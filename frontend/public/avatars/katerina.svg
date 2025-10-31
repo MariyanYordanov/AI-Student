@@ -1,0 +1,50 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Head background -->
+  <circle cx="100" cy="100" r="95" fill="#FDDEE0"/>
+
+  <!-- Purple-toned hair -->
+  <path d="M 35 88 Q 25 48 100 30 Q 175 48 165 88" fill="#7B4B8A"/>
+
+  <!-- Hair sides with some color accent -->
+  <path d="M 38 95 Q 35 135 45 165 Q 48 170 52 165 Q 45 135 48 100" fill="#7B4B8A"/>
+  <path d="M 162 95 Q 165 135 155 165 Q 152 170 148 165 Q 155 135 152 100" fill="#7B4B8A"/>
+
+  <!-- Hair highlights creative -->
+  <ellipse cx="75" cy="52" rx="18" ry="24" fill="#9D6CB3" opacity="0.65"/>
+  <ellipse cx="125" cy="52" rx="18" ry="24" fill="#9D6CB3" opacity="0.65"/>
+  <path d="M 100 40 Q 110 38 115 50" stroke="#E88FB6" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.8"/>
+
+  <!-- Face -->
+  <ellipse cx="100" cy="100" rx="48" ry="53" fill="#FDDEE0"/>
+
+  <!-- Ears -->
+  <ellipse cx="52" cy="98" rx="10" ry="17" fill="#F5C8D0"/>
+  <ellipse cx="148" cy="98" rx="10" ry="17" fill="#F5C8D0"/>
+
+  <!-- Creative expressive eyes -->
+  <circle cx="80" cy="90" r="7" fill="#4D3A4A"/>
+  <circle cx="120" cy="90" r="7" fill="#4D3A4A"/>
+
+  <!-- Bright creative eye shine -->
+  <circle cx="81" cy="86" r="3" fill="white"/>
+  <circle cx="121" cy="86" r="3" fill="white"/>
+
+  <!-- Creative expressive eyebrows -->
+  <path d="M 68 75 Q 80 70 92 75" stroke="#5B3A6B" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M 108 75 Q 120 70 132 75" stroke="#5B3A6B" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+
+  <!-- Playful nose -->
+  <path d="M 100 90 L 100 115" stroke="#E5BCCB" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+
+  <!-- Joyful bright smile -->
+  <path d="M 75 142 Q 100 156 125 142" stroke="#E8697F" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+  <path d="M 75 142 Q 100 150 125 142" stroke="#F5B3C3" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.6"/>
+
+  <!-- Vibrant creative cheeks -->
+  <ellipse cx="58" cy="110" rx="10" ry="7" fill="#F5A3B3" opacity="0.75"/>
+  <ellipse cx="142" cy="110" rx="10" ry="7" fill="#F5A3B3" opacity="0.75"/>
+
+  <!-- Creative spark details -->
+  <circle cx="45" cy="85" r="2" fill="#E88FB6" opacity="0.6"/>
+  <circle cx="155" cy="85" r="2" fill="#9D6CB3" opacity="0.6"/>
+</svg>

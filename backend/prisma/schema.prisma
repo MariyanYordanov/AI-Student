@@ -1,0 +1,145 @@
+// Prisma schema for AI Teacher-Student system
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// User model - real students and teachers
+model User {
+  id                String   @id @default(uuid())
+  email             String   @unique
+  password          String   @default("") // Hashed password for authentication
+  name              String
+  role              String   @default("STUDENT") // STUDENT, TEACHER, or ADMIN
+
+  // Email verification fields
+  emailVerified     Boolean  @default(false)
+  verificationToken String?  @unique
+  verificationTokenExpiry DateTime?
+
+  createdAt         DateTime @default(now())
+  lastActive        DateTime @updatedAt
+
+  // Relations
+  aiStudents        AIStudent[]
+  sessions          Session[]
+  achievements      Achievement[]
+  topicProgress     TopicProgress[]
+}
+
+// AI Student - virtual student that learns
+model AIStudent {
+  id                String   @id @default(uuid())
+  ownerId           String
+  characterId       String   @default("jean") // Reference to predefined character (jean, maria, ivan, etc.)
+  name              String   // Character's name
+  level             Int      @default(0)
+  totalXP           Int      @default(0)
+
+  // Personality traits stored as JSON
+  // {curiosity: 0.7, confusionRate: 0.3, learningSpeed: 0.5}
+  personalityTraits String   @default("{\"curiosity\":0.5,\"confusionRate\":0.5,\"learningSpeed\":0.5}")
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @default(now())
+
+  // Relations
+  owner             User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  sessions          Session[]
+  knowledge         Knowledge[]
+
+  @@unique([ownerId, characterId])
+}
+
+// Knowledge items the AI student has learned
+model Knowledge {
+  id                  String   @id @default(uuid())
+  aiStudentId         String
+  concept             String
+  understandingLevel  Float    @default(0.0) // 0.0 to 1.0
+  examplesSeen        Int      @default(0)
+  lastReviewed        DateTime @default(now())
+
+  // Store metadata as JSON
+  metadata            String   @default("{}")
+
+  // Relations
+  aiStudent           AIStudent @relation(fields: [aiStudentId], references: [id])
+
+  @@unique([aiStudentId, concept])
+}
+
+// Teaching sessions
+model Session {
+  id              String   @id @default(uuid())
+  studentId       String
+  aiStudentId     String
+  topic           String
+  durationMinutes Int      @default(0)
+  xpEarned        Int      @default(0)
+  qualityScore    Float?
+
+  // Conversation transcript stored as JSON array
+  // [{role: 'student', message: '...', timestamp: ...}, ...]
+  transcript      String   @default("[]")
+
+  createdAt       DateTime @default(now())
+  endedAt         DateTime?
+
+  // Relations
+  student         User      @relation(fields: [studentId], references: [id])
+  aiStudent       AIStudent @relation(fields: [aiStudentId], references: [id])
+}
+
+// Achievements/badges
+model Achievement {
+  id          String   @id @default(uuid())
+  userId      String
+  type        String
+  unlockedAt  DateTime @default(now())
+
+  // Store extra data as JSON
+  metadata    String   @default("{}")
+
+  // Relations
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+// Topic - Static list of all JavaScript topics
+model Topic {
+  id                  String   @id
+  section             String   // "Основи", "Средни", "Напреднал", "ООП", "Практически", "Web"
+  title               String   // Topic title in Bulgarian
+  description         String   // Topic description
+  difficulty          String   @default("beginner") // beginner, intermediate, advanced
+  estimatedMinutes    Int      @default(20)
+  createdAt           DateTime @default(now())
+
+  // Relations
+  userProgress        TopicProgress[]
+
+  @@unique([section, title])
+}
+
+// TopicProgress - Tracks user progress on each topic
+model TopicProgress {
+  id                  String   @id @default(uuid())
+  userId              String
+  topicId             String
+  understandingLevel  Float    @default(0.0) // 0.0 to 1.0 (0% to 100%)
+  sessionsCount       Int      @default(0)   // Number of times taught
+  lastStudied         DateTime @default(now())
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  // Relations
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic               Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, topicId])
+}
