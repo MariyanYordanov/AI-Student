@@ -35,7 +35,6 @@ function Dashboard() {
     topics,
     selectedSection,
     selectedTopic,
-    userProgress,
     isLoading: topicsLoading,
     fetchAllTopics,
     selectSection,
@@ -49,7 +48,6 @@ function Dashboard() {
   const [isLoadingCharacters, setIsLoadingCharacters] = useState(true);
   const [isStarting, setIsStarting] = useState(false);
   const [step, setStep] = useState<'characters' | 'topics'>('characters');
-  const [shouldShowTopics, setShouldShowTopics] = useState(false);
   const [aiStudentProgress, setAiStudentProgress] = useState<Record<string, any>>({});
 
   // Redirect if not logged in

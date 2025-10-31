@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { api } from '../services/api';
 
 export default function VerifyEmail() {
   const [searchParams] = useSearchParams();
@@ -19,7 +18,8 @@ export default function VerifyEmail() {
       }
 
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/verify-email/${token}`, {
+        const apiUrl = (import.meta.env.VITE_API_URL as string) || '/api';
+        const response = await fetch(`${apiUrl}/auth/verify-email/${token}`, {
           method: 'GET',
         });
 
