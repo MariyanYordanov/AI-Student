@@ -14,6 +14,8 @@ function Register() {
   const [localError, setLocalError] = useState('');
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState('');
+  const [isResendingEmail, setIsResendingEmail] = useState(false);
+  const [resendSuccess, setResendSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,6 +43,36 @@ function Register() {
       setRegistrationSuccess(true);
     } catch (err) {
       setLocalError(error || 'Грешка при регистрация');
+    }
+  };
+
+  const handleResendEmail = async () => {
+    setIsResendingEmail(true);
+    setResendSuccess(false);
+    setLocalError('');
+
+    try {
+      const apiUrl = (import.meta.env.VITE_API_URL as string) || '/api';
+      const response = await fetch(`${apiUrl}/auth/resend-verification-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: registeredEmail }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setResendSuccess(true);
+        setTimeout(() => setResendSuccess(false), 5000);
+      } else {
+        setLocalError(data.error || 'Грешка при изпращане на имейла');
+      }
+    } catch (err) {
+      setLocalError('Грешка при изпращане на имейла. Опитай отново.');
+    } finally {
+      setIsResendingEmail(false);
     }
   };
 
@@ -86,15 +118,37 @@ function Register() {
                 ✓ След верификацията можеш да се логнеш
               </p>
             </div>
-            <p className="text-sm text-gray-600 mb-6">
-              Имейлът не е пристигнал? Провери spam папката или помоли за нов линк при логин.
+            {resendSuccess && (
+              <div className="p-3 bg-green-100 text-green-700 rounded-lg text-sm mb-4">
+                ✓ Имейлът е изпратен успешно! Провери своя inbox.
+              </div>
+            )}
+
+            {localError && (
+              <div className="p-3 bg-red-100 text-red-700 rounded-lg text-sm mb-4">
+                ❌ {localError}
+              </div>
+            )}
+
+            <p className="text-sm text-gray-600 mb-4">
+              Имейлът не е пристигнал?
             </p>
-            <Link
-              to="/login"
-              className="inline-block w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200 text-center"
+            <button
+              onClick={handleResendEmail}
+              disabled={isResendingEmail}
+              className="w-full px-6 py-3 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-300 text-gray-900 font-medium rounded-lg transition duration-200 mb-4"
             >
-              Към логин
-            </Link>
+              {isResendingEmail ? '⏳ Изпращам...' : '📧 Изпрати отново верификационния имейл'}
+            </button>
+
+            <div className="border-t border-gray-200 pt-4">
+              <Link
+                to="/login"
+                className="inline-block w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200 text-center"
+              >
+                Към логин
+              </Link>
+            </div>
           </div>
         </div>
       </div>
