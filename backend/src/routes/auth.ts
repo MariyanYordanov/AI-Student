@@ -85,12 +85,16 @@ router.post('/register', async (req, res, next) => {
     }
 
     console.log('✓ Registration successful');
+    // Generate token for new user (even if not verified yet)
+    const token = generateToken(user.id, user.email, user.role);
+
     res.status(201).json({
       id: user.id,
       email: user.email,
       name: user.name,
       role: user.role,
       emailVerified: user.emailVerified,
+      token,
       message: 'Registration successful. Please check your email to verify your account.',
     });
   } catch (error) {
