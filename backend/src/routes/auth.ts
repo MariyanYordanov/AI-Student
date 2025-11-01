@@ -204,8 +204,66 @@ router.post('/logout', authMiddleware, (_req, res) => {
 });
 
 /**
+ * POST /api/auth/verify-email
+ * Verify user email with token (sent in request body)
+ * This is more secure than GET with token in URL
+ */
+router.post('/verify-email', async (req, res, next) => {
+  try {
+    const { token } = req.body;
+
+    if (!token) {
+      res.status(400).json({ error: 'Verification token is required' });
+      return;
+    }
+
+    console.log('🔍 Verifying email with token...');
+
+    // Find user with this token
+    const user = await prisma.user.findUnique({
+      where: { verificationToken: token },
+    });
+
+    if (!user) {
+      console.log('❌ Token not found in database');
+      res.status(404).json({ error: 'Invalid or expired verification token' });
+      return;
+    }
+
+    // Check if token has expired
+    if (user.verificationTokenExpiry && user.verificationTokenExpiry < new Date()) {
+      console.log('❌ Token expired for:', user.email);
+      res.status(400).json({ error: 'Verification token has expired' });
+      return;
+    }
+
+    console.log('✓ Token valid, marking email as verified:', user.email);
+
+    // Mark email as verified and clear token
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        emailVerified: true,
+        verificationToken: null,
+        verificationTokenExpiry: null,
+      },
+    });
+
+    console.log('✓ Email verified successfully:', user.email);
+
+    res.json({
+      message: 'Email verified successfully!',
+      email: user.email,
+    });
+  } catch (error) {
+    console.error('❌ Verification error:', error);
+    next(error);
+  }
+});
+
+/**
  * GET /api/auth/verify-email/:token
- * Verify user email with token
+ * Verify user email with token (legacy - deprecated)
  */
 router.get('/verify-email/:token', async (req, res, next) => {
   try {
