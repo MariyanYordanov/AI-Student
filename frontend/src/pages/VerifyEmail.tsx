@@ -18,8 +18,8 @@ export default function VerifyEmail() {
       }
 
       try {
-        const apiUrl = (import.meta.env.VITE_API_URL as string) || '/api';
-        const response = await fetch(`${apiUrl}/auth/verify-email/${token}`, {
+        const apiUrl = (import.meta.env.VITE_API_URL as string) || 'http://localhost:4000';
+        const response = await fetch(`${apiUrl}/api/auth/verify-email/${token}`, {
           method: 'GET',
         });
 
