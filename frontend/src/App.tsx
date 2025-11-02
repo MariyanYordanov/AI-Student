@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuthStore } from './stores/authStore';
 import { useTheme } from './hooks/useTheme';
 import LandingPage from './pages/LandingPage';
@@ -32,12 +32,20 @@ function HomeRoute() {
 
 function App() {
   const { restoreSession } = useAuthStore();
+  const [isInitialized, setIsInitialized] = useState(false);
   useTheme(); // Initialize theme from localStorage
 
   // Restore session on mount
   useEffect(() => {
     restoreSession();
+    // Mark as initialized immediately (restoreSession is synchronous)
+    setIsInitialized(true);
   }, []);
+
+  // Don't render routes until session is restored from localStorage
+  if (!isInitialized) {
+    return <div />;
+  }
 
   return (
     <ErrorBoundary>
