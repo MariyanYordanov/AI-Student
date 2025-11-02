@@ -13,6 +13,8 @@ import Register from './pages/Register';
 import VerifyEmail from './pages/VerifyEmail';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { Navbar } from './components/Navbar';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { AdminRoute } from './components/AdminRoute';
 
 function HomeRoute() {
   const { user } = useAuthStore();
@@ -42,7 +44,7 @@ function App() {
       <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors">
         <Navbar />
         <Routes>
-          {/* Auth Routes */}
+          {/* Auth Routes - Public */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
@@ -50,12 +52,33 @@ function App() {
           {/* Home - Landing or Dashboard based on auth */}
           <Route path="/" element={<HomeRoute />} />
 
-          {/* Admin Routes */}
-          <Route path="/admin" element={<AdminDashboard />} />
+          {/* Admin Routes - Requires admin role */}
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            }
+          />
 
-          {/* Main Routes */}
-          <Route path="/teach/:sessionId" element={<TeachingSession />} />
-          <Route path="/history/:aiStudentId" element={<SessionHistory />} />
+          {/* Protected Routes - Requires authentication and email verification */}
+          <Route
+            path="/teach/:sessionId"
+            element={
+              <ProtectedRoute requireEmailVerified>
+                <TeachingSession />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/history/:aiStudentId"
+            element={
+              <ProtectedRoute requireEmailVerified>
+                <SessionHistory />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
