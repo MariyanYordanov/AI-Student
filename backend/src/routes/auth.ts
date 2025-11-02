@@ -257,7 +257,11 @@ router.post('/verify-email', async (req, res, next) => {
 
     res.json({
       message: 'Email verified successfully!',
+      id: updatedUser.id,
       email: updatedUser.email,
+      name: updatedUser.name,
+      role: updatedUser.role,
+      emailVerified: updatedUser.emailVerified,
       token: jwtToken,
     });
   } catch (error) {
