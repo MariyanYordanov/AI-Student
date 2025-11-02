@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
 
@@ -7,6 +7,7 @@ export default function VerifyEmail() {
   const { t } = useTranslation();
   const { isDark } = useTheme();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('');
   const [email, setEmail] = useState('');
@@ -37,7 +38,23 @@ export default function VerifyEmail() {
           setStatus('success');
           setMessage(t('auth.verificationSent'));
           setEmail(data.email);
-          // NO auto-redirect - user manually clicks login button
+
+          // AUTO-LOGIN: Save token and user data to localStorage and authStore
+          if (data.token) {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify({
+              id: data.id,
+              email: data.email,
+              name: data.name,
+              role: data.role,
+              emailVerified: true
+            }));
+          }
+
+          // Auto-redirect to dashboard after 2 seconds
+          setTimeout(() => {
+            navigate('/');
+          }, 2000);
         } else {
           setStatus('error');
           setMessage(data.error || t('auth.errors.genericError'));
@@ -95,14 +112,8 @@ export default function VerifyEmail() {
               {t('auth.checkEmail')} <span className="font-semibold">{email}</span>
             </p>
             <p className={`mb-6 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-              {t('auth.emailVerification')}
+              Redirecting to dashboard in 2 seconds...
             </p>
-            <Link
-              to="/login"
-              className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200"
-            >
-              {t('auth.login')}
-            </Link>
           </div>
         )}
 
