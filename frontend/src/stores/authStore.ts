@@ -61,14 +61,22 @@ export const useAuthStore = create<AuthState>((set) => ({
     const token = localStorage.getItem('token');
     const userStr = localStorage.getItem('user');
 
+    console.log('[DEBUG] restoreSession: token =', token ? 'exists' : 'null');
+    console.log('[DEBUG] restoreSession: userStr =', userStr);
+
     if (token && userStr) {
       try {
         const user = JSON.parse(userStr);
+        console.log('[DEBUG] restoreSession: Parsed user =', user);
         set({ user, token });
-      } catch {
+        console.log('[DEBUG] restoreSession: Set authStore with user');
+      } catch (error) {
+        console.log('[DEBUG] restoreSession: Parse error =', error);
         localStorage.removeItem('token');
         localStorage.removeItem('user');
       }
+    } else {
+      console.log('[DEBUG] restoreSession: No token or userStr in localStorage');
     }
   },
 

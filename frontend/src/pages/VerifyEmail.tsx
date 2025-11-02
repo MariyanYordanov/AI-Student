@@ -33,6 +33,7 @@ export default function VerifyEmail() {
         });
 
         const data = await response.json();
+        console.log('[DEBUG] Verify response:', data);
 
         if (response.ok) {
           setStatus('success');
@@ -41,18 +42,23 @@ export default function VerifyEmail() {
 
           // AUTO-LOGIN: Save token and user data to localStorage and authStore
           if (data.token) {
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify({
+            const userObj = {
               id: data.id,
               email: data.email,
               name: data.name,
               role: data.role,
               emailVerified: true
-            }));
+            };
+            console.log('[DEBUG] Saving to localStorage:', userObj);
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify(userObj));
+            console.log('[DEBUG] localStorage user after save:', localStorage.getItem('user'));
           }
 
           // Auto-redirect to dashboard after 2 seconds
+          console.log('[DEBUG] Will redirect to / in 2 seconds');
           setTimeout(() => {
+            console.log('[DEBUG] Redirecting to /');
             navigate('/');
           }, 2000);
         } else {
