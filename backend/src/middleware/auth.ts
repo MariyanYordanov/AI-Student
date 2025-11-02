@@ -57,3 +57,37 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
   }
   next();
 }
+
+/**
+ * Require ADMIN or SUPERADMIN role
+ */
+export function requireAdmin(req: Request, res: Response, next: NextFunction) {
+  if (!req.user) {
+    res.status(401).json({ error: 'Authentication required' });
+    return;
+  }
+
+  if (req.user.role !== 'ADMIN' && req.user.role !== 'SUPERADMIN') {
+    res.status(403).json({ error: 'Admin access required' });
+    return;
+  }
+
+  next();
+}
+
+/**
+ * Require SUPERADMIN role only
+ */
+export function requireSuperAdmin(req: Request, res: Response, next: NextFunction) {
+  if (!req.user) {
+    res.status(401).json({ error: 'Authentication required' });
+    return;
+  }
+
+  if (req.user.role !== 'SUPERADMIN') {
+    res.status(403).json({ error: 'SuperAdmin access required' });
+    return;
+  }
+
+  next();
+}

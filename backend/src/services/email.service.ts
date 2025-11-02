@@ -114,4 +114,73 @@ export class EmailService {
       // Don't throw here as email is not critical after registration
     }
   }
+
+  /**
+   * Send custom email to user
+   */
+  static async sendCustomEmail(toEmail: string, userName: string, subject: string, message: string): Promise<void> {
+    if (!SENDGRID_API_KEY) {
+      console.warn('SendGrid API key not configured. Email not sent.');
+      return;
+    }
+
+    const msg = {
+      to: toEmail,
+      from: FROM_EMAIL,
+      subject: `LearnMate - ${subject}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2>${subject}</h2>
+          <p>Привет ${userName},</p>
+          ${message}
+          <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+          <p style="color: #999; font-size: 12px; text-align: center;">
+            LearnMate Team
+          </p>
+        </div>
+      `,
+    };
+
+    try {
+      await sgMail.send(msg);
+      console.log(`Custom email sent to ${toEmail}`);
+    } catch (error) {
+      console.error('Error sending custom email:', error);
+      throw new Error('Failed to send custom email');
+    }
+  }
+
+  /**
+   * Send admin notification
+   */
+  static async sendAdminNotification(toEmail: string, subject: string, message: string): Promise<void> {
+    if (!SENDGRID_API_KEY) {
+      console.warn('SendGrid API key not configured. Email not sent.');
+      return;
+    }
+
+    const msg = {
+      to: toEmail,
+      from: FROM_EMAIL,
+      subject: `LearnMate Admin - ${subject}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2>Admin Notification: ${subject}</h2>
+          ${message}
+          <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+          <p style="color: #999; font-size: 12px; text-align: center;">
+            LearnMate Admin System
+          </p>
+        </div>
+      `,
+    };
+
+    try {
+      await sgMail.send(msg);
+      console.log(`Admin notification sent to ${toEmail}`);
+    } catch (error) {
+      console.error('Error sending admin notification:', error);
+      throw new Error('Failed to send admin notification');
+    }
+  }
 }

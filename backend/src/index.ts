@@ -5,6 +5,7 @@ import { sessionRouter } from './routes/sessions';
 import { aiStudentRouter } from './routes/ai-students';
 import { authRouter } from './routes/auth';
 import { topicsRouter } from './routes/topics';
+import adminRouter from './routes/admin';
 import { errorHandler } from './middleware/error-handler';
 
 dotenv.config();
@@ -43,6 +44,7 @@ app.get('/health', (_req, res) => {
 
 // Routes
 app.use('/api/auth', authRouter);
+app.use('/api/admin', adminRouter);
 app.use('/api/topics', topicsRouter);
 app.use('/api/sessions', sessionRouter);
 app.use('/api/ai-students', aiStudentRouter);
