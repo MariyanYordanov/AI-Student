@@ -252,13 +252,13 @@ router.post('/verify-email', async (req, res, next) => {
     console.log('✓ Email verified successfully:', user.email);
 
     // Generate JWT token for auto-login
-    const token = generateToken(updatedUser.id, updatedUser.email, updatedUser.role);
+    const jwtToken = generateToken(updatedUser.id, updatedUser.email, updatedUser.role);
 
     res.json({
       message: 'Email verified successfully!',
       email: updatedUser.email,
-      token: token.token,
-      refreshToken: token.refreshToken,
+      token: jwtToken.token,
+      refreshToken: jwtToken.refreshToken,
     });
   } catch (error) {
     console.error('❌ Verification error:', error);
