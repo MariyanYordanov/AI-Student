@@ -9,7 +9,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <Brain className="w-8 h-8 text-blue-600" />
-            <span className="text-2xl font-bold text-gray-900">LearnMate</span>
+            <span className="text-2xl font-bold text-gray-900">Aily</span>
           </div>
           <div className="flex gap-4">
             <Link
@@ -34,7 +34,7 @@ export default function LandingPage() {
           Учи с помощта на <span className="text-blue-600">AI Ученик</span>
         </h1>
         <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-          LearnMate е революционна платформа, където можеш да проверяваш своите знания, като учиш AI ученик по различни теми.
+          Aily е революционна платформа, където можеш да проверяваш своите знания, като учиш AI ученик по различни теми.
         </p>
         <div className="flex gap-4 justify-center">
           <Link
@@ -55,7 +55,7 @@ export default function LandingPage() {
       {/* Features Section */}
       <section className="bg-gray-50 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">Защо LearnMate?</h2>
+          <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">Защо Aily?</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Feature 1 */}
@@ -158,7 +158,7 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl font-bold mb-6">Готов ли си да начнеш?</h2>
           <p className="text-xl mb-8 text-blue-100">
-            Присъединяй се към хиляди студенти, които учат и растат със LearnMate.
+            Присъединяй се към хиляди студенти, които учат и растат с Aily.
           </p>
           <Link
             to="/register"
@@ -176,7 +176,7 @@ export default function LandingPage() {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <Brain className="w-6 h-6 text-blue-400" />
-                <span className="font-bold text-white">LearnMate</span>
+                <span className="font-bold text-white">Aily</span>
               </div>
               <p className="text-sm">Платформа за учене с AI</p>
             </div>
@@ -203,7 +203,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 text-center text-sm">
-            <p>Copyright 2024 LearnMate. Всички права запазени.</p>
+            <p>Copyright 2024 Aily. Всички права запазени.</p>
           </div>
         </div>
       </footer>

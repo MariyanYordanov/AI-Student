@@ -11,7 +11,6 @@ export interface StudentCharacter {
     confusionRate: number; // 0-1
     learningSpeed: number; // 0-1
   };
-  avatar: string; // path to avatar SVG or image
   learningStyle: string;
   motivations: string[];
   commonQuestions: string[];
@@ -21,7 +20,6 @@ export const STUDENT_CHARACTERS: StudentCharacter[] = [
   {
     id: 'jean',
     name: 'Жан',
-    avatar: '/avatars/jean.svg',
     personality: {
       curiosity: 0.8,
       confusionRate: 0.6,
@@ -43,7 +41,6 @@ export const STUDENT_CHARACTERS: StudentCharacter[] = [
   {
     id: 'maria',
     name: 'Мария',
-    avatar: '/avatars/maria.svg',
     personality: {
       curiosity: 0.5,
       confusionRate: 0.3,
@@ -64,7 +61,6 @@ export const STUDENT_CHARACTERS: StudentCharacter[] = [
   {
     id: 'ivan',
     name: 'Иван',
-    avatar: '/avatars/ivan.svg',
     personality: {
       curiosity: 0.9,
       confusionRate: 0.2,
@@ -86,7 +82,6 @@ export const STUDENT_CHARACTERS: StudentCharacter[] = [
   {
     id: 'nadya',
     name: 'Надя',
-    avatar: '/avatars/nadya.svg',
     personality: {
       curiosity: 0.6,
       confusionRate: 0.5,
@@ -108,7 +103,6 @@ export const STUDENT_CHARACTERS: StudentCharacter[] = [
   {
     id: 'petr',
     name: 'Петър',
-    avatar: '/avatars/petr.svg',
     personality: {
       curiosity: 0.7,
       confusionRate: 0.2,
@@ -130,7 +124,6 @@ export const STUDENT_CHARACTERS: StudentCharacter[] = [
   {
     id: 'katerina',
     name: 'Катерина',
-    avatar: '/avatars/katerina.svg',
     personality: {
       curiosity: 0.7,
       confusionRate: 0.4,

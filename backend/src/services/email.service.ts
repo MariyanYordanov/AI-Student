@@ -28,10 +28,10 @@ export class EmailService {
     const msg = {
       to: toEmail,
       from: FROM_EMAIL,
-      subject: 'LearnMate - Потвърждение на имейл адрес',
+      subject: 'Aily - Потвърждение на имейл адрес',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2>Добре дошъл в LearnMate!</h2>
+          <h2>Добре дошъл в Aily!</h2>
           <p>Привет ${userName},</p>
           <p>Благодарим, че се регистрира. За да активираш своя профил, моля потвърди своя имейл адрес чрез клик на линка по-долу:</p>
 
@@ -53,7 +53,7 @@ export class EmailService {
           </p>
           <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
           <p style="color: #999; font-size: 12px; text-align: center;">
-            LearnMate Team
+            Aily Team
           </p>
         </div>
       `,
@@ -86,24 +86,24 @@ export class EmailService {
     const msg = {
       to: toEmail,
       from: FROM_EMAIL,
-      subject: 'LearnMate - Добре дошъл!',
+      subject: 'Aily - Добре дошъл!',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2>Имейлът си е потвърден!</h2>
           <p>Привет ${userName},</p>
-          <p>Поздравления! Твоят имейл адрес е успешно потвърден и можеш вече да използваш LearnMate.</p>
+          <p>Поздравления! Твоят имейл адрес е успешно потвърден и можеш вече да използваш Aily.</p>
           <p>
             <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/login" style="display: inline-block; padding: 12px 24px; background-color: #2563eb; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">
-              Влез в LearnMate
+              Влез в Aily
             </a>
           </p>
           <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
           <p style="color: #999; font-size: 12px; text-align: center;">
-            LearnMate Team
+            Aily Team
           </p>
         </div>
       `,
-      text: 'Твоят имейл адрес е потвърден. Можеш вече да използваш LearnMate.',
+      text: 'Твоят имейл адрес е потвърден. Можеш вече да използваш Aily.',
     };
 
     try {
@@ -127,7 +127,7 @@ export class EmailService {
     const msg = {
       to: toEmail,
       from: FROM_EMAIL,
-      subject: `LearnMate - ${subject}`,
+      subject: `Aily - ${subject}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2>${subject}</h2>
@@ -135,7 +135,7 @@ export class EmailService {
           ${message}
           <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
           <p style="color: #999; font-size: 12px; text-align: center;">
-            LearnMate Team
+            Aily Team
           </p>
         </div>
       `,
@@ -162,14 +162,14 @@ export class EmailService {
     const msg = {
       to: toEmail,
       from: FROM_EMAIL,
-      subject: `LearnMate Admin - ${subject}`,
+      subject: `Aily Admin - ${subject}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2>Admin Notification: ${subject}</h2>
           ${message}
           <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
           <p style="color: #999; font-size: 12px; text-align: center;">
-            LearnMate Admin System
+            Aily Admin System
           </p>
         </div>
       `,
