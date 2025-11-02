@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useAuthStore } from './stores/authStore';
 import { useTheme } from './hooks/useTheme';
 import LandingPage from './pages/LandingPage';
+// Version: 1.0.0 - Ensure VerifyEmail route is available
 import TeachingSession from './pages/TeachingSession';
 import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
