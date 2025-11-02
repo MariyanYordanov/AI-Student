@@ -240,7 +240,7 @@ router.post('/verify-email', async (req, res, next) => {
     console.log('✓ Token valid, marking email as verified:', user.email);
 
     // Mark email as verified and clear token
-    await prisma.user.update({
+    const updatedUser = await prisma.user.update({
       where: { id: user.id },
       data: {
         emailVerified: true,
@@ -251,9 +251,14 @@ router.post('/verify-email', async (req, res, next) => {
 
     console.log('✓ Email verified successfully:', user.email);
 
+    // Generate JWT token for auto-login
+    const token = generateToken(updatedUser.id, updatedUser.email, updatedUser.role);
+
     res.json({
       message: 'Email verified successfully!',
-      email: user.email,
+      email: updatedUser.email,
+      token: token.token,
+      refreshToken: token.refreshToken,
     });
   } catch (error) {
     console.error('❌ Verification error:', error);

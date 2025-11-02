@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 
 export default function VerifyEmail() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('');
   const [email, setEmail] = useState('');
@@ -30,9 +31,22 @@ export default function VerifyEmail() {
         const data = await response.json();
 
         if (response.ok) {
+          // Save token to localStorage for auto-login
+          if (data.token) {
+            localStorage.setItem('token', data.token);
+            if (data.refreshToken) {
+              localStorage.setItem('refreshToken', data.refreshToken);
+            }
+          }
+
           setStatus('success');
           setMessage('Email verified successfully!');
           setEmail(data.email);
+
+          // Auto-redirect to home/students page after 2 seconds
+          setTimeout(() => {
+            navigate('/');
+          }, 2000);
         } else {
           setStatus('error');
           setMessage(data.error || 'Failed to verify email');
@@ -83,12 +97,12 @@ export default function VerifyEmail() {
             <p className="text-gray-600 mb-4">
               Адресът <span className="font-semibold">{email}</span> е потвърден.
             </p>
-            <p className="text-gray-600 mb-6">Можете да се логнете и да започнете да учите.</p>
+            <p className="text-gray-600 mb-6">Пренасочване в ход на секунди...</p>
             <Link
-              to="/login"
+              to="/"
               className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200"
             >
-              Към логин
+              Отиди сега
             </Link>
           </div>
         )}
