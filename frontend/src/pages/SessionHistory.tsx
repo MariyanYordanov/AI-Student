@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../stores/authStore';
 
 interface Session {
   id: string;
@@ -24,9 +25,19 @@ interface Session {
 function SessionHistory() {
   const { aiStudentId } = useParams<{ aiStudentId: string }>();
   const navigate = useNavigate();
+  const { user } = useAuthStore();
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
+
+  // Redirect if not logged in or email not verified
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    } else if (!user.emailVerified) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
 
   useEffect(() => {
     loadSessions();

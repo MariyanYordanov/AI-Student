@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../stores/authStore';
 
 interface TeacherStats {
   totalAIStudents: number;
@@ -20,9 +21,19 @@ interface TeacherStats {
 
 function TeacherDashboard() {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
   const [stats, setStats] = useState<TeacherStats | null>(null);
   const [loading, setLoading] = useState(true);
   const TEMP_USER_ID = 'temp-user-123';
+
+  // Redirect if not logged in or email not verified
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    } else if (!user.emailVerified) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
 
   useEffect(() => {
     loadStats();

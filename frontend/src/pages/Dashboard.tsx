@@ -50,9 +50,12 @@ function Dashboard() {
   const [step, setStep] = useState<'characters' | 'topics'>('characters');
   const [aiStudentProgress, setAiStudentProgress] = useState<Record<string, any>>({});
 
-  // Redirect if not logged in
+  // Redirect if not logged in or email not verified
   useEffect(() => {
     if (!user) {
+      navigate('/login');
+    } else if (!user.emailVerified) {
+      // Block unverified users from accessing dashboard
       navigate('/login');
     }
   }, [user, navigate]);

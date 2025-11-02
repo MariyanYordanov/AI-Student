@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../stores/authStore';
 import { api } from '../services/api';
 import { SessionMessage, AIStudent } from '../types';
 import ChatMessage from '../components/ChatMessage';
@@ -8,6 +9,7 @@ import MessageInput from '../components/MessageInput';
 function TeachingSession() {
   const { sessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
+  const { user } = useAuthStore();
 
   const [messages, setMessages] = useState<SessionMessage[]>([]);
   const [loading, setLoading] = useState(false);
@@ -15,6 +17,15 @@ function TeachingSession() {
   const [topic, setTopic] = useState('');
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Redirect if not logged in or email not verified
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    } else if (!user.emailVerified) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
 
   useEffect(() => {
     if (sessionId) {
