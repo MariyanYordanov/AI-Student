@@ -35,19 +35,15 @@ export default function VerifyEmail() {
         const data = await response.json();
 
         if (response.ok) {
-          // Save token to localStorage for auto-login
-          if (data.token) {
-            localStorage.setItem('token', data.token);
-          }
-
           setStatus('success');
           setMessage(t('auth.verificationSent'));
           setEmail(data.email);
 
-          // Auto-redirect to home/students page after 2 seconds
+          // Auto-redirect to login page after 3 seconds
+          // User needs to manually login with their verified email
           setTimeout(() => {
-            navigate('/');
-          }, 2000);
+            navigate('/login');
+          }, 3000);
         } else {
           setStatus('error');
           setMessage(data.error || t('auth.errors.genericError'));
