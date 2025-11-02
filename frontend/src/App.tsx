@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useAuthStore } from './stores/authStore';
+import { useTheme } from './hooks/useTheme';
 import LandingPage from './pages/LandingPage';
 import TeachingSession from './pages/TeachingSession';
 import Dashboard from './pages/Dashboard';
@@ -10,6 +11,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import VerifyEmail from './pages/VerifyEmail';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { Navbar } from './components/Navbar';
 
 function HomeRoute() {
   const { user } = useAuthStore();
@@ -27,6 +29,7 @@ function HomeRoute() {
 
 function App() {
   const { restoreSession } = useAuthStore();
+  useTheme(); // Initialize theme from localStorage
 
   // Restore session on mount
   useEffect(() => {
@@ -35,7 +38,8 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-gray-100">
+      <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors">
+        <Navbar />
         <Routes>
           {/* Auth Routes */}
           <Route path="/login" element={<Login />} />
