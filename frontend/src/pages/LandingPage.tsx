@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { BookOpen, Brain, Target, Users, CheckCircle } from 'lucide-react';
+import { BookOpen, Brain, Target } from 'lucide-react';
 
 export default function LandingPage() {
   return (

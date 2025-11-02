@@ -5,6 +5,7 @@ export interface User {
   email: string;
   name: string;
   role: 'STUDENT' | 'TEACHER' | 'ADMIN';
+  emailVerified: boolean;
   createdAt?: string;
 }
 
