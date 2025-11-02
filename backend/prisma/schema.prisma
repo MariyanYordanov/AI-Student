@@ -9,13 +9,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// User roles enum
+enum UserRole {
+  SUPERADMIN
+  ADMIN
+  STUDENT
+}
+
 // User model - real students and teachers
 model User {
   id                String   @id @default(uuid())
   email             String   @unique
   password          String   @default("") // Hashed password for authentication
   name              String
-  role              String   @default("STUDENT") // STUDENT, TEACHER, or ADMIN
+  role              UserRole @default(STUDENT)
 
   // Email verification fields
   emailVerified     Boolean  @default(false)

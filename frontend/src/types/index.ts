@@ -4,7 +4,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'STUDENT' | 'TEACHER' | 'ADMIN';
+  role: 'SUPERADMIN' | 'ADMIN' | 'STUDENT';
   emailVerified: boolean;
   createdAt?: string;
 }
