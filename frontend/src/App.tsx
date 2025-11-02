@@ -4,6 +4,7 @@ import { useAuthStore } from './stores/authStore';
 import LandingPage from './pages/LandingPage';
 import TeachingSession from './pages/TeachingSession';
 import Dashboard from './pages/Dashboard';
+import AdminDashboard from './pages/AdminDashboard';
 import SessionHistory from './pages/SessionHistory';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -43,6 +44,9 @@ function App() {
 
           {/* Home - Landing or Dashboard based on auth */}
           <Route path="/" element={<HomeRoute />} />
+
+          {/* Admin Routes */}
+          <Route path="/admin" element={<AdminDashboard />} />
 
           {/* Main Routes */}
           <Route path="/teach/:sessionId" element={<TeachingSession />} />
