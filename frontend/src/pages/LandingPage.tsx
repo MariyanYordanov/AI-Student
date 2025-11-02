@@ -1,210 +1,194 @@
 import { Link } from 'react-router-dom';
-import { BookOpen, Brain, Target } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { useTheme } from '../hooks/useTheme';
 
 export default function LandingPage() {
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Brain className="w-8 h-8 text-blue-600" />
-            <span className="text-2xl font-bold text-gray-900">Aily</span>
-          </div>
-          <div className="flex gap-4">
-            <Link
-              to="/login"
-              className="px-6 py-2 text-gray-700 hover:text-gray-900 font-medium transition"
-            >
-              Вход
-            </Link>
-            <Link
-              to="/register"
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition"
-            >
-              Регистрация
-            </Link>
-          </div>
-        </div>
-      </header>
+  const { t } = useTranslation();
+  const { isDark } = useTheme();
 
+  return (
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-        <h1 className="text-5xl font-bold text-gray-900 mb-6">
-          Учи с помощта на <span className="text-blue-600">AI Ученик</span>
+        <div className="mb-8">
+          <h2 className="text-sm font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-widest">
+            {t('landing.subtitle')}
+          </h2>
+        </div>
+        <h1 className="text-5xl md:text-6xl font-bold mb-6">
+          {t('landing.title')}
         </h1>
-        <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-          Aily е революционна платформа, където можеш да проверяваш своите знания, като учиш AI ученик по различни теми.
+        <p className="text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto">
+          {t('landing.description')}
         </p>
-        <div className="flex gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             to="/register"
-            className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-lg transition"
+            className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-lg transition"
           >
-            Започни сега
+            {t('landing.cta')}
           </Link>
           <Link
             to="/login"
-            className="px-8 py-3 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 font-medium text-lg transition"
+            className="px-8 py-3 border-2 border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950 font-semibold text-lg transition"
           >
-            Вече имам акаунт
+            {t('landing.login')}
           </Link>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="bg-gray-50 py-20">
+      <section className={isDark ? 'py-20 bg-gray-800' : 'py-20 bg-gray-50'}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">Защо Aily?</h2>
+          <h2 className="text-4xl font-bold mb-12 text-center">{t('landing.features')}</h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Feature 1 */}
-            <div className="bg-white rounded-lg shadow-lg p-8">
-              <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg mb-4">
-                <Brain className="w-6 h-6 text-blue-600" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">AI Ученик</h3>
-              <p className="text-gray-600">
-                Работи с реалистичен AI ученик, който разпитва и учи по теми, които избереш.
+            <div className={isDark ? 'bg-gray-700 rounded-lg shadow-lg p-8' : 'bg-white rounded-lg shadow-lg p-8'}>
+              <div className="text-4xl mb-4">🎯</div>
+              <h3 className="text-xl font-bold mb-3">{t('landing.feature1Title')}</h3>
+              <p className={isDark ? 'text-gray-300' : 'text-gray-600'}>
+                {t('landing.feature1Desc')}
               </p>
             </div>
 
             {/* Feature 2 */}
-            <div className="bg-white rounded-lg shadow-lg p-8">
-              <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg mb-4">
-                <BookOpen className="w-6 h-6 text-blue-600" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Множество Теми</h3>
-              <p className="text-gray-600">
-                Избери от разнообразие теми и области, за да проверяваш своите знания.
+            <div className={isDark ? 'bg-gray-700 rounded-lg shadow-lg p-8' : 'bg-white rounded-lg shadow-lg p-8'}>
+              <div className="text-4xl mb-4">📈</div>
+              <h3 className="text-xl font-bold mb-3">{t('landing.feature2Title')}</h3>
+              <p className={isDark ? 'text-gray-300' : 'text-gray-600'}>
+                {t('landing.feature2Desc')}
               </p>
             </div>
 
             {/* Feature 3 */}
-            <div className="bg-white rounded-lg shadow-lg p-8">
-              <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg mb-4">
-                <Target className="w-6 h-6 text-blue-600" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Проследяване на Прогреса</h3>
-              <p className="text-gray-600">
-                Виждай своя прогрес, събирай опит и следи развитието си по време.
+            <div className={isDark ? 'bg-gray-700 rounded-lg shadow-lg p-8' : 'bg-white rounded-lg shadow-lg p-8'}>
+              <div className="text-4xl mb-4">💾</div>
+              <h3 className="text-xl font-bold mb-3">{t('landing.feature3Title')}</h3>
+              <p className={isDark ? 'text-gray-300' : 'text-gray-600'}>
+                {t('landing.feature3Desc')}
+              </p>
+            </div>
+
+            {/* Feature 4 */}
+            <div className={isDark ? 'bg-gray-700 rounded-lg shadow-lg p-8' : 'bg-white rounded-lg shadow-lg p-8'}>
+              <div className="text-4xl mb-4">💬</div>
+              <h3 className="text-xl font-bold mb-3">{t('landing.feature4Title')}</h3>
+              <p className={isDark ? 'text-gray-300' : 'text-gray-600'}>
+                {t('landing.feature4Desc')}
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* How It Works */}
+      {/* About Aily Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">Как работи?</h2>
+        <h2 className="text-4xl font-bold mb-12 text-center">{t('common.appName')} - {t('landing.subtitle')}</h2>
 
-        <div className="space-y-8">
-          {/* Step 1 */}
-          <div className="flex gap-6 items-start">
-            <div className="flex items-center justify-center w-10 h-10 bg-blue-600 text-white rounded-full font-bold flex-shrink-0">
-              1
-            </div>
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Регистрирай се</h3>
-              <p className="text-gray-600 text-lg">
-                Създай своя акаунт с валиден имейл адрес. След верификация можеш да начнеш.
-              </p>
-            </div>
+        <div className="max-w-3xl mx-auto">
+          <div className={isDark ? 'bg-gray-800 rounded-lg p-8 mb-8' : 'bg-gray-50 rounded-lg p-8 mb-8'}>
+            <p className={`text-lg mb-4 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+              Aily is your personal AI learning assistant designed to help you teach and learn at the same time. Unlike traditional chatbots, Aily is a genuine learner that retains knowledge from every teaching session you have.
+            </p>
+            <p className={`text-lg mb-4 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+              Every time you start a new session, Aily adopts a different learning personality. But what makes Aily special is that she never forgets. All concepts learned accumulate over time.
+            </p>
           </div>
 
-          {/* Step 2 */}
-          <div className="flex gap-6 items-start">
-            <div className="flex items-center justify-center w-10 h-10 bg-blue-600 text-white rounded-full font-bold flex-shrink-0">
-              2
-            </div>
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Избери персонаж</h3>
-              <p className="text-gray-600 text-lg">
-                Избери AI ученик с различни черти на личност, които ще доберат изживяването.
-              </p>
-            </div>
+          {/* Why Teach Aily */}
+          <div className={isDark ? 'bg-gray-800 rounded-lg p-8' : 'bg-gray-50 rounded-lg p-8'}>
+            <h3 className="text-2xl font-bold mb-6">Why Teach Aily?</h3>
+            <ul className={`space-y-4 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+              <li className="flex gap-4">
+                <span className="text-2xl flex-shrink-0">✓</span>
+                <span>Deepen your understanding by explaining concepts</span>
+              </li>
+              <li className="flex gap-4">
+                <span className="text-2xl flex-shrink-0">✓</span>
+                <span>Observe how Aily learns and adapts</span>
+              </li>
+              <li className="flex gap-4">
+                <span className="text-2xl flex-shrink-0">✓</span>
+                <span>Build on previous knowledge - Aily remembers everything</span>
+              </li>
+              <li className="flex gap-4">
+                <span className="text-2xl flex-shrink-0">✓</span>
+                <span>Practice teaching through different topics</span>
+              </li>
+            </ul>
           </div>
+        </div>
+      </section>
 
-          {/* Step 3 */}
-          <div className="flex gap-6 items-start">
-            <div className="flex items-center justify-center w-10 h-10 bg-blue-600 text-white rounded-full font-bold flex-shrink-0">
-              3
-            </div>
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Начни обучение</h3>
-              <p className="text-gray-600 text-lg">
-                Избери тема и начни да учиш своя AI ученик. Разпитай го, отговори на неговите въпроси.
-              </p>
-            </div>
-          </div>
+      {/* How It Works */}
+      <section className={isDark ? 'py-20 bg-gray-800' : 'py-20 bg-gray-50'}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-4xl font-bold mb-12 text-center">{t('landing.howItWorks')}</h2>
 
-          {/* Step 4 */}
-          <div className="flex gap-6 items-start">
-            <div className="flex items-center justify-center w-10 h-10 bg-blue-600 text-white rounded-full font-bold flex-shrink-0">
-              4
+          <div className="space-y-8">
+            {/* Step 1 */}
+            <div className="flex gap-6 items-start">
+              <div className="flex items-center justify-center w-10 h-10 bg-blue-600 text-white rounded-full font-bold flex-shrink-0">
+                1
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold mb-2">{t('landing.step1')}</h3>
+                <p className={isDark ? 'text-gray-300' : 'text-gray-600'}>
+                  {t('landing.step1Desc')}
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Следи прогреса</h3>
-              <p className="text-gray-600 text-lg">
-                Виждай как расте твоя AI ученик и какво е научил. Събирай опит и разблокирай нови теми.
-              </p>
+
+            {/* Step 2 */}
+            <div className="flex gap-6 items-start">
+              <div className="flex items-center justify-center w-10 h-10 bg-blue-600 text-white rounded-full font-bold flex-shrink-0">
+                2
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold mb-2">{t('landing.step2')}</h3>
+                <p className={isDark ? 'text-gray-300' : 'text-gray-600'}>
+                  {t('landing.step2Desc')}
+                </p>
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="flex gap-6 items-start">
+              <div className="flex items-center justify-center w-10 h-10 bg-blue-600 text-white rounded-full font-bold flex-shrink-0">
+                3
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold mb-2">{t('landing.step3')}</h3>
+                <p className={isDark ? 'text-gray-300' : 'text-gray-600'}>
+                  {t('landing.step3Desc')}
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="bg-blue-600 text-white py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold mb-6">Готов ли си да начнеш?</h2>
-          <p className="text-xl mb-8 text-blue-100">
-            Присъединяй се към хиляди студенти, които учат и растат с Aily.
-          </p>
-          <Link
-            to="/register"
-            className="inline-block px-8 py-3 bg-white text-blue-600 rounded-lg hover:bg-gray-100 font-bold text-lg transition"
-          >
-            Регистрирай се сега
-          </Link>
-        </div>
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+        <h2 className="text-4xl font-bold mb-6">Ready to start teaching Aily?</h2>
+        <p className={isDark ? 'text-xl mb-8 text-gray-400' : 'text-xl mb-8 text-gray-600'}>
+          Join thousands of users who are learning by teaching
+        </p>
+        <Link
+          to="/register"
+          className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-lg transition inline-block"
+        >
+          {t('landing.cta')}
+        </Link>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-400 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <Brain className="w-6 h-6 text-blue-400" />
-                <span className="font-bold text-white">Aily</span>
-              </div>
-              <p className="text-sm">Платформа за учене с AI</p>
-            </div>
-            <div>
-              <h4 className="font-bold text-white mb-4">Продукт</h4>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-white transition">Начало</a></li>
-                <li><a href="#" className="hover:text-white transition">За нас</a></li>
-                <li><a href="#" className="hover:text-white transition">Функции</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold text-white mb-4">Правни</h4>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-white transition">Условия</a></li>
-                <li><a href="#" className="hover:text-white transition">Приватност</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold text-white mb-4">Контакт</h4>
-              <ul className="space-y-2 text-sm">
-                <li><a href="mailto:support@learnmate.com" className="hover:text-white transition">support@learnmate.com</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 pt-8 text-center text-sm">
-            <p>Copyright 2024 Aily. Всички права запазени.</p>
-          </div>
+      <footer className={isDark ? 'bg-gray-800 border-gray-700 py-12 border-t' : 'bg-gray-50 border-gray-200 py-12 border-t'}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>
+            © 2024 Aily. Learning by Teaching.
+          </p>
         </div>
       </footer>
     </div>
