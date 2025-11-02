@@ -216,7 +216,7 @@ router.post('/verify-email', async (req, res, next) => {
       return;
     }
 
-    console.log('[FIND] Verifying email with token...');
+    console.log('[VERIFY] Verifying email with token:', token.substring(0, 20) + '...');
 
     // Find user with this token
     const user = await prisma.user.findUnique({
@@ -229,6 +229,8 @@ router.post('/verify-email', async (req, res, next) => {
       return;
     }
 
+    console.log('[VERIFY] Found user:', user.email, 'Current emailVerified:', user.emailVerified);
+
     // Check if token has expired
     if (user.verificationTokenExpiry && user.verificationTokenExpiry < new Date()) {
       console.log('[ERR] Token expired for:', user.email);
@@ -236,7 +238,7 @@ router.post('/verify-email', async (req, res, next) => {
       return;
     }
 
-    console.log('[OK] Token valid, marking email as verified:', user.email);
+    console.log('[VERIFY] Token valid, updating database...');
 
     // Mark email as verified and clear token
     const updatedUser = await prisma.user.update({
@@ -248,7 +250,7 @@ router.post('/verify-email', async (req, res, next) => {
       },
     });
 
-    console.log('[OK] Email verified successfully:', user.email);
+    console.log('[OK] Email verified successfully:', updatedUser.email, 'New emailVerified:', updatedUser.emailVerified);
 
     // Generate JWT token for auto-login
     const jwtToken = generateToken(updatedUser.id, updatedUser.email, updatedUser.role);
