@@ -36,6 +36,14 @@
     "feature3Desc": "Aily remembers everything you've learned and builds upon it",
     "feature4Title": "Interactive Sessions",
     "feature4Desc": "Engage in meaningful conversations with Aily about programming",
+    "aboutAily": "About Aily",
+    "ailyDescription1": "Aily is your personal AI learner designed to help teachers through interactive learning sessions. Unlike traditional chatbots, Aily is a genuine learner that retains knowledge from every teaching session you have.",
+    "ailyDescription2": "Every time you start a new session, Aily adopts a different learning personality. But what makes Aily special is that she never forgets. All concepts learned accumulate over time.",
+    "whyTeachAily": "Why Teach Aily?",
+    "benefit1": "Deepen your understanding by explaining concepts",
+    "benefit2": "Observe how Aily learns and adapts",
+    "benefit3": "Build on previous knowledge - Aily remembers everything",
+    "benefit4": "Practice teaching through different topics",
     "howItWorks": "How It Works",
     "step1": "Choose a topic",
     "step1Desc": "Select any JavaScript topic you want to learn",
@@ -44,6 +52,8 @@
     "step3": "Track progress",
     "step3Desc": "Monitor your learning and Aily's knowledge growth",
     "cta": "Get Started",
+    "ctaTitle": "Ready to teach Aily?",
+    "ctaSubtitle": "Join thousands of users who are learning by teaching",
     "login": "Login",
     "register": "Register"
   },
@@ -234,5 +244,8 @@
     "practicalBehavior": "Focus on real-world applications and practical usefulness",
     "organizedBehavior": "Appreciate clear structure, rules, and logical organization",
     "creativeBehavior": "Enjoy building projects with visible results and creative freedom"
+  },
+  "footer": {
+    "copyright": "© 2024 Aily. Learning by Teaching."
   }
 }

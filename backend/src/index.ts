@@ -15,6 +15,7 @@ const PORT = process.env.PORT || 4000;
 
 // CORS configuration
 const allowedOrigins = [
+  'https://aily.onrender.com',
   'https://studaint.onrender.com',
   'http://localhost:3000',
   'http://localhost:5173',

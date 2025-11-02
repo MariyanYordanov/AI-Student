@@ -45,7 +45,6 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Feature 1 */}
             <div className={isDark ? 'bg-gray-700 rounded-lg shadow-lg p-8' : 'bg-white rounded-lg shadow-lg p-8'}>
-              <div className="text-4xl mb-4">🎯</div>
               <h3 className="text-xl font-bold mb-3">{t('landing.feature1Title')}</h3>
               <p className={isDark ? 'text-gray-300' : 'text-gray-600'}>
                 {t('landing.feature1Desc')}
@@ -54,7 +53,6 @@ export default function LandingPage() {
 
             {/* Feature 2 */}
             <div className={isDark ? 'bg-gray-700 rounded-lg shadow-lg p-8' : 'bg-white rounded-lg shadow-lg p-8'}>
-              <div className="text-4xl mb-4">📈</div>
               <h3 className="text-xl font-bold mb-3">{t('landing.feature2Title')}</h3>
               <p className={isDark ? 'text-gray-300' : 'text-gray-600'}>
                 {t('landing.feature2Desc')}
@@ -63,7 +61,6 @@ export default function LandingPage() {
 
             {/* Feature 3 */}
             <div className={isDark ? 'bg-gray-700 rounded-lg shadow-lg p-8' : 'bg-white rounded-lg shadow-lg p-8'}>
-              <div className="text-4xl mb-4">💾</div>
               <h3 className="text-xl font-bold mb-3">{t('landing.feature3Title')}</h3>
               <p className={isDark ? 'text-gray-300' : 'text-gray-600'}>
                 {t('landing.feature3Desc')}
@@ -72,7 +69,6 @@ export default function LandingPage() {
 
             {/* Feature 4 */}
             <div className={isDark ? 'bg-gray-700 rounded-lg shadow-lg p-8' : 'bg-white rounded-lg shadow-lg p-8'}>
-              <div className="text-4xl mb-4">💬</div>
               <h3 className="text-xl font-bold mb-3">{t('landing.feature4Title')}</h3>
               <p className={isDark ? 'text-gray-300' : 'text-gray-600'}>
                 {t('landing.feature4Desc')}
@@ -84,37 +80,33 @@ export default function LandingPage() {
 
       {/* About Aily Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <h2 className="text-4xl font-bold mb-12 text-center">{t('common.appName')} - {t('landing.subtitle')}</h2>
+        <h2 className="text-4xl font-bold mb-12 text-center">{t('landing.aboutAily')}</h2>
 
         <div className="max-w-3xl mx-auto">
           <div className={isDark ? 'bg-gray-800 rounded-lg p-8 mb-8' : 'bg-gray-50 rounded-lg p-8 mb-8'}>
             <p className={`text-lg mb-4 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-              Aily is your personal AI learning assistant designed to help you teach and learn at the same time. Unlike traditional chatbots, Aily is a genuine learner that retains knowledge from every teaching session you have.
+              {t('landing.ailyDescription1')}
             </p>
             <p className={`text-lg mb-4 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-              Every time you start a new session, Aily adopts a different learning personality. But what makes Aily special is that she never forgets. All concepts learned accumulate over time.
+              {t('landing.ailyDescription2')}
             </p>
           </div>
 
           {/* Why Teach Aily */}
           <div className={isDark ? 'bg-gray-800 rounded-lg p-8' : 'bg-gray-50 rounded-lg p-8'}>
-            <h3 className="text-2xl font-bold mb-6">Why Teach Aily?</h3>
+            <h3 className="text-2xl font-bold mb-6">{t('landing.whyTeachAily')}</h3>
             <ul className={`space-y-4 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
               <li className="flex gap-4">
-                <span className="text-2xl flex-shrink-0">✓</span>
-                <span>Deepen your understanding by explaining concepts</span>
+                <span>{t('landing.benefit1')}</span>
               </li>
               <li className="flex gap-4">
-                <span className="text-2xl flex-shrink-0">✓</span>
-                <span>Observe how Aily learns and adapts</span>
+                <span>{t('landing.benefit2')}</span>
               </li>
               <li className="flex gap-4">
-                <span className="text-2xl flex-shrink-0">✓</span>
-                <span>Build on previous knowledge - Aily remembers everything</span>
+                <span>{t('landing.benefit3')}</span>
               </li>
               <li className="flex gap-4">
-                <span className="text-2xl flex-shrink-0">✓</span>
-                <span>Practice teaching through different topics</span>
+                <span>{t('landing.benefit4')}</span>
               </li>
             </ul>
           </div>
@@ -171,9 +163,9 @@ export default function LandingPage() {
 
       {/* CTA Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-        <h2 className="text-4xl font-bold mb-6">Ready to start teaching Aily?</h2>
+        <h2 className="text-4xl font-bold mb-6">{t('landing.ctaTitle')}</h2>
         <p className={isDark ? 'text-xl mb-8 text-gray-400' : 'text-xl mb-8 text-gray-600'}>
-          Join thousands of users who are learning by teaching
+          {t('landing.ctaSubtitle')}
         </p>
         <Link
           to="/register"
@@ -187,7 +179,7 @@ export default function LandingPage() {
       <footer className={isDark ? 'bg-gray-800 border-gray-700 py-12 border-t' : 'bg-gray-50 border-gray-200 py-12 border-t'}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>
-            © 2024 Aily. Learning by Teaching.
+            {t('footer.copyright')}
           </p>
         </div>
       </footer>
