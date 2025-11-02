@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams, Link, useNavigate } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
 
@@ -7,7 +7,6 @@ export default function VerifyEmail() {
   const { t } = useTranslation();
   const { isDark } = useTheme();
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('');
   const [email, setEmail] = useState('');
@@ -38,12 +37,7 @@ export default function VerifyEmail() {
           setStatus('success');
           setMessage(t('auth.verificationSent'));
           setEmail(data.email);
-
-          // Auto-redirect to login page after 3 seconds
-          // User needs to manually login with their verified email
-          setTimeout(() => {
-            navigate('/login');
-          }, 3000);
+          // NO auto-redirect - user manually clicks login button
         } else {
           setStatus('error');
           setMessage(data.error || t('auth.errors.genericError'));
@@ -101,13 +95,13 @@ export default function VerifyEmail() {
               {t('auth.checkEmail')} <span className="font-semibold">{email}</span>
             </p>
             <p className={`mb-6 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-              {t('errors.reload')}
+              {t('auth.emailVerification')}
             </p>
             <Link
-              to="/"
+              to="/login"
               className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200"
             >
-              {t('common.back')}
+              {t('auth.login')}
             </Link>
           </div>
         )}
