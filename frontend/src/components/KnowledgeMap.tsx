@@ -137,8 +137,8 @@ function KnowledgeMap({ aiStudentId }: KnowledgeMapProps) {
                 </div>
 
                 <div className="flex items-center space-x-4 text-xs text-gray-600">
-                  <span>👁️ {item.examplesSeen} примера</span>
-                  <span>📅 Ревюиран {formatDate(item.lastReviewed)}</span>
+                  <span>{item.examplesSeen} примера</span>
+                  <span>Ревюиран {formatDate(item.lastReviewed)}</span>
                 </div>
               </div>
             </div>

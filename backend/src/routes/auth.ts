@@ -16,11 +16,11 @@ const prisma = new PrismaClient();
 router.post('/register', async (req, res, next) => {
   try {
     const { email, name, password } = req.body;
-    console.log('📝 Registration attempt:', { email, name, passwordLength: password?.length });
+    console.log('[LOG] Registration attempt:', { email, name, passwordLength: password?.length });
 
     // Validate input
     if (!email || !name || !password) {
-      console.log('❌ Validation failed: missing fields');
+      console.log('[ERR] Validation failed: missing fields');
       res.status(400).json({ error: 'Email, name, and password are required' });
       return;
     }
@@ -28,13 +28,13 @@ router.post('/register', async (req, res, next) => {
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      console.log('❌ Email validation failed: invalid format');
+      console.log('[ERR] Email validation failed: invalid format');
       res.status(400).json({ error: 'Please provide a valid email address' });
       return;
     }
 
     if (password.length < 6) {
-      console.log('❌ Password too short');
+      console.log('[ERR] Password too short');
       res.status(400).json({ error: 'Password must be at least 6 characters' });
       return;
     }
@@ -45,12 +45,12 @@ router.post('/register', async (req, res, next) => {
     });
 
     if (existingUser) {
-      console.log('❌ User already exists:', email);
+      console.log('[ERR] User already exists:', email);
       res.status(400).json({ error: 'User with this email already exists' });
       return;
     }
 
-    console.log('✓ Validation passed, hashing password...');
+    console.log('[OK] Validation passed, hashing password...');
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -59,7 +59,7 @@ router.post('/register', async (req, res, next) => {
     const verificationTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
     // Create user
-    console.log('✓ Creating user in database...');
+    console.log('[OK] Creating user in database...');
     const user = await prisma.user.create({
       data: {
         email,
@@ -72,19 +72,19 @@ router.post('/register', async (req, res, next) => {
       },
     });
 
-    console.log('✓ User created:', user.id);
+    console.log('[OK] User created:', user.id);
 
     // Send verification email
     try {
-      console.log('✓ Sending verification email...');
+      console.log('[OK] Sending verification email...');
       await EmailService.sendVerificationEmail(email, name, verificationToken);
-      console.log('✓ Verification email sent');
+      console.log('[OK] Verification email sent');
     } catch (emailError) {
-      console.error('❌ Error sending verification email:', emailError);
+      console.error('[ERR] Error sending verification email:', emailError);
       // Don't fail registration if email fails, but log it
     }
 
-    console.log('✓ Registration successful');
+    console.log('[OK] Registration successful');
     // Generate token for new user (even if not verified yet)
     const token = generateToken(user.id, user.email, user.role);
 
@@ -98,7 +98,7 @@ router.post('/register', async (req, res, next) => {
       message: 'Registration successful. Please check your email to verify your account.',
     });
   } catch (error) {
-    console.error('❌ Registration error:', error);
+    console.error('[ERR] Registration error:', error);
     next(error);
   }
 });
@@ -137,7 +137,7 @@ router.post('/login', async (req, res, next) => {
 
     // Check if email is verified
     if (!user.emailVerified) {
-      console.log('❌ Login blocked: email not verified -', email);
+      console.log('[ERR] Login blocked: email not verified -', email);
       res.status(403).json({
         error: 'Email not verified',
         message: 'Моля потвърди имейл адреса си преди да се логнеш. Провери своя inbox за верификационния линк.',
@@ -217,7 +217,7 @@ router.post('/verify-email', async (req, res, next) => {
       return;
     }
 
-    console.log('🔍 Verifying email with token...');
+    console.log('[FIND] Verifying email with token...');
 
     // Find user with this token
     const user = await prisma.user.findUnique({
@@ -225,19 +225,19 @@ router.post('/verify-email', async (req, res, next) => {
     });
 
     if (!user) {
-      console.log('❌ Token not found in database');
+      console.log('[ERR] Token not found in database');
       res.status(404).json({ error: 'Invalid or expired verification token' });
       return;
     }
 
     // Check if token has expired
     if (user.verificationTokenExpiry && user.verificationTokenExpiry < new Date()) {
-      console.log('❌ Token expired for:', user.email);
+      console.log('[ERR] Token expired for:', user.email);
       res.status(400).json({ error: 'Verification token has expired' });
       return;
     }
 
-    console.log('✓ Token valid, marking email as verified:', user.email);
+    console.log('[OK] Token valid, marking email as verified:', user.email);
 
     // Mark email as verified and clear token
     const updatedUser = await prisma.user.update({
@@ -249,7 +249,7 @@ router.post('/verify-email', async (req, res, next) => {
       },
     });
 
-    console.log('✓ Email verified successfully:', user.email);
+    console.log('[OK] Email verified successfully:', user.email);
 
     // Generate JWT token for auto-login
     const jwtToken = generateToken(updatedUser.id, updatedUser.email, updatedUser.role);
@@ -260,7 +260,7 @@ router.post('/verify-email', async (req, res, next) => {
       token: jwtToken,
     });
   } catch (error) {
-    console.error('❌ Verification error:', error);
+    console.error('[ERR] Verification error:', error);
     next(error);
   }
 });
@@ -381,15 +381,15 @@ router.post('/change-unverified-email', async (req, res, next) => {
 
     // Send verification email to new address
     try {
-      console.log('✓ Sending verification email to new address...');
+      console.log('[OK] Sending verification email to new address...');
       await EmailService.sendVerificationEmail(newEmail, user.name, newVerificationToken);
-      console.log('✓ Verification email sent to new address');
+      console.log('[OK] Verification email sent to new address');
       res.json({
         message: 'Email has been changed. Please check your new email for a verification link.',
         newEmail,
       });
     } catch (emailError) {
-      console.error('❌ Error sending verification email:', emailError);
+      console.error('[ERR] Error sending verification email:', emailError);
       res.status(500).json({ error: 'Email change failed. Please try again later.' });
     }
   } catch (error) {
@@ -454,14 +454,14 @@ router.post('/resend-verification-email', async (req, res, next) => {
 
     // Send verification email
     try {
-      console.log('✓ Resending verification email...');
+      console.log('[OK] Resending verification email...');
       await EmailService.sendVerificationEmail(email, user.name, newVerificationToken);
-      console.log('✓ Verification email resent');
+      console.log('[OK] Verification email resent');
       res.json({
         message: 'Verification email sent successfully. Please check your inbox.'
       });
     } catch (emailError) {
-      console.error('❌ Error resending verification email:', emailError);
+      console.error('[ERR] Error resending verification email:', emailError);
       res.status(500).json({ error: 'Failed to send verification email. Please try again later.' });
     }
   } catch (error) {

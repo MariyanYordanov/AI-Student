@@ -138,7 +138,7 @@ function Register() {
               disabled={isResendingEmail}
               className="w-full px-6 py-3 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-300 text-gray-900 font-medium rounded-lg transition duration-200 mb-4"
             >
-              {isResendingEmail ? '⏳ Изпращам...' : '📧 Изпрати отново верификационния имейл'}
+              {isResendingEmail ? 'Изпращам...' : 'Изпрати отново верификационния имейл'}
             </button>
 
             <div className="border-t border-gray-200 pt-4">

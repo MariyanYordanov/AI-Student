@@ -7,11 +7,11 @@ interface ChatMessageProps {
 function ChatMessage({ message }: ChatMessageProps) {
   const isStudent = message.role === 'student';
 
-  const emotionEmojis = {
-    confused: '😕',
-    understanding: '😊',
-    excited: '😃',
-    neutral: '🙂',
+  const emotionLabels = {
+    confused: 'объркан',
+    understanding: 'разбира',
+    excited: 'развълнуван',
+    neutral: 'неутрален',
   };
 
   return (
@@ -25,8 +25,8 @@ function ChatMessage({ message }: ChatMessageProps) {
       >
         <div className="flex items-start space-x-2">
           {!isStudent && message.emotion && (
-            <span className="text-2xl">
-              {emotionEmojis[message.emotion] || '🙂'}
+            <span className="text-xs font-semibold text-gray-500">
+              [{emotionLabels[message.emotion] || 'неутрален'}]
             </span>
           )}
           <div className="flex-1">

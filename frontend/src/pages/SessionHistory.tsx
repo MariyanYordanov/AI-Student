@@ -126,15 +126,12 @@ function SessionHistory() {
                       </p>
                       <div className="flex items-center space-x-6 text-sm text-gray-600">
                         <div className="flex items-center space-x-1">
-                          <span>⏱️</span>
                           <span>{session.durationMinutes} мин</span>
                         </div>
                         <div className="flex items-center space-x-1">
-                          <span>💬</span>
                           <span>{session.transcript.length} съобщения</span>
                         </div>
                         <div className="flex items-center space-x-1">
-                          <span>✨</span>
                           <span>{session.xpEarned} XP</span>
                         </div>
                       </div>

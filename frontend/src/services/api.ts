@@ -41,11 +41,11 @@ async function fetchWithTimeout(url: string, options: RequestInit = {}): Promise
     if (error instanceof Error) {
       // Network error
       if (error.name === 'AbortError') {
-        throw new Error('⏱️ Заявката отне твърде дълго време. Провери интернет връзката.');
+        throw new Error('Заявката отне твърде дълго време. Провери интернет връзката.');
       }
       // No connection to server
       if (error.name === 'TypeError' && error.message.includes('fetch')) {
-        throw new Error('📡 Няма връзка със сървъра. Работи ли backend на port 4000?');
+        throw new Error('Няма връзка със сървъра. Работи ли backend на port 4000?');
       }
     }
     throw error;
@@ -60,23 +60,23 @@ async function handleResponse(response: Response): Promise<any> {
     // Unauthorized
     if (response.status === 401) {
       const error = await response.json().catch(() => ({ error: 'Unauthorized' }));
-      throw new Error(`🔐 ${error.error || 'Невалидни идентификационни данни'}`);
+      throw new Error(`${error.error || 'Невалидни идентификационни данни'}`);
     }
     // Server errors
     if (response.status >= 500) {
-      throw new Error('🔧 Сървърът има проблем. Опитай след малко.');
+      throw new Error('Сървърът има проблем. Опитай след малко.');
     }
     // Not found
     if (response.status === 404) {
-      throw new Error('❓ Ресурсът не е намерен.');
+      throw new Error('Ресурсът не е намерен.');
     }
     // Bad request
     if (response.status === 400) {
       const error = await response.json().catch(() => ({ error: 'Bad request' }));
-      throw new Error(`⚠️ ${error.error || 'Невалидна заявка'}`);
+      throw new Error(`${error.error || 'Невалидна заявка'}`);
     }
     // Generic error
-    throw new Error(`❌ Грешка: ${response.statusText}`);
+    throw new Error(`Грешка: ${response.statusText}`);
   }
 
   return response.json();

@@ -53,6 +53,6 @@ app.use('/api/ai-students', aiStudentRouter);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📚 AI Teacher-Student API ready`);
+  console.log(`[START] Server running on http://localhost:${PORT}`);
+  console.log(`[READY] Aily API ready`);
 });

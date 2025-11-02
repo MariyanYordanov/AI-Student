@@ -20,7 +20,7 @@ export class GeminiService {
       throw new Error('GEMINI_API_KEY not set in environment. Get one from https://aistudio.google.com/apikey');
     }
     this.apiKey = key;
-    console.log('✅ Gemini API initialized with key:', this.apiKey.substring(0, 10) + '...');
+    console.log('[OK] Gemini API initialized with key:', this.apiKey.substring(0, 10) + '...');
   }
 
   /**
@@ -43,7 +43,7 @@ export class GeminiService {
     try {
       // Using gemini-2.0-flash-exp - experimental but works
       const modelName = 'gemini-2.0-flash-exp';
-      console.log(`🤖 Calling Gemini API: ${this.baseURL}/models/${modelName}:generateContent`);
+      console.log(`[AI] Calling Gemini API: ${this.baseURL}/models/${modelName}:generateContent`);
 
       // Build conversation history for context
       const contents: Array<{ role: string; parts: Array<{ text: string }> }> = [];
@@ -85,7 +85,7 @@ export class GeminiService {
         },
       };
 
-      console.log('📤 Request body:', JSON.stringify(requestBody, null, 2).substring(0, 500) + '...');
+      console.log('[REQ] Request body:', JSON.stringify(requestBody, null, 2).substring(0, 500) + '...');
 
       // Retry logic with exponential backoff
       const MAX_RETRIES = 3;
@@ -107,7 +107,7 @@ export class GeminiService {
           // Handle rate limiting (429)
           if (response.status === 429) {
             const waitTime = Math.pow(2, attempt) * 1000; // 2s, 4s, 8s
-            console.warn(`⚠️ Rate limited. Waiting ${waitTime}ms before retry ${attempt}/${MAX_RETRIES}`);
+            console.warn(`[WARN] Rate limited. Waiting ${waitTime}ms before retry ${attempt}/${MAX_RETRIES}`);
             await this.sleep(waitTime);
             continue;
           }
@@ -115,7 +115,7 @@ export class GeminiService {
           // Handle server errors (5xx) - retry
           if (response.status >= 500) {
             const waitTime = 1000 * attempt; // 1s, 2s, 3s
-            console.warn(`⚠️ Server error ${response.status}. Retrying ${attempt}/${MAX_RETRIES}...`);
+            console.warn(`[WARN] Server error ${response.status}. Retrying ${attempt}/${MAX_RETRIES}...`);
             await this.sleep(waitTime);
             continue;
           }
@@ -123,7 +123,7 @@ export class GeminiService {
           // Other errors - don't retry
           if (!response.ok) {
             const errorBody = await response.text();
-            console.error('❌ Gemini API Error Response:', errorBody);
+            console.error('[ERR] Gemini API Error Response:', errorBody);
             throw new Error(`Gemini API error: ${response.statusText} - ${errorBody}`);
           }
 
@@ -131,37 +131,30 @@ export class GeminiService {
 
           // Check if we got a valid response
           if (!data.candidates || data.candidates.length === 0) {
-            console.error('❌ No candidates in Gemini response:', JSON.stringify(data));
+            console.error('[ERR] No candidates in Gemini response:', JSON.stringify(data));
             throw new Error('No response from Gemini API');
           }
 
-          let aiMessage = data.candidates[0]?.content?.parts[0]?.text || 'Хм... не разбрах. 🙂';
-
-          // Validate response: ensure it has an emoji
-          const hasEmoji = /😕|😃|😊|🙂|🤔|🎉|🤩|👍/.test(aiMessage);
-          if (!hasEmoji) {
-            console.warn('⚠️ AI response missing emoji, adding default 🙂');
-            aiMessage += ' 🙂';
-          }
+          let aiMessage = data.candidates[0]?.content?.parts[0]?.text || 'Хм... не разбрах.';
 
           // Validate response: not too long (max 300 chars)
           if (aiMessage.length > 300) {
-            console.warn('⚠️ AI response too long, truncating');
-            aiMessage = aiMessage.substring(0, 297) + '... 🙂';
+            console.warn('[WARN] AI response too long, truncating');
+            aiMessage = aiMessage.substring(0, 297) + '...';
           }
 
           // Validate: no AI assistant phrases
           const aiPhrases = ['разбира се', 'със сигорност', 'нека да', 'бих искал', 'може да'];
           const lowerMessage = aiMessage.toLowerCase();
           if (aiPhrases.some(phrase => lowerMessage.includes(phrase))) {
-            console.warn('⚠️ AI used assistant phrases, response may not sound like student');
+            console.warn('[WARN] AI used assistant phrases, response may not sound like student');
           }
 
           return this.parseResponse(aiMessage, context);
 
         } catch (error) {
           lastError = error instanceof Error ? error : new Error('Unknown error');
-          console.error(`❌ Attempt ${attempt}/${MAX_RETRIES} failed:`, error);
+          console.error(`[ERR] Attempt ${attempt}/${MAX_RETRIES} failed:`, error);
 
           // If not the last attempt, wait before retry
           if (attempt < MAX_RETRIES) {
@@ -172,10 +165,10 @@ export class GeminiService {
       }
 
       // All retries failed
-      console.error(`❌ All ${MAX_RETRIES} attempts failed`);
+      console.error(`[ERR] All ${MAX_RETRIES} attempts failed`);
       throw new Error(`Failed after ${MAX_RETRIES} attempts: ${lastError?.message}`);
     } catch (error) {
-      console.error('❌ Gemini API error:', error);
+      console.error('[ERR] Gemini API error:', error);
       if (error instanceof Error) {
         throw error;
       }
@@ -219,13 +212,8 @@ export class GeminiService {
 4. Ако не разбираш - питай уточняващи въпроси
 5. Покажи ентусиазъм когато научиш нещо: "Ааа!", "Супер!", "Ясно!"
 6. Понякога бъркай подобни неща
-7. ВИНАГИ завършвай с ЕДИН от тези emoji в края на съобщението:
-   - 😕 ако си объркан/не разбираш
-   - 😃 ако си развълнуван/схванал нещо важно
-   - 😊 ако разбираш/учиш
-   - 🙂 ако си неутрален/просто слушаш
-8. НЕ ПИШИ код в отговорите си - само говори за него
-9. НЕ използвай AI фрази като "Разбира се", "Със сигурност", "Нека"
+7. НЕ ПИШИ код в отговорите си - само говори за него
+8. НЕ използвай AI фрази като "Разбира се", "Със сигурност", "Нека"
 
 ПРИМЕРНИ ОТГОВОРИ ЗА НИВО ${level}:
 ${this.getExampleResponsesForLevel(level)}
@@ -239,17 +227,17 @@ ${this.getExampleResponsesForLevel(level)}
   private getExampleResponsesForLevel(level: number): string {
     const examples = [
       // Level 0
-      `- "Ъъъ... това let нещо е за какво точно? 😕"
+      `- "Ъъъ... това let нещо е за какво точно?"
 - "Чакай, не разбрах... може ли пример?"
 - "console.log-a принтира ли неща?"`,
       // Level 1
-      `- "Ааа! Значи let е за променливи, нали? 😃"
+      `- "Ааа! Значи let е за променливи, нали?"
 - "Окей, мисля че схванах... let x = 5 прави променлива?"
 - "А защо не мога да ползвам var?"`,
       // Level 2
       `- "Супер! Значи const е за константи които не се променят!"
 - "А let може да се променя после, така ли?"
-- "Разбрах разликата! 😃"`,
+- "Разбрах разликата!"`,
     ];
 
     return examples[Math.min(level, examples.length - 1)];
@@ -265,26 +253,18 @@ ${this.getExampleResponsesForLevel(level)}
 
     // Confused patterns
     if (
-      message.includes('😕') ||
-      message.includes('🤔') ||
-      message.includes('❓') ||
       /не разбирам|не разбрах|объркан|объркана|какво значи|не знам|хъ\?|ъъъ/.test(lowerMsg)
     ) {
       emotion = 'confused';
     }
     // Excited patterns (check before understanding to prioritize higher emotion)
     else if (
-      message.includes('😃') ||
-      message.includes('🤩') ||
-      message.includes('🎉') ||
       /ааа+!|супер!|страхотно!|уау|wow|готино|яко|перфектно|разбрах!/.test(lowerMsg)
     ) {
       emotion = 'excited';
     }
     // Understanding patterns
     else if (
-      message.includes('😊') ||
-      message.includes('👍') ||
       /ааа[,\s]|разбрах[,\.\s]|ясно|окей|добре|схванах|сетих се|aha|got it/.test(lowerMsg)
     ) {
       emotion = 'understanding';
