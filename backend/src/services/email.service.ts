@@ -35,13 +35,35 @@ export class EmailService {
           <p>Привет ${userName},</p>
           <p>Благодарим, че се регистрира. За да активираш своя профил, моля потвърди своя имейл адрес чрез клик на линка по-долу:</p>
 
-          <!-- Auto-submit form for verification -->
-          <form action="${backendUrl}/api/auth/verify-email" method="POST" style="display: inline;">
-            <input type="hidden" name="token" value="${verificationToken}">
-            <button type="submit" style="display: inline-block; padding: 12px 24px; background-color: #2563eb; color: white; text-decoration: none; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px;">
-              Потвърди имейл адрес
-            </button>
-          </form>
+          <!-- Verification button with JavaScript -->
+          <button onclick="verifyEmail('${backendUrl}', '${verificationToken}')" style="display: inline-block; padding: 12px 24px; background-color: #2563eb; color: white; text-decoration: none; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px;">
+            Потвърди имейл адрес
+          </button>
+
+          <script>
+            function verifyEmail(backendUrl, token) {
+              fetch(backendUrl + '/api/auth/verify-email', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ token: token })
+              })
+              .then(response => response.json())
+              .then(data => {
+                if (data.message) {
+                  alert('Имейлът е потвърден успешно! Можете да се логнете.');
+                  window.location.href = '${process.env.FRONTEND_URL || 'http://localhost:3000'}/login';
+                } else {
+                  alert('Грешка при верификацията: ' + data.error);
+                }
+              })
+              .catch(error => {
+                console.error('Verification error:', error);
+                alert('Грешка при верификацията. Моля опитайте отново.');
+              });
+            }
+          </script>
 
           <p style="color: #666; font-size: 14px; margin-top: 20px;">
             Или копирай и постави този линк в браузъра си:<br>
