@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { useTheme } from '../hooks/useTheme';
 
 export default function VerifyEmail() {
+  const { t } = useTranslation();
+  const { isDark } = useTheme();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
@@ -14,7 +18,7 @@ export default function VerifyEmail() {
 
       if (!token) {
         setStatus('error');
-        setMessage('Verification token is missing from the URL');
+        setMessage(t('errors.errorOccurred'));
         return;
       }
 
@@ -37,7 +41,7 @@ export default function VerifyEmail() {
           }
 
           setStatus('success');
-          setMessage('Email verified successfully!');
+          setMessage(t('auth.verificationSent'));
           setEmail(data.email);
 
           // Auto-redirect to home/students page after 2 seconds
@@ -46,11 +50,11 @@ export default function VerifyEmail() {
           }, 2000);
         } else {
           setStatus('error');
-          setMessage(data.error || 'Failed to verify email');
+          setMessage(data.error || t('auth.errors.genericError'));
         }
       } catch (error) {
         setStatus('error');
-        setMessage('An error occurred while verifying your email. Please try again.');
+        setMessage(t('auth.errors.networkError'));
         console.error('Verification error:', error);
       }
     };
@@ -59,8 +63,8 @@ export default function VerifyEmail() {
   }, [searchParams]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-lg p-8 max-w-md w-full">
+    <div className={`min-h-screen flex items-center justify-center p-4 ${isDark ? 'bg-gray-900' : 'bg-gradient-to-br from-blue-50 to-indigo-100'}`}>
+      <div className={`rounded-xl shadow-lg p-8 max-w-md w-full ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
         {status === 'loading' && (
           <div className="text-center">
             <div className="mb-4">
@@ -68,8 +72,12 @@ export default function VerifyEmail() {
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
               </div>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Верификация на имейла</h1>
-            <p className="text-gray-600">Проверяваме вашия имейл адрес...</p>
+            <h1 className={`text-2xl font-bold mb-2 ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
+              {t('auth.emailVerification')}
+            </h1>
+            <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>
+              {t('auth.checkEmail')}
+            </p>
           </div>
         )}
 
@@ -90,16 +98,20 @@ export default function VerifyEmail() {
                 />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">{message}</h1>
-            <p className="text-gray-600 mb-4">
-              Адресът <span className="font-semibold">{email}</span> е потвърден.
+            <h1 className={`text-2xl font-bold mb-2 ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
+              {message}
+            </h1>
+            <p className={`mb-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+              {t('auth.checkEmail')} <span className="font-semibold">{email}</span>
             </p>
-            <p className="text-gray-600 mb-6">Пренасочване в ход на секунди...</p>
+            <p className={`mb-6 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+              {t('errors.reload')}
+            </p>
             <Link
               to="/"
               className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200"
             >
-              Отиди сега
+              {t('common.back')}
             </Link>
           </div>
         )}
@@ -121,17 +133,19 @@ export default function VerifyEmail() {
                 />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Грешка при верификацията</h1>
-            <p className="text-gray-600 mb-6">{message}</p>
+            <h1 className={`text-2xl font-bold mb-2 ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
+              {t('errors.errorOccurred')}
+            </h1>
+            <p className={`mb-6 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{message}</p>
             <div className="space-y-3">
-              <p className="text-sm text-gray-500">
-                Ако проблемът персистира, свържете се с поддръжката.
+              <p className={`text-sm ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
+                {t('auth.errors.serverError')}
               </p>
               <Link
                 to="/login"
                 className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200"
               >
-                Към логин
+                {t('auth.login')}
               </Link>
             </div>
           </div>
