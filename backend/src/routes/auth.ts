@@ -85,8 +85,8 @@ router.post('/register', async (req, res, next) => {
     }
 
     console.log('[OK] Registration successful');
-    // Generate token for new user (even if not verified yet)
-    const token = generateToken(user.id, user.email, user.role);
+    // DO NOT generate token for unverified users
+    // User must verify email first before they can login
 
     res.status(201).json({
       id: user.id,
@@ -94,7 +94,6 @@ router.post('/register', async (req, res, next) => {
       name: user.name,
       role: user.role,
       emailVerified: user.emailVerified,
-      token,
       message: 'Registration successful. Please check your email to verify your account.',
     });
   } catch (error) {

@@ -25,10 +25,11 @@ export const useAuthStore = create<AuthState>((set) => ({
   register: async (email: string, name: string, password: string) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await api.auth.register(email, name, password);
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify(response));
-      set({ user: response, token: response.token, isLoading: false });
+      await api.auth.register(email, name, password);
+      // DO NOT login user automatically after registration
+      // User must verify email first before they can login
+      // Just clear loading state and let the register component show the verification message
+      set({ isLoading: false });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Грешка при регистрация';
       set({ error: message, isLoading: false });
