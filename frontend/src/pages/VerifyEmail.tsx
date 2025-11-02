@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
+import { useAuthStore } from '../stores/authStore';
 
 export default function VerifyEmail() {
   const { t } = useTranslation();
@@ -40,7 +41,7 @@ export default function VerifyEmail() {
           setMessage(t('auth.verificationSent'));
           setEmail(data.email);
 
-          // AUTO-LOGIN: Save token and user data to localStorage and authStore
+          // AUTO-LOGIN: Log in the user using authStore
           if (data.token) {
             const userObj = {
               id: data.id,
@@ -49,18 +50,28 @@ export default function VerifyEmail() {
               role: data.role,
               emailVerified: true
             };
-            console.log('[DEBUG] Saving to localStorage:', userObj);
+            console.log('[DEBUG] Verify email success, auto-logging in user:', userObj);
+
+            // Save to localStorage for persistence
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify(userObj));
-            console.log('[DEBUG] localStorage user after save:', localStorage.getItem('user'));
-          }
 
-          // Auto-redirect to dashboard after 2 seconds
-          console.log('[DEBUG] Will redirect to / in 2 seconds');
-          setTimeout(() => {
-            console.log('[DEBUG] Redirecting to /');
-            navigate('/');
-          }, 2000);
+            // Update authStore directly using Zustand's setState - this is the key fix!
+            useAuthStore.setState({
+              user: userObj,
+              token: data.token,
+              isLoading: false,
+              error: null
+            });
+
+            console.log('[DEBUG] AuthStore updated with verified user');
+            console.log('[DEBUG] Redirecting to dashboard...');
+
+            // Redirect immediately to dashboard (no 2-second delay)
+            setTimeout(() => {
+              navigate('/');
+            }, 500); // Small delay to ensure state update
+          }
         } else {
           setStatus('error');
           setMessage(data.error || t('auth.errors.genericError'));
