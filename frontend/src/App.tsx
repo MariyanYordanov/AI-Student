@@ -1,14 +1,28 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useAuthStore } from './stores/authStore';
+import LandingPage from './pages/LandingPage';
 import TeachingSession from './pages/TeachingSession';
 import Dashboard from './pages/Dashboard';
-import TeacherDashboard from './pages/TeacherDashboard';
 import SessionHistory from './pages/SessionHistory';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import VerifyEmail from './pages/VerifyEmail';
 import { ErrorBoundary } from './components/ErrorBoundary';
+
+function HomeRoute() {
+  const { user } = useAuthStore();
+
+  if (!user) {
+    return <LandingPage />;
+  }
+
+  if (!user.emailVerified) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <Dashboard />;
+}
 
 function App() {
   const { restoreSession } = useAuthStore();
@@ -27,10 +41,11 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
 
+          {/* Home - Landing or Dashboard based on auth */}
+          <Route path="/" element={<HomeRoute />} />
+
           {/* Main Routes */}
-          <Route path="/" element={<Dashboard />} />
           <Route path="/teach/:sessionId" element={<TeachingSession />} />
-          <Route path="/dashboard" element={<TeacherDashboard />} />
           <Route path="/history/:aiStudentId" element={<SessionHistory />} />
 
           {/* Fallback */}
