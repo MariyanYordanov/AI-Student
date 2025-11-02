@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: aily-frontend
+    runtime: node
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && npm start
+    envVars:
+      - key: VITE_API_URL
+        value: https://ai-student-r9ay.onrender.com

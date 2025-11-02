@@ -2,12 +2,18 @@
   "name": "ai-teacher-student",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "concurrently \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
     "dev:backend": "npm --prefix backend run dev",
     "dev:frontend": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "start": "node server.js",
     "install:all": "cd backend && npm install && cd ../frontend && npm install && cd ..",
     "setup": "cd backend && npx prisma generate && npx prisma migrate dev --name init && cd .."
+  },
+  "dependencies": {
+    "express": "^4.21.2"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
