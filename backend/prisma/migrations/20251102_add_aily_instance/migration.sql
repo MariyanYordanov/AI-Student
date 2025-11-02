@@ -23,12 +23,8 @@ ALTER TABLE "Knowledge" ADD CONSTRAINT "Knowledge_ailyInstanceId_fkey" FOREIGN K
 -- Make aiStudentId nullable
 ALTER TABLE "Knowledge" ALTER COLUMN "aiStudentId" DROP NOT NULL;
 
--- Remove old unique constraint
-ALTER TABLE "Knowledge" DROP CONSTRAINT "Knowledge_aiStudentId_concept_key";
-
--- Add new unique constraints
+-- Add new unique constraint for AilyInstance
 ALTER TABLE "Knowledge" ADD CONSTRAINT "Knowledge_ailyInstanceId_concept_key" UNIQUE("ailyInstanceId", "concept");
-ALTER TABLE "Knowledge" ADD CONSTRAINT "Knowledge_aiStudentId_concept_key" UNIQUE("aiStudentId", "concept");
 
 -- Update Session table to support both AilyInstance and AIStudent
 ALTER TABLE "Session" ADD COLUMN "ailyInstanceId" TEXT;
