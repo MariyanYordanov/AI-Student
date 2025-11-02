@@ -85,7 +85,7 @@ function Login() {
 
           {(localError || error) && (
             <div className="p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
-              <div className="font-semibold mb-1">❌ {localError || error}</div>
+              <div className="font-semibold mb-1">Грешка: {localError || error}</div>
               {error?.includes('Email not verified') && (
                 <div className="mt-2 text-xs text-red-600">
                   <p>Стъпки за верификация:</p>

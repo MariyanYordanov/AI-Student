@@ -106,27 +106,27 @@ function Register() {
             </div>
             <div className="space-y-4 text-left mb-6">
               <p className="text-gray-700">
-                ✓ Отвори твоя имейл адрес
+                • Отвори твоя имейл адрес
               </p>
               <p className="text-gray-700">
-                ✓ Намери имейла от LearnMate
+                • Намери имейла от Aily
               </p>
               <p className="text-gray-700">
-                ✓ Кликни на линка "Потвърди имейл адрес"
+                • Кликни на линка "Потвърди имейл адрес"
               </p>
               <p className="text-gray-700">
-                ✓ След верификацията можеш да се логнеш
+                • След верификацията можеш да се логнеш
               </p>
             </div>
             {resendSuccess && (
               <div className="p-3 bg-green-100 text-green-700 rounded-lg text-sm mb-4">
-                ✓ Имейлът е изпратен успешно! Провери своя inbox.
+                Имейлът е изпратен успешно! Провери своя inbox.
               </div>
             )}
 
             {localError && (
               <div className="p-3 bg-red-100 text-red-700 rounded-lg text-sm mb-4">
-                ❌ {localError}
+                Грешка: {localError}
               </div>
             )}
 
@@ -261,7 +261,7 @@ function Register() {
 
           {(localError || error) && (
             <div className="p-3 bg-red-100 text-red-700 rounded-lg text-sm">
-              ❌ {localError || error}
+              Грешка: {localError || error}
             </div>
           )}
 
