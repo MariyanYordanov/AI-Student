@@ -42,9 +42,9 @@ function KnowledgeMap({ aiStudentId }: KnowledgeMapProps) {
   };
 
   const getStatusText = (level: number) => {
-    if (level >= 0.7) return '✓ Добре разбрано';
-    if (level >= 0.3) return '⚠ Частично';
-    return '❌ Начало';
+    if (level >= 0.7) return 'Добре разбрано';
+    if (level >= 0.3) return 'Частично';
+    return 'Начало';
   };
 
   const getStatusBg = (level: number) => {
@@ -76,7 +76,6 @@ function KnowledgeMap({ aiStudentId }: KnowledgeMapProps) {
   if (knowledge.length === 0) {
     return (
       <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-        <div className="text-6xl mb-4">📚</div>
         <p className="text-gray-600 text-lg font-medium">Все още няма научени концепции</p>
         <p className="text-gray-500 text-sm mt-2">Започни да обучаваш AI ученика!</p>
       </div>

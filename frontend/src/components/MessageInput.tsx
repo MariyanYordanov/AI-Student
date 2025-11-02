@@ -129,7 +129,7 @@ function MessageInput({ onSend, disabled }: MessageInputProps) {
       </div>
       <div className="max-w-4xl mx-auto mt-2">
         <p className="text-xs text-gray-500 text-center">
-          💡 Съвет: Обяснявай със примери и питай дали AI ученикът разбра
+          Съвет: Обяснявай със примери и питай дали AI ученикът разбра
         </p>
       </div>
     </div>
