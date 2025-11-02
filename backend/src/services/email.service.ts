@@ -28,28 +28,28 @@ export class EmailService {
     const msg = {
       to: toEmail,
       from: FROM_EMAIL,
-      subject: 'Aily - Потвърждение на имейл адрес',
+      subject: 'Aily - Email Verification',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2>Добре дошъл в Aily!</h2>
-          <p>Привет ${userName},</p>
-          <p>Благодарим, че се регистрира. За да активираш своя профил, моля потвърди своя имейл адрес чрез клик на линка по-долу:</p>
+          <h2>Welcome to Aily!</h2>
+          <p>Hi ${userName},</p>
+          <p>Thank you for registering. To activate your profile, please verify your email address by clicking the link below:</p>
 
           <!-- Verification link -->
           <p>
             <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}" style="display: inline-block; padding: 12px 24px; background-color: #2563eb; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">
-              Потвърди имейл адрес
+              Verify Email Address
             </a>
           </p>
 
           <p style="color: #666; font-size: 14px; margin-top: 20px;">
-            Или копирай и постави този линк в браузъра си:<br>
+            Or copy and paste this link in your browser:<br>
             <code style="background: #f0f0f0; padding: 8px; display: inline-block; margin-top: 8px;">
               ${verificationLink}
             </code>
           </p>
           <p style="color: #666; font-size: 12px;">
-            Този линк е валиден за 24 часа.
+            This link is valid for 24 hours.
           </p>
           <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
           <p style="color: #999; font-size: 12px; text-align: center;">
@@ -57,7 +57,7 @@ export class EmailService {
           </p>
         </div>
       `,
-      text: `Потвърди своя имейл адрес: ${verificationLink}`,
+      text: `Verify your email address: ${verificationLink}`,
     };
 
     try {
