@@ -257,8 +257,7 @@ router.post('/verify-email', async (req, res, next) => {
     res.json({
       message: 'Email verified successfully!',
       email: updatedUser.email,
-      token: jwtToken.token,
-      refreshToken: jwtToken.refreshToken,
+      token: jwtToken,
     });
   } catch (error) {
     console.error('❌ Verification error:', error);

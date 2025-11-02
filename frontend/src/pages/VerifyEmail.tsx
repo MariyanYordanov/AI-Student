@@ -34,9 +34,6 @@ export default function VerifyEmail() {
           // Save token to localStorage for auto-login
           if (data.token) {
             localStorage.setItem('token', data.token);
-            if (data.refreshToken) {
-              localStorage.setItem('refreshToken', data.refreshToken);
-            }
           }
 
           setStatus('success');
