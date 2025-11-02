@@ -22,6 +22,7 @@ export class EmailService {
       return;
     }
 
+    const backendUrl = process.env.VITE_API_URL || 'https://ai-student-r9ay.onrender.com';
     const verificationLink = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}`;
 
     const msg = {
@@ -33,12 +34,16 @@ export class EmailService {
           <h2>Добре дошъл в LearnMate!</h2>
           <p>Привет ${userName},</p>
           <p>Благодарим, че се регистрира. За да активираш своя профил, моля потвърди своя имейл адрес чрез клик на линка по-долу:</p>
-          <p>
-            <a href="${verificationLink}" style="display: inline-block; padding: 12px 24px; background-color: #2563eb; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">
+
+          <!-- Auto-submit form for verification -->
+          <form action="${backendUrl}/api/auth/verify-email" method="POST" style="display: inline;">
+            <input type="hidden" name="token" value="${verificationToken}">
+            <button type="submit" style="display: inline-block; padding: 12px 24px; background-color: #2563eb; color: white; text-decoration: none; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px;">
               Потвърди имейл адрес
-            </a>
-          </p>
-          <p style="color: #666; font-size: 14px;">
+            </button>
+          </form>
+
+          <p style="color: #666; font-size: 14px; margin-top: 20px;">
             Или копирай и постави този линк в браузъра си:<br>
             <code style="background: #f0f0f0; padding: 8px; display: inline-block; margin-top: 8px;">
               ${verificationLink}
