@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../stores/authStore';
+import { useTheme } from '../hooks/useTheme';
 import { Trash2, Mail, LogOut } from 'lucide-react';
 
 interface AdminUser {
@@ -14,6 +16,8 @@ interface AdminUser {
 }
 
 export default function AdminDashboard() {
+  const { t } = useTranslation();
+  const { isDark } = useTheme();
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
   const [users, setUsers] = useState<AdminUser[]>([]);
@@ -66,7 +70,7 @@ export default function AdminDashboard() {
   };
 
   const handleDeleteUser = async (userId: string) => {
-    if (!confirm('Are you sure you want to delete this user?')) {
+    if (!confirm(t('admin.confirmDelete'))) {
       return;
     }
 
@@ -142,9 +146,9 @@ export default function AdminDashboard() {
 
       setEmailData({ subject: '', message: '' });
       setShowEmailForm(false);
-      alert('Email sent successfully');
+      alert(t('common.success'));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error sending email');
+      setError(err instanceof Error ? err.message : t('auth.errors.genericError'));
     }
   };
 
@@ -166,26 +170,30 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow">
+    <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
+      <header className={`shadow ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-            <p className="text-gray-600 mt-1">Logged in as {user.email} ({user.role})</p>
+            <h1 className={`text-3xl font-bold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
+              {t('admin.title')}
+            </h1>
+            <p className={`mt-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+              {t('common.appName')} ({user?.role})
+            </p>
           </div>
           <button
             onClick={() => { logout(); navigate('/'); }}
             className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
           >
             <LogOut className="w-4 h-4" />
-            Logout
+            {t('common.logout')}
           </button>
         </div>
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+          <div className={`mb-6 p-4 rounded-lg ${isDark ? 'bg-red-900/20 border border-red-800 text-red-400' : 'bg-red-50 border border-red-200 text-red-700'}`}>
             {error}
           </div>
         )}
@@ -193,36 +201,56 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Users List */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-2xl font-bold text-gray-900">Users</h2>
+            <div className={`rounded-lg shadow ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
+              <div className={`px-6 py-4 ${isDark ? 'border-b border-gray-700' : 'border-b border-gray-200'}`}>
+                <h2 className={`text-2xl font-bold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
+                  {t('admin.userManagement')}
+                </h2>
               </div>
 
               {loading ? (
-                <div className="p-6 text-center text-gray-600">Loading users...</div>
+                <div className={`p-6 text-center ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                  {t('common.loading')}
+                </div>
               ) : users.length === 0 ? (
-                <div className="p-6 text-center text-gray-600">No users found</div>
+                <div className={`p-6 text-center ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                  {t('dashboard.noTopics')}
+                </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-gray-50 border-b border-gray-200">
+                    <thead className={isDark ? 'bg-gray-700 border-b border-gray-700' : 'bg-gray-50 border-b border-gray-200'}>
                       <tr>
-                        <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Name</th>
-                        <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Email</th>
-                        <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Role</th>
-                        <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Verified</th>
-                        <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
+                        <th className={`px-6 py-3 text-left text-sm font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                          {t('admin.role')}
+                        </th>
+                        <th className={`px-6 py-3 text-left text-sm font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                          {t('admin.email')}
+                        </th>
+                        <th className={`px-6 py-3 text-left text-sm font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                          {t('admin.role')}
+                        </th>
+                        <th className={`px-6 py-3 text-left text-sm font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                          {t('admin.status')}
+                        </th>
+                        <th className={`px-6 py-3 text-left text-sm font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                          {t('admin.actions')}
+                        </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">
+                    <tbody className={isDark ? 'divide-y divide-gray-700' : 'divide-y divide-gray-200'}>
                       {users.map((u) => (
                         <tr
                           key={u.id}
-                          className={`cursor-pointer hover:bg-gray-50 ${selectedUser?.id === u.id ? 'bg-blue-50' : ''}`}
+                          className={`cursor-pointer transition ${isDark ? (selectedUser?.id === u.id ? 'bg-blue-900/30' : 'hover:bg-gray-700') : (selectedUser?.id === u.id ? 'bg-blue-50' : 'hover:bg-gray-50')}`}
                           onClick={() => setSelectedUser(u)}
                         >
-                          <td className="px-6 py-4 text-sm text-gray-900">{u.name}</td>
-                          <td className="px-6 py-4 text-sm text-gray-600">{u.email}</td>
+                          <td className={`px-6 py-4 text-sm ${isDark ? 'text-gray-300' : 'text-gray-900'}`}>
+                            {u.name}
+                          </td>
+                          <td className={`px-6 py-4 text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                            {u.email}
+                          </td>
                           <td className="px-6 py-4 text-sm">
                             <span className={`px-3 py-1 rounded-full text-sm font-medium ${getRoleBadgeColor(u.role)}`}>
                               {u.role}
@@ -230,7 +258,7 @@ export default function AdminDashboard() {
                           </td>
                           <td className="px-6 py-4 text-sm">
                             <span className={u.emailVerified ? 'text-green-600' : 'text-red-600'}>
-                              {u.emailVerified ? 'Yes' : 'No'}
+                              {u.emailVerified ? t('admin.verified') : t('admin.unverified')}
                             </span>
                           </td>
                           <td className="px-6 py-4 text-sm">
@@ -256,26 +284,32 @@ export default function AdminDashboard() {
           {/* User Details Panel */}
           <div className="lg:col-span-1">
             {selectedUser ? (
-              <div className="bg-white rounded-lg shadow p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">{selectedUser.name}</h3>
+              <div className={`rounded-lg shadow p-6 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
+                <h3 className={`text-xl font-bold mb-4 ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
+                  {selectedUser.name}
+                </h3>
 
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Email</label>
-                    <p className="text-gray-900">{selectedUser.email}</p>
+                    <label className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                      {t('admin.email')}
+                    </label>
+                    <p className={isDark ? 'text-gray-300' : 'text-gray-900'}>{selectedUser.email}</p>
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Role</label>
+                    <label className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                      {t('admin.role')}
+                    </label>
                     {user?.role === 'SUPERADMIN' ? (
                       <select
                         value={selectedUser.role}
                         onChange={(e) => handleChangeRole(selectedUser.id, e.target.value)}
-                        className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className={`w-full mt-1 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${isDark ? 'bg-gray-700 border border-gray-600 text-gray-100' : 'border border-gray-300 bg-white'}`}
                       >
-                        <option value="STUDENT">Student</option>
-                        <option value="ADMIN">Admin</option>
-                        <option value="SUPERADMIN">SuperAdmin</option>
+                        <option value="STUDENT">{t('admin.student')}</option>
+                        <option value="ADMIN">{t('admin.admin')}</option>
+                        <option value="SUPERADMIN">{t('admin.superAdmin')}</option>
                       </select>
                     ) : (
                       <p className={`px-3 py-2 rounded ${getRoleBadgeColor(selectedUser.role)}`}>
@@ -285,29 +319,30 @@ export default function AdminDashboard() {
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Email Verified</label>
+                    <label className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                      {t('admin.status')}
+                    </label>
                     <p className={selectedUser.emailVerified ? 'text-green-600 font-medium' : 'text-red-600 font-medium'}>
-                      {selectedUser.emailVerified ? 'Yes' : 'No'}
+                      {selectedUser.emailVerified ? t('admin.verified') : t('admin.unverified')}
                     </p>
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Joined</label>
-                    <p className="text-gray-600">{new Date(selectedUser.createdAt).toLocaleDateString()}</p>
+                    <label className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                      {t('auth.errors.notFound')}
+                    </label>
+                    <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>
+                      {new Date(selectedUser.createdAt).toLocaleDateString()}
+                    </p>
                   </div>
 
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">Last Active</label>
-                    <p className="text-gray-600">{new Date(selectedUser.lastActive).toLocaleString()}</p>
-                  </div>
-
-                  <div className="border-t border-gray-200 pt-4 space-y-3">
+                  <div className={`${isDark ? 'border-gray-700' : 'border-gray-200'} border-t pt-4 space-y-3`}>
                     <button
                       onClick={() => setShowEmailForm(!showEmailForm)}
                       className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
                     >
                       <Mail className="w-4 h-4" />
-                      Send Email
+                      {t('admin.sendEmail')}
                     </button>
 
                     {user?.role === 'SUPERADMIN' && (
@@ -316,35 +351,39 @@ export default function AdminDashboard() {
                         className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
                       >
                         <Trash2 className="w-4 h-4" />
-                        Delete User
+                        {t('admin.deleteUser')}
                       </button>
                     )}
                   </div>
                 </div>
 
                 {showEmailForm && (
-                  <form onSubmit={handleSendEmail} className="mt-4 border-t border-gray-200 pt-4">
+                  <form onSubmit={handleSendEmail} className={`mt-4 ${isDark ? 'border-gray-700' : 'border-gray-200'} border-t pt-4`}>
                     <div className="space-y-3">
                       <div>
-                        <label className="text-sm font-medium text-gray-700">Subject</label>
+                        <label className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                          {t('auth.password')}
+                        </label>
                         <input
                           type="text"
                           value={emailData.subject}
                           onChange={(e) => setEmailData({ ...emailData, subject: e.target.value })}
-                          placeholder="Email subject"
-                          className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder={t('admin.characterName')}
+                          className={`w-full mt-1 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${isDark ? 'bg-gray-700 border border-gray-600 text-gray-100' : 'border border-gray-300'}`}
                           required
                         />
                       </div>
 
                       <div>
-                        <label className="text-sm font-medium text-gray-700">Message</label>
+                        <label className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                          {t('auth.password')}
+                        </label>
                         <textarea
                           value={emailData.message}
                           onChange={(e) => setEmailData({ ...emailData, message: e.target.value })}
-                          placeholder="Email message (HTML supported)"
+                          placeholder={t('admin.characterName')}
                           rows={4}
-                          className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className={`w-full mt-1 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${isDark ? 'bg-gray-700 border border-gray-600 text-gray-100' : 'border border-gray-300'}`}
                           required
                         />
                       </div>
@@ -353,15 +392,15 @@ export default function AdminDashboard() {
                         type="submit"
                         className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
                       >
-                        Send Email
+                        {t('admin.sendEmail')}
                       </button>
                     </div>
                   </form>
                 )}
               </div>
             ) : (
-              <div className="bg-white rounded-lg shadow p-6 text-center text-gray-600">
-                Select a user to view details
+              <div className={`rounded-lg shadow p-6 text-center ${isDark ? 'bg-gray-800 text-gray-400' : 'bg-white text-gray-600'}`}>
+                {t('dashboard.noTopics')}
               </div>
             )}
           </div>
