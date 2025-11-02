@@ -114,6 +114,19 @@ export const api = {
       });
       return handleResponse(response);
     },
+
+    async updatePreferences(preferredTheme?: string, preferredLanguage?: string) {
+      const body: any = {};
+      if (preferredTheme) body.preferredTheme = preferredTheme;
+      if (preferredLanguage) body.preferredLanguage = preferredLanguage;
+
+      const response = await fetchWithTimeout(`${API_BASE}/auth/preferences`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      return handleResponse(response);
+    },
   },
 
   // Topics

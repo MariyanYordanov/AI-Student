@@ -1,5 +1,7 @@
 import { useTranslation } from 'i18next-react';
 import { useTheme } from '../hooks/useTheme';
+import { api } from '../services/api';
+import { useAuthStore } from '../stores/authStore';
 
 interface LanguageThemeSwitcherProps {
   className?: string;
@@ -8,10 +10,34 @@ interface LanguageThemeSwitcherProps {
 export function LanguageThemeSwitcher({ className = '' }: LanguageThemeSwitcherProps) {
   const { i18n } = useTranslation();
   const { isDark, toggleTheme } = useTheme();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
-  const handleLanguageChange = (lang: string) => {
+  const handleLanguageChange = async (lang: string) => {
     i18n.changeLanguage(lang);
     localStorage.setItem('i18nextLng', lang);
+
+    // Save to database if authenticated
+    if (isAuthenticated) {
+      try {
+        await api.auth.updatePreferences(undefined, lang);
+      } catch (error) {
+        console.error('Failed to save language preference:', error);
+      }
+    }
+  };
+
+  const handleThemeChange = async () => {
+    toggleTheme();
+    const newTheme = isDark ? 'light' : 'dark';
+
+    // Save to database if authenticated
+    if (isAuthenticated) {
+      try {
+        await api.auth.updatePreferences(newTheme, undefined);
+      } catch (error) {
+        console.error('Failed to save theme preference:', error);
+      }
+    }
   };
 
   return (
@@ -42,7 +68,7 @@ export function LanguageThemeSwitcher({ className = '' }: LanguageThemeSwitcherP
 
       {/* Theme Switcher */}
       <button
-        onClick={toggleTheme}
+        onClick={handleThemeChange}
         className="p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
         title={isDark ? 'Light mode' : 'Dark mode'}
       >

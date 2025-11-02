@@ -469,4 +469,88 @@ router.post('/resend-verification-email', async (req, res, next) => {
   }
 });
 
+/**
+ * GET /api/auth/me
+ * Get current user info with preferences
+ */
+router.get('/me', authMiddleware, async (req, res, next) => {
+  try {
+    const userId = (req as any).userId;
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        emailVerified: true,
+        preferredTheme: true,
+        preferredLanguage: true,
+        createdAt: true,
+      },
+    });
+
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    res.json(user);
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * PATCH /api/auth/preferences
+ * Update user theme and language preferences
+ */
+router.patch('/preferences', authMiddleware, async (req, res, next) => {
+  try {
+    const userId = (req as any).userId;
+    const { preferredTheme, preferredLanguage } = req.body;
+
+    // Validate inputs
+    if (preferredTheme && !['light', 'dark'].includes(preferredTheme)) {
+      res.status(400).json({ error: 'Invalid theme. Must be "light" or "dark"' });
+      return;
+    }
+
+    if (preferredLanguage && !['en', 'bg'].includes(preferredLanguage)) {
+      res.status(400).json({ error: 'Invalid language. Must be "en" or "bg"' });
+      return;
+    }
+
+    const updateData: any = {};
+    if (preferredTheme) updateData.preferredTheme = preferredTheme;
+    if (preferredLanguage) updateData.preferredLanguage = preferredLanguage;
+
+    if (Object.keys(updateData).length === 0) {
+      res.status(400).json({ error: 'No preferences to update' });
+      return;
+    }
+
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: updateData,
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        preferredTheme: true,
+        preferredLanguage: true,
+      },
+    });
+
+    console.log('[OK] User preferences updated:', userId);
+    res.json({
+      message: 'Preferences updated successfully',
+      user,
+    });
+  } catch (error) {
+    console.error('[ERR] Error updating preferences:', error);
+    next(error);
+  }
+});
+
 export { router as authRouter };
