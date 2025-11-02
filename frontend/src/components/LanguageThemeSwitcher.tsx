@@ -1,4 +1,4 @@
-import { useTranslation } from 'i18next-react';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
 import { api } from '../services/api';
 import { useAuthStore } from '../stores/authStore';
@@ -10,7 +10,8 @@ interface LanguageThemeSwitcherProps {
 export function LanguageThemeSwitcher({ className = '' }: LanguageThemeSwitcherProps) {
   const { i18n } = useTranslation();
   const { isDark, toggleTheme } = useTheme();
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const user = useAuthStore((state) => state.user);
+  const isAuthenticated = !!user;
 
   const handleLanguageChange = async (lang: string) => {
     i18n.changeLanguage(lang);
