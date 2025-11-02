@@ -1,12 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../stores/authStore';
+import { useTheme } from '../hooks/useTheme';
 import { api } from '../services/api';
 import { SessionMessage, AIStudent } from '../types';
 import ChatMessage from '../components/ChatMessage';
 import MessageInput from '../components/MessageInput';
 
 function TeachingSession() {
+  const { t } = useTranslation();
+  const { isDark } = useTheme();
   const { sessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
   const { user } = useAuthStore();
@@ -63,7 +67,7 @@ function TeachingSession() {
       await loadSession();
     } catch (error) {
       console.error('Error sending message:', error);
-      alert('Грешка при изпращане на съобщение');
+      alert(t('auth.errors.genericError'));
     } finally {
       setLoading(false);
     }
@@ -72,21 +76,21 @@ function TeachingSession() {
   const handleEndSession = async () => {
     if (!sessionId) return;
 
-    const confirm = window.confirm('Сигурен ли си, че искаш да приключиш сесията?');
+    const confirm = window.confirm(t('session.endSession') + '?');
     if (!confirm) return;
 
     try {
       const result = await api.endSession(sessionId);
 
-      let message = `Сесията приключи!\n\n`;
-      message += `Време: ${result.durationMinutes} мин\n`;
-      message += `Съобщения: ${result.messagesExchanged}\n`;
-      message += `XP спечелени: +${result.xpEarned}\n`;
-      message += `Общо XP: ${result.totalXP}`;
+      let message = `${t('session.sessionEnded')}!\n\n`;
+      message += `${t('session.timeSpent')}: ${result.durationMinutes} ${t('dashboard.minutes')}\n`;
+      message += `${t('dashboard.messages')}: ${result.messagesExchanged}\n`;
+      message += `${t('session.xpEarned')}: +${result.xpEarned}\n`;
+      message += `${t('common.appName')} ${t('dashboard.xp')}: ${result.totalXP}`;
 
       if (result.leveledUp) {
-        message += `\n\nПОЗДРАВЛЕНИЯ!\n`;
-        message += `${aiStudent?.name} достигна ниво ${result.newLevel}!`;
+        message += `\n\n${t('session.wellUnderstood')}!\n`;
+        message += `${t('common.appName')} ${t('dashboard.level')} ${result.newLevel}!`;
       }
 
       alert(message);
@@ -112,30 +116,30 @@ function TeachingSession() {
   const xpProgress = nextLevelXP > 0 ? Math.min((currentLevelXP / nextLevelXP) * 100, 100) : 0;
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className={`flex flex-col h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
+      <div className={`px-6 py-4 shadow-sm ${isDark ? 'bg-gray-800 border-b border-gray-700' : 'bg-white border-b border-gray-200'}`}>
         <div className="flex items-center justify-between max-w-4xl mx-auto">
           <div className="flex items-center space-x-4">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
-              {aiStudent?.name?.charAt(0) || 'A'}
+              {t('common.appName').charAt(0)}
             </div>
             <div className="flex-1">
-              <h2 className="text-xl font-semibold text-gray-900">
-                {aiStudent?.name || 'AI Ученик'}
+              <h2 className={`text-xl font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
+                {t('common.appName')}
               </h2>
-              <p className="text-sm text-gray-500 mb-1">
-                Тема: {topic} • Ниво {currentLevel}
+              <p className={`text-sm mb-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                {t('session.topic')}: {topic} • {t('dashboard.level')} {currentLevel}
               </p>
               {/* XP Progress Bar */}
               <div className="flex items-center space-x-2">
-                <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-xs">
+                <div className={`flex-1 rounded-full h-2 max-w-xs ${isDark ? 'bg-gray-700' : 'bg-gray-200'}`}>
                   <div
                     className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all duration-500"
                     style={{ width: `${xpProgress}%` }}
                   />
                 </div>
-                <span className="text-xs text-gray-600 font-medium whitespace-nowrap">
+                <span className={`text-xs font-medium whitespace-nowrap ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                   {totalXP} / {XP_THRESHOLDS[currentLevel + 1] || '∞'} XP
                 </span>
               </div>
@@ -143,9 +147,9 @@ function TeachingSession() {
           </div>
           <button
             onClick={handleEndSession}
-            className="px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition"
+            className={`px-4 py-2 text-sm font-medium rounded-lg transition ${isDark ? 'text-red-400 hover:bg-red-900/20' : 'text-red-600 hover:bg-red-50'}`}
           >
-            Приключи сесията
+            {t('session.endSession')}
           </button>
         </div>
       </div>
@@ -154,9 +158,9 @@ function TeachingSession() {
       <div className="flex-1 overflow-y-auto px-4 py-6">
         <div className="max-w-4xl mx-auto space-y-4">
           {messages.length === 0 && !loading && (
-            <div className="text-center text-gray-500 py-12">
-              <p className="text-lg mb-2">Започни да обучаваш AI ученика!</p>
-              <p className="text-sm">Обясни му концепцията ясно и разбираемо</p>
+            <div className={`text-center py-12 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+              <p className="text-lg mb-2">{t('session.inputPlaceholder')}</p>
+              <p className="text-sm">{t('session.tipText')}</p>
             </div>
           )}
 
@@ -165,13 +169,13 @@ function TeachingSession() {
           ))}
 
           {loading && (
-            <div className="flex items-center space-x-2 text-gray-500">
+            <div className={`flex items-center space-x-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
               <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                <div className={`w-2 h-2 rounded-full animate-bounce ${isDark ? 'bg-gray-500' : 'bg-gray-400'}`} style={{ animationDelay: '0ms' }}></div>
+                <div className={`w-2 h-2 rounded-full animate-bounce ${isDark ? 'bg-gray-500' : 'bg-gray-400'}`} style={{ animationDelay: '150ms' }}></div>
+                <div className={`w-2 h-2 rounded-full animate-bounce ${isDark ? 'bg-gray-500' : 'bg-gray-400'}`} style={{ animationDelay: '300ms' }}></div>
               </div>
-              <span className="text-sm">AI ученикът мисли...</span>
+              <span className="text-sm">{t('common.appName')} {t('session.inputPlaceholder')}</span>
             </div>
           )}
 
