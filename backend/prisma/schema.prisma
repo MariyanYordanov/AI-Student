@@ -22,17 +22,46 @@ model User {
   verificationToken String?  @unique
   verificationTokenExpiry DateTime?
 
+  // User preferences
+  preferredTheme    String   @default("light") // light or dark
+  preferredLanguage String   @default("en") // en or bg
+
   createdAt         DateTime @default(now())
   lastActive        DateTime @updatedAt
 
   // Relations
+  aily              AilyInstance?
   aiStudents        AIStudent[]
   sessions          Session[]
   achievements      Achievement[]
   topicProgress     TopicProgress[]
 }
 
-// AI Student - virtual student that learns
+// Aily Instance - Single virtual assistant per user that learns and retains knowledge
+model AilyInstance {
+  id                String   @id @default(uuid())
+  userId            String   @unique
+
+  // Current character for this session (randomly selected, but knowledge persists)
+  currentCharacterId String  @default("curious-explorer")
+
+  // Aily's overall level (Beginner=0, Intermediate=1, Advanced=2)
+  level             Int      @default(0)
+  totalXP           Int      @default(0)
+
+  // All concepts Aily has learned (retained across sessions)
+  // Knowledge is never forgotten, only updated
+  knowledge         Knowledge[]
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessions          Session[]
+}
+
+// AI Student - virtual student that learns (kept for backwards compatibility)
 model AIStudent {
   id                String   @id @default(uuid())
   ownerId           String
@@ -56,10 +85,11 @@ model AIStudent {
   @@unique([ownerId, characterId])
 }
 
-// Knowledge items the AI student has learned
+// Knowledge items that Aily has learned (persisted across sessions)
 model Knowledge {
   id                  String   @id @default(uuid())
-  aiStudentId         String
+  ailyInstanceId      String?
+  aiStudentId         String?
   concept             String
   understandingLevel  Float    @default(0.0) // 0.0 to 1.0
   examplesSeen        Int      @default(0)
@@ -69,8 +99,10 @@ model Knowledge {
   metadata            String   @default("{}")
 
   // Relations
-  aiStudent           AIStudent @relation(fields: [aiStudentId], references: [id])
+  ailyInstance        AilyInstance? @relation(fields: [ailyInstanceId], references: [id], onDelete: Cascade)
+  aiStudent           AIStudent? @relation(fields: [aiStudentId], references: [id], onDelete: Cascade)
 
+  @@unique([ailyInstanceId, concept])
   @@unique([aiStudentId, concept])
 }
 
@@ -78,7 +110,8 @@ model Knowledge {
 model Session {
   id              String   @id @default(uuid())
   studentId       String
-  aiStudentId     String
+  ailyInstanceId  String?
+  aiStudentId     String?
   topic           String
   durationMinutes Int      @default(0)
   xpEarned        Int      @default(0)
@@ -92,8 +125,9 @@ model Session {
   endedAt         DateTime?
 
   // Relations
-  student         User      @relation(fields: [studentId], references: [id])
-  aiStudent       AIStudent @relation(fields: [aiStudentId], references: [id])
+  student         User         @relation(fields: [studentId], references: [id])
+  ailyInstance    AilyInstance? @relation(fields: [ailyInstanceId], references: [id], onDelete: Cascade)
+  aiStudent       AIStudent?   @relation(fields: [aiStudentId], references: [id], onDelete: Cascade)
 }
 
 // Achievements/badges
