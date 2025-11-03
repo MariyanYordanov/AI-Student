@@ -68,6 +68,23 @@ export const useAuthStore = create<AuthState>((set) => ({
       try {
         const user = JSON.parse(userStr);
         console.log('[DEBUG] restoreSession: Parsed user =', user);
+
+        // Validate user object structure - it should NOT contain token field
+        if (user.token) {
+          console.log('[DEBUG] restoreSession: User object contains invalid token field, clearing localStorage');
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          return;
+        }
+
+        // Validate required fields
+        if (!user.id || !user.email || !user.emailVerified === undefined) {
+          console.log('[DEBUG] restoreSession: User object missing required fields');
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          return;
+        }
+
         set({ user, token });
         console.log('[DEBUG] restoreSession: Set authStore with user');
       } catch (error) {
