@@ -69,17 +69,16 @@ export const useAuthStore = create<AuthState>((set) => ({
         const user = JSON.parse(userStr);
         console.log('[DEBUG] restoreSession: Parsed user =', user);
 
-        // Validate user object structure - it should NOT contain token field
+        // Clean up user object - remove token field if present (old format)
         if (user.token) {
-          console.log('[DEBUG] restoreSession: User object contains invalid token field, clearing localStorage');
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          return;
+          console.log('[DEBUG] restoreSession: Removing invalid token field from user object');
+          delete user.token;
+          localStorage.setItem('user', JSON.stringify(user));
         }
 
         // Validate required fields
-        if (!user.id || !user.email || !user.emailVerified === undefined) {
-          console.log('[DEBUG] restoreSession: User object missing required fields');
+        if (!user.id || !user.email) {
+          console.log('[DEBUG] restoreSession: User object missing required fields (id, email)');
           localStorage.removeItem('token');
           localStorage.removeItem('user');
           return;
