@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { requireAuth, requireAdmin, requireSuperAdmin } from '../middleware/auth';
+import { authMiddleware, requireAuth, requireAdmin, requireSuperAdmin } from '../middleware/auth';
 import { EmailService } from '../services/email.service';
 
 const prisma = new PrismaClient();
@@ -11,7 +11,7 @@ const router = Router();
  * GET /api/admin/users
  * Get all users (ADMIN or SUPERADMIN only)
  */
-router.get('/users', requireAuth, requireAdmin, async (req: Request, res: Response, next: NextFunction) => {
+router.get('/users', authMiddleware, requireAuth, requireAdmin, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const users = await prisma.user.findMany({
       select: {
@@ -37,7 +37,7 @@ router.get('/users', requireAuth, requireAdmin, async (req: Request, res: Respon
  * PATCH /api/admin/users/:id/role
  * Change user role (SUPERADMIN only)
  */
-router.patch('/users/:id/role', requireAuth, requireSuperAdmin, async (req: Request, res: Response, next: NextFunction) => {
+router.patch('/users/:id/role', authMiddleware, requireAuth, requireSuperAdmin, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const { role } = req.body;
@@ -66,7 +66,7 @@ router.patch('/users/:id/role', requireAuth, requireSuperAdmin, async (req: Requ
  * DELETE /api/admin/users/:id
  * Delete user (ADMIN or SUPERADMIN)
  */
-router.delete('/users/:id', requireAuth, requireAdmin, async (req: Request, res: Response, next: NextFunction) => {
+router.delete('/users/:id', authMiddleware, requireAuth, requireAdmin, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const userId = req.user?.id;
@@ -94,7 +94,7 @@ router.delete('/users/:id', requireAuth, requireAdmin, async (req: Request, res:
  * POST /api/admin/send-email
  * Send email to user (ADMIN or SUPERADMIN)
  */
-router.post('/send-email', requireAuth, requireAdmin, async (req: Request, res: Response, next: NextFunction) => {
+router.post('/send-email', authMiddleware, requireAuth, requireAdmin, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { userId, subject, message } = req.body;
 
@@ -127,7 +127,7 @@ router.post('/send-email', requireAuth, requireAdmin, async (req: Request, res: 
  * POST /api/admin/admin-request
  * Request admin rights (SUPERADMIN reviews)
  */
-router.post('/admin-request', requireAuth, async (req: Request, res: Response, next: NextFunction) => {
+router.post('/admin-request', authMiddleware, requireAuth, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.id;
     const userEmail = req.user?.email;
