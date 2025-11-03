@@ -159,6 +159,7 @@ router.post('/login', async (req, res, next) => {
       email: user.email,
       name: user.name,
       role: user.role,
+      emailVerified: user.emailVerified,
       token,
     });
   } catch (error) {
