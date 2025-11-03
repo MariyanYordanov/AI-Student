@@ -6,7 +6,6 @@ import { useTopicsStore } from '../stores/topicsStore';
 import { useTheme } from '../hooks/useTheme';
 import { SectionTabs } from '../components/SectionTabs';
 import { TopicCard } from '../components/TopicCard';
-import { ICON_MAP } from '../data/topics';
 import { api } from '../services/api';
 
 interface AilyInstance {
@@ -197,7 +196,6 @@ function Dashboard() {
                 <SectionTabs
                   selectedSection={selectedSection}
                   onSelectSection={selectSection}
-                  iconMap={ICON_MAP}
                 />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

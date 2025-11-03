@@ -89,42 +89,22 @@ function MessageInput({ onSend, disabled }: MessageInputProps) {
         <button
           onClick={handleVoiceInput}
           disabled={disabled}
-          className={`px-4 py-3 rounded-xl transition duration-200 flex items-center justify-center ${
+          className={`px-4 py-3 rounded-xl transition duration-200 ${
             isListening
               ? 'bg-red-600 hover:bg-red-700 text-white'
               : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
           } disabled:bg-gray-100 disabled:cursor-not-allowed`}
           title={isListening ? 'Слушам...' : 'Микрофон'}
         >
-          <svg
-            className="w-5 h-5"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" />
-            <path d="M17 16.91c-1.48 1.46-3.51 2.36-5.71 2.36-2.2 0-4.23-.9-5.71-2.36m9.42-9.42C15.51 4.35 13.92 3 12 3s-3.51 1.35-4.71 2.49M3 9.5h2v2H3zm18 0h2v2h-2z" />
-          </svg>
+          {isListening ? 'Слушам...' : 'Микрофон'}
         </button>
 
         <button
           onClick={handleSend}
           disabled={disabled || !input.trim()}
-          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white font-medium rounded-xl transition duration-200 flex items-center space-x-2"
+          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white font-medium rounded-xl transition duration-200"
         >
-          <span>Изпрати</span>
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-            />
-          </svg>
+          Изпрати
         </button>
       </div>
       <div className="max-w-4xl mx-auto mt-2">
