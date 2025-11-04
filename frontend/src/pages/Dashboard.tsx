@@ -81,33 +81,35 @@ function Dashboard() {
     const loadAily = async () => {
       try {
         if (user) {
-          // Fetch Aily instance - for now we'll create a placeholder
-          // This will be fetched from the backend when AilyInstance endpoints are created
-          const ailyId = user.id; // Placeholder - will be replaced with actual API call
+          // Fetch Aily instances for this user
+          const ailyInstances = await api.aiStudents.getUserStudents(user.id);
 
-          // Load knowledge/progress for Aily
-          try {
-            const knowledge = await api.aiStudents.getAIStudentKnowledge(ailyId);
-            const progressMap: Record<string, any> = {};
-            knowledge.forEach((k: any) => {
-              progressMap[k.concept] = k;
-            });
-            setAilyProgress(progressMap);
-          } catch (error) {
-            console.error('Error loading Aily knowledge:', error);
+          if (ailyInstances && ailyInstances.length > 0) {
+            // Use the first (or most recent) Aily instance
+            const aily = ailyInstances[0];
+            setAilyInstance(aily);
+
+            // Load knowledge/progress for this Aily
+            try {
+              const knowledge = await api.aiStudents.getAIStudentKnowledge(aily.id);
+              const progressMap: Record<string, any> = {};
+              knowledge.forEach((k: any) => {
+                progressMap[k.concept] = k;
+              });
+              setAilyProgress(progressMap);
+            } catch (error) {
+              console.error('Error loading Aily knowledge:', error);
+            }
+          } else {
+            // No Aily instance found - user needs to select a character first
+            console.warn('No Aily instance found for user. Redirecting to character selection...');
+            // TODO: Redirect to character selection page when implemented
+            setAilyInstance(null);
           }
-
-          // Set placeholder Aily instance - will be updated once backend endpoints are ready
-          setAilyInstance({
-            id: ailyId,
-            userId: user.id,
-            currentCharacterId: 'curious-explorer',
-            level: 0,
-            totalXP: 0,
-          });
         }
       } catch (error) {
         console.error('Error loading Aily:', error);
+        setAilyInstance(null);
       } finally {
         setIsLoadingAily(false);
       }
@@ -225,6 +227,18 @@ function Dashboard() {
             {isLoadingAily ? (
               <div className="text-center py-6">
                 <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>{t('common.loading')}</p>
+              </div>
+            ) : !ailyInstance ? (
+              <div className="text-center py-6">
+                <p className={`mb-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                  Нямаш избран AI ученик. Моля, избери character първо.
+                </p>
+                <button
+                  onClick={() => navigate('/character-selection')}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Избери Character
+                </button>
               </div>
             ) : (
               <>

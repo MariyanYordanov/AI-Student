@@ -21,6 +21,30 @@ router.post('/start', async (req, res, next) => {
       return;
     }
 
+    // Validate that AI student exists before creating session
+    const aiStudent = await prisma.ailyInstance.findUnique({
+      where: { id: aiStudentId },
+    });
+
+    if (!aiStudent) {
+      console.error(`[ERR] AI student not found: ${aiStudentId}`);
+      res.status(404).json({
+        error: 'AI студентът не е намерен. Моля, избери AI студент от Dashboard.'
+      });
+      return;
+    }
+
+    // Validate that user exists
+    const user = await prisma.user.findUnique({
+      where: { id: studentId },
+    });
+
+    if (!user) {
+      console.error(`[ERR] User not found: ${studentId}`);
+      res.status(404).json({ error: 'Потребителят не е намерен.' });
+      return;
+    }
+
     const session = await prisma.session.create({
       data: {
         studentId,
