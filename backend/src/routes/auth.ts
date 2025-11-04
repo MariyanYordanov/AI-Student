@@ -74,6 +74,30 @@ router.post('/register', async (req, res, next) => {
 
     console.log('[OK] User created:', user.id);
 
+    // Create default AilyInstance for new user
+    try {
+      console.log('[OK] Creating default AilyInstance for user...');
+      const defaultPersonality = {
+        curiosity: 0.7,
+        confusionRate: 0.5,
+        learningSpeed: 0.6,
+      };
+
+      await prisma.ailyInstance.create({
+        data: {
+          userId: user.id,
+          currentCharacterId: 'curious-explorer',
+          level: 0,
+          totalXP: 0,
+          personalityTraits: JSON.stringify(defaultPersonality),
+        },
+      });
+      console.log('[OK] Default AilyInstance created');
+    } catch (ailyError) {
+      console.error('[ERR] Failed to create default AilyInstance:', ailyError);
+      // Don't fail registration if AilyInstance creation fails
+    }
+
     // Send verification email
     try {
       console.log('[OK] Sending verification email...');
