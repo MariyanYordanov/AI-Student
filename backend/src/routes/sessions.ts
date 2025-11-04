@@ -60,7 +60,17 @@ router.post('/start', async (req, res, next) => {
 
     // Generate greeting message
     const greetingPrompt = `Здравей! Днес ще те науча за ${topic}. Готов ли си?`;
-    const aiGreeting = await gemini.generateResponse(greetingPrompt, context, []);
+    let aiGreeting;
+    try {
+      aiGreeting = await gemini.generateResponse(greetingPrompt, context, []);
+    } catch (aiError) {
+      console.error('[ERR] Failed to generate AI greeting:', aiError);
+      // Fallback to default greeting if AI fails
+      aiGreeting = {
+        message: `Здравей! Днес ще те науча за ${topic}. Готов ли си?`,
+        emotion: 'curious',
+      };
+    }
 
     // Add initial exchange to transcript
     const transcript: SessionMessage[] = [
