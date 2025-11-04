@@ -58,16 +58,32 @@ router.post('/start', async (req, res, next) => {
       personalityTraits,
     };
 
-    // Generate greeting message
+    // Generate greeting message with timeout handling
     const greetingPrompt = `Здравей! Днес ще те науча за ${topic}. Готов ли си?`;
     let aiGreeting;
+    let geminiAvailable = true;
+
     try {
       aiGreeting = await gemini.generateResponse(greetingPrompt, context, []);
     } catch (aiError) {
       console.error('[ERR] Failed to generate AI greeting:', aiError);
-      // Fallback to default greeting if AI fails
+      geminiAvailable = false;
+
+      // Check if it's a timeout or API key issue
+      const errorMsg = aiError instanceof Error ? aiError.message : '';
+      const isTimeout = errorMsg.includes('timeout');
+      const isApiKey = errorMsg.includes('API_KEY') || errorMsg.includes('API error');
+
+      // Provide specific fallback message
+      let fallbackMessage = `Здравей! Днес ще те науча за ${topic}. Готов ли си?`;
+      if (isTimeout) {
+        fallbackMessage = `Здравей! (AI асистентът отговаря бавно, но можем да започнем). Днес ще те науча за ${topic}. Готов ли си?`;
+      } else if (isApiKey) {
+        fallbackMessage = `Здравей! (AI асистентът е недостъпен, но можем да започнем). Днес ще те науча за ${topic}. Готов ли си?`;
+      }
+
       aiGreeting = {
-        message: `Здравей! Днес ще те науча за ${topic}. Готов ли си?`,
+        message: fallbackMessage,
         emotion: 'curious',
       };
     }
@@ -177,8 +193,22 @@ router.post('/:id/message', async (req, res, next) => {
     // Get conversation history
     const transcript: SessionMessage[] = JSON.parse(session.transcript);
 
-    // Get AI response WITH conversation history
-    const aiResponse = await gemini.generateResponse(userMessage, context, transcript);
+    // Get AI response WITH conversation history and fallback handling
+    let aiResponse;
+    try {
+      aiResponse = await gemini.generateResponse(userMessage, context, transcript);
+    } catch (aiError) {
+      console.error('[ERR] Failed to generate AI response:', aiError);
+
+      // Fallback response when Gemini is unavailable
+      aiResponse = {
+        message: 'Хм... малко се замислих. Можеш ли да преформулираш това, което каза?',
+        emotion: 'confused' as const,
+        understandingDelta: 0,
+        shouldAskQuestion: true,
+      };
+    }
+
     transcript.push(
       {
         role: 'student',

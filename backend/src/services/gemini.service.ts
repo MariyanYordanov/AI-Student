@@ -87,12 +87,16 @@ export class GeminiService {
 
       console.log('[REQ] Request body:', JSON.stringify(requestBody, null, 2).substring(0, 500) + '...');
 
-      // Retry logic with exponential backoff
-      const MAX_RETRIES = 3;
+      // Retry logic with exponential backoff (reduced retries for faster fallback)
+      const MAX_RETRIES = 2;
       let lastError: Error | null = null;
 
       for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
         try {
+          // Add timeout to fetch request (10 seconds)
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 10000);
+
           const response = await fetch(
             `${this.baseURL}/models/${modelName}:generateContent?key=${this.apiKey}`,
             {
@@ -101,8 +105,11 @@ export class GeminiService {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify(requestBody),
+              signal: controller.signal,
             }
           );
+
+          clearTimeout(timeoutId);
 
           // Handle rate limiting (429)
           if (response.status === 429) {
@@ -154,7 +161,14 @@ export class GeminiService {
 
         } catch (error) {
           lastError = error instanceof Error ? error : new Error('Unknown error');
-          console.error(`[ERR] Attempt ${attempt}/${MAX_RETRIES} failed:`, error);
+
+          // Check if it's a timeout error
+          if (error instanceof Error && error.name === 'AbortError') {
+            console.error(`[ERR] Attempt ${attempt}/${MAX_RETRIES} timed out after 10s`);
+            lastError = new Error('Gemini API timeout');
+          } else {
+            console.error(`[ERR] Attempt ${attempt}/${MAX_RETRIES} failed:`, error);
+          }
 
           // If not the last attempt, wait before retry
           if (attempt < MAX_RETRIES) {
