@@ -5,7 +5,11 @@ import { LanguageThemeSwitcher } from './LanguageThemeSwitcher';
 
 export function Navbar() {
   const { t } = useTranslation();
-  const { user } = useAuthStore();
+  const { user, logout } = useAuthStore();
+
+  const handleLogout = () => {
+    logout();
+  };
 
   return (
     <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
@@ -48,6 +52,12 @@ export function Navbar() {
                 <span className="text-sm text-gray-700 dark:text-gray-300">
                   {user.name}
                 </span>
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 font-medium transition"
+                >
+                  {t('auth.logout')}
+                </button>
               </div>
             ) : (
               <div className="flex items-center gap-2">

@@ -228,18 +228,6 @@ function Dashboard() {
               <div className="text-center py-6">
                 <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>{t('common.loading')}</p>
               </div>
-            ) : !ailyInstance ? (
-              <div className="text-center py-6">
-                <p className={`mb-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Нямаш избран AI ученик. Моля, избери character първо.
-                </p>
-                <button
-                  onClick={() => navigate('/character-selection')}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Избери Character
-                </button>
-              </div>
             ) : (
               <>
                 <div className={`space-y-4 mb-6 p-4 rounded-lg ${isDark ? 'bg-gray-700' : 'bg-gray-50'}`}>
