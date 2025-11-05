@@ -49,6 +49,10 @@ model AilyInstance {
   level             Int      @default(0)
   totalXP           Int      @default(0)
 
+  // Personality traits stored as JSON
+  // {curiosity: 0.7, confusionRate: 0.3, learningSpeed: 0.5}
+  personalityTraits String   @default("{\"curiosity\":0.7,\"confusionRate\":0.5,\"learningSpeed\":0.6}")
+
   // All concepts Aily has learned (retained across sessions)
   // Knowledge is never forgotten, only updated
   knowledge         Knowledge[]

@@ -14,14 +14,14 @@ async function createMissingAilyInstances() {
     // Get all users
     const users = await prisma.user.findMany({
       include: {
-        ailyInstances: true,
+        aily: true,
       },
     });
 
     console.log(`[INFO] Found ${users.length} total users`);
 
     // Filter users without AilyInstance
-    const usersWithoutAily = users.filter(u => u.ailyInstances.length === 0);
+    const usersWithoutAily = users.filter(u => !u.aily);
 
     console.log(`[INFO] Found ${usersWithoutAily.length} users without AilyInstance`);
 
