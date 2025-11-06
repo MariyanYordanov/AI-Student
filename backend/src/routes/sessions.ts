@@ -128,7 +128,7 @@ router.post('/start', async (req, res, next) => {
 
     res.json({
       sessionId: session.id,
-      aiStudent: session.ailyInstance!,
+      aiStudent: ailyInstance,
       initialMessage: aiGreeting.message,
       initialEmotion: aiGreeting.emotion,
       message: 'Session started',
@@ -152,16 +152,9 @@ router.post('/:id/message', async (req, res, next) => {
       return;
     }
 
-    // Get session and AI student data
+    // Get session data
     const session = await prisma.session.findUnique({
       where: { id: sessionId },
-      include: {
-        aiStudent: {
-          include: {
-            knowledge: true,
-          },
-        },
-      },
     });
 
     if (!session) {
@@ -169,12 +162,25 @@ router.post('/:id/message', async (req, res, next) => {
       return;
     }
 
+    // Get Aily instance with knowledge
+    const ailyInstance = await prisma.ailyInstance.findUnique({
+      where: { id: session.ailyInstanceId! },
+      include: {
+        knowledge: true,
+      },
+    });
+
+    if (!ailyInstance) {
+      res.status(404).json({ error: 'Aily instance not found' });
+      return;
+    }
+
     // Build AI context with knowledge decay applied
-    const personalityTraits = JSON.parse(session.ailyInstance!.personalityTraits);
+    const personalityTraits = JSON.parse(ailyInstance.personalityTraits);
 
     // Apply decay to old knowledge and update in database
     const updatedKnowledge = await Promise.all(
-      session.ailyInstance!.knowledge.map(async (k) => {
+      ailyInstance.knowledge.map(async (k) => {
         if (shouldApplyDecay(k.lastReviewed)) {
           const decayedLevel = calculateDecay(k.lastReviewed, k.understandingLevel);
 
@@ -199,9 +205,9 @@ router.post('/:id/message', async (req, res, next) => {
       .map((k) => k.concept);
 
     const context: AIStudentContext = {
-      aiStudentId: session.ailyInstance!.id,
-      name: session.ailyInstance!.name,
-      level: session.ailyInstance!.level,
+      aiStudentId: ailyInstance.id,
+      name: 'Aily',
+      level: ailyInstance.level,
       grade: 8, // Default
       knownConcepts,
       partialConcepts,
@@ -267,8 +273,8 @@ router.post('/:id/message', async (req, res, next) => {
       // Get current knowledge to calculate new level with cap
       const currentKnowledge = await prisma.knowledge.findUnique({
         where: {
-          aiStudentId_concept: {
-            aiStudentId: session.ailyInstance!.id,
+          ailyInstanceId_concept: {
+            ailyInstanceId: ailyInstance.id,
             concept: session.topic,
           },
         },
@@ -279,8 +285,8 @@ router.post('/:id/message', async (req, res, next) => {
 
       await prisma.knowledge.upsert({
         where: {
-          aiStudentId_concept: {
-            aiStudentId: session.ailyInstance!.id,
+          ailyInstanceId_concept: {
+            ailyInstanceId: ailyInstance.id,
             concept: session.topic,
           },
         },
@@ -290,7 +296,7 @@ router.post('/:id/message', async (req, res, next) => {
           lastReviewed: new Date(),
         },
         create: {
-          aiStudentId: session.ailyInstance!.id,
+          ailyInstanceId: ailyInstance.id,
           concept: session.topic,
           understandingLevel: Math.max(0, Math.min(1.0, aiResponse.understandingDelta)),
           examplesSeen: 1,
@@ -305,8 +311,8 @@ router.post('/:id/message', async (req, res, next) => {
 
     // Add XP to AI student (real-time)
     if (xpGained > 0) {
-      await prisma.aIStudent.update({
-        where: { id: session.ailyInstance!.id },
+      await prisma.ailyInstance.update({
+        where: { id: ailyInstance.id },
         data: {
           totalXP: { increment: xpGained },
         },
@@ -412,7 +418,7 @@ router.get('/:id', async (req, res, next) => {
       where: { id },
       include: {
         student: true,
-        aiStudent: true,
+        ailyInstance: true,
       },
     });
 
@@ -440,7 +446,7 @@ router.get('/ai-student/:aiStudentId/history', async (req, res, next) => {
     const { limit = 20 } = req.query;
 
     const sessions = await prisma.session.findMany({
-      where: { aiStudentId },
+      where: { ailyInstanceId: aiStudentId },
       orderBy: { createdAt: 'desc' },
       take: Number(limit),
       include: {
@@ -470,9 +476,9 @@ router.get('/student/:studentId/stats', async (req, res, next) => {
   try {
     const { studentId } = req.params;
 
-    // Get all AI students created by this student
-    const aiStudents = await prisma.aIStudent.findMany({
-      where: { ownerId: studentId },
+    // Get the user's AilyInstance
+    const ailyInstance = await prisma.ailyInstance.findUnique({
+      where: { userId: studentId },
       include: {
         sessions: {
           where: { endedAt: { not: null } },
@@ -481,26 +487,31 @@ router.get('/student/:studentId/stats', async (req, res, next) => {
       },
     });
 
+    if (!ailyInstance) {
+      res.json({
+        totalSessions: 0,
+        totalTeachingMinutes: 0,
+        totalXPGiven: 0,
+        ailyLevel: 0,
+        mostTaughtConcepts: [],
+        ailyInstance: null,
+      });
+      return;
+    }
+
     // Calculate stats
-    const totalAIStudents = aiStudents.length;
-    const totalSessions = aiStudents.reduce((sum, ai) => sum + ai.sessions.length, 0);
-    const totalTeachingMinutes = aiStudents.reduce(
-      (sum, ai) =>
-        sum + ai.sessions.reduce((s, session) => s + session.durationMinutes, 0),
+    const totalSessions = ailyInstance.sessions.length;
+    const totalTeachingMinutes = ailyInstance.sessions.reduce(
+      (sum, session) => sum + session.durationMinutes,
       0
     );
-    const totalXPGiven = aiStudents.reduce((sum, ai) => sum + ai.totalXP, 0);
-    const averageAILevel =
-      totalAIStudents > 0
-        ? aiStudents.reduce((sum, ai) => sum + ai.level, 0) / totalAIStudents
-        : 0;
+    const totalXPGiven = ailyInstance.totalXP;
+    const ailyLevel = ailyInstance.level;
 
     // Concepts taught
     const conceptsMap = new Map<string, number>();
-    aiStudents.forEach((ai) => {
-      ai.knowledge.forEach((k) => {
-        conceptsMap.set(k.concept, (conceptsMap.get(k.concept) || 0) + 1);
-      });
+    ailyInstance.knowledge.forEach((k) => {
+      conceptsMap.set(k.concept, (conceptsMap.get(k.concept) || 0) + 1);
     });
 
     const mostTaughtConcepts = Array.from(conceptsMap.entries())
@@ -509,20 +520,18 @@ router.get('/student/:studentId/stats', async (req, res, next) => {
       .slice(0, 10);
 
     res.json({
-      totalAIStudents,
       totalSessions,
       totalTeachingMinutes,
       totalXPGiven,
-      averageAILevel: Math.round(averageAILevel * 10) / 10,
+      ailyLevel,
       mostTaughtConcepts,
-      aiStudents: aiStudents.map((ai) => ({
-        id: ai.id,
-        name: ai.name,
-        level: ai.level,
-        totalXP: ai.totalXP,
-        sessionCount: ai.sessions.length,
-        knowledgeCount: ai.knowledge.length,
-      })),
+      ailyInstance: {
+        id: ailyInstance.id,
+        level: ailyInstance.level,
+        totalXP: ailyInstance.totalXP,
+        sessionCount: ailyInstance.sessions.length,
+        knowledgeCount: ailyInstance.knowledge.length,
+      },
     });
   } catch (error) {
     next(error);
