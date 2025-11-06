@@ -84,20 +84,21 @@ router.post('/select-character', authMiddleware, requireAuth, async (req, res, n
 
 /**
  * GET /api/ai-students/user/:userId
- * Get all AI students for a user
+ * Get AilyInstance for a user (returns as array for backwards compatibility)
  */
 router.get('/user/:userId', authMiddleware, requireAuth, async (req, res, next) => {
   try {
     const { userId } = req.params;
 
-    // Verify user is requesting their own students
+    // Verify user is requesting their own Aily
     if (req.user!.id !== userId) {
       res.status(403).json({ error: 'Not authorized' });
       return;
     }
 
-    const aiStudents = await prisma.aIStudent.findMany({
-      where: { ownerId: userId },
+    // Get user's AilyInstance
+    const ailyInstance = await prisma.ailyInstance.findUnique({
+      where: { userId },
       include: {
         knowledge: true,
         sessions: {
@@ -105,8 +106,10 @@ router.get('/user/:userId', authMiddleware, requireAuth, async (req, res, next) 
           take: 3,
         },
       },
-      orderBy: { createdAt: 'desc' },
     });
+
+    // Return as array for backwards compatibility with frontend
+    const aiStudents = ailyInstance ? [ailyInstance] : [];
 
     res.json(
       aiStudents.map((student) => ({
