@@ -21,13 +21,16 @@ router.post('/start', async (req, res, next) => {
       return;
     }
 
-    // Validate that AI student exists before creating session
-    const aiStudent = await prisma.ailyInstance.findUnique({
+    // Validate that AI student exists and fetch with knowledge
+    const ailyInstance = await prisma.ailyInstance.findUnique({
       where: { id: aiStudentId },
+      include: {
+        knowledge: true,
+      },
     });
 
-    if (!aiStudent) {
-      console.error(`[ERR] AI student not found: ${aiStudentId}`);
+    if (!ailyInstance) {
+      console.error(`[ERR] Aily instance not found: ${aiStudentId}`);
       res.status(404).json({
         error: 'AI студентът не е намерен. Моля, избери AI студент от Dashboard.'
       });
@@ -52,28 +55,21 @@ router.post('/start', async (req, res, next) => {
         topic,
         transcript: '[]',
       },
-      include: {
-        ailyInstance: {
-          include: {
-            knowledge: true,
-          },
-        },
-      },
     });
 
-    // Generate initial AI student greeting
-    const personalityTraits = JSON.parse(session.ailyInstance!.personalityTraits);
-    const knownConcepts = session.ailyInstance!.knowledge
+    // Generate initial AI student greeting using the fetched ailyInstance
+    const personalityTraits = JSON.parse(ailyInstance.personalityTraits);
+    const knownConcepts = ailyInstance.knowledge
       .filter((k) => k.understandingLevel > 0.7)
       .map((k) => k.concept);
-    const partialConcepts = session.ailyInstance!.knowledge
+    const partialConcepts = ailyInstance.knowledge
       .filter((k) => k.understandingLevel > 0.3 && k.understandingLevel <= 0.7)
       .map((k) => k.concept);
 
     const context: AIStudentContext = {
-      aiStudentId: session.ailyInstance!.id,
-      name: session.ailyInstance!.name || 'Aily',
-      level: session.ailyInstance!.level,
+      aiStudentId: ailyInstance.id,
+      name: 'Aily',
+      level: ailyInstance.level,
       grade: 8,
       knownConcepts,
       partialConcepts,
