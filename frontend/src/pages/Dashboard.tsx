@@ -21,7 +21,7 @@ function Dashboard() {
   const { isDark } = useTheme();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user, logout } = useAuthStore();
+  const { user } = useAuthStore();
   const {
     topics,
     selectedSection,
@@ -137,6 +137,11 @@ function Dashboard() {
   }, [topics]);
 
   const handleStartSession = async () => {
+    if (!user) {
+      alert('Моля, влез в акаунта си първо.');
+      return;
+    }
+
     if (!selectedTopic) {
       alert('Моля, избери тема първо.');
       return;
