@@ -359,31 +359,31 @@ router.post('/:id/end', async (req, res, next) => {
       },
     });
 
-    // Add XP to AI student and check for level-up
+    // Add XP to Aily and check for level-up
     const XP_THRESHOLDS = [0, 100, 300, 600, 1000, 1500];
-    const aiStudent = await prisma.aIStudent.findUnique({
-      where: { id: session.ailyInstance!Id },
+    const ailyInstance = await prisma.ailyInstance.findUnique({
+      where: { id: session.ailyInstanceId! },
     });
 
-    if (!aiStudent) {
-      res.status(404).json({ error: 'AI student not found' });
+    if (!ailyInstance) {
+      res.status(404).json({ error: 'Aily instance not found' });
       return;
     }
 
-    const newTotalXP = aiStudent.totalXP + xpEarned;
-    let newLevel = aiStudent.level;
+    const newTotalXP = ailyInstance.totalXP + xpEarned;
+    let newLevel = ailyInstance.level;
     let leveledUp = false;
 
     // Check if reached next level threshold
-    if (aiStudent.level < XP_THRESHOLDS.length - 1) {
-      if (newTotalXP >= XP_THRESHOLDS[aiStudent.level + 1]) {
-        newLevel = aiStudent.level + 1;
+    if (ailyInstance.level < XP_THRESHOLDS.length - 1) {
+      if (newTotalXP >= XP_THRESHOLDS[ailyInstance.level + 1]) {
+        newLevel = ailyInstance.level + 1;
         leveledUp = true;
       }
     }
 
-    await prisma.aIStudent.update({
-      where: { id: session.ailyInstance!Id },
+    await prisma.ailyInstance.update({
+      where: { id: session.ailyInstanceId! },
       data: {
         totalXP: newTotalXP,
         level: newLevel,
