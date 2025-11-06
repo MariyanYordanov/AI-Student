@@ -544,9 +544,9 @@ router.get('/me', authMiddleware, async (req, res, next) => {
  * PATCH /api/auth/preferences
  * Update user theme and language preferences
  */
-router.patch('/preferences', authMiddleware, async (req, res, next) => {
+router.patch('/preferences', authMiddleware, requireAuth, async (req, res, next) => {
   try {
-    const userId = (req as any).userId;
+    const userId = req.user!.id;
     const { preferredTheme, preferredLanguage } = req.body;
 
     // Validate inputs
