@@ -58,6 +58,15 @@ router.post('/register', async (req, res, next) => {
     const verificationToken = randomBytes(32).toString('hex');
     const verificationTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
+    // Check if this is the first user (should be SUPERADMIN)
+    const userCount = await prisma.user.count();
+    const isFirstUser = userCount === 0;
+    const userRole = isFirstUser ? 'SUPERADMIN' : 'STUDENT';
+
+    if (isFirstUser) {
+      console.log('[OK] First user detected - creating as SUPERADMIN');
+    }
+
     // Create user
     console.log('[OK] Creating user in database...');
     const user = await prisma.user.create({
@@ -65,14 +74,14 @@ router.post('/register', async (req, res, next) => {
         email,
         name,
         password: hashedPassword,
-        role: 'STUDENT',
+        role: userRole,
         verificationToken,
         verificationTokenExpiry,
         emailVerified: false,
       },
     });
 
-    console.log('[OK] User created:', user.id);
+    console.log(`[OK] User created: ${user.id} (role: ${user.role})`);
 
     // Create default AilyInstance for new user
     try {
