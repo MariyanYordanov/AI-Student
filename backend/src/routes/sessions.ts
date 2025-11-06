@@ -48,12 +48,12 @@ router.post('/start', async (req, res, next) => {
     const session = await prisma.session.create({
       data: {
         studentId,
-        aiStudentId,
+        ailyInstanceId: aiStudentId, // Use ailyInstanceId field
         topic,
         transcript: '[]',
       },
       include: {
-        aiStudent: {
+        ailyInstance: {
           include: {
             knowledge: true,
           },
@@ -62,18 +62,18 @@ router.post('/start', async (req, res, next) => {
     });
 
     // Generate initial AI student greeting
-    const personalityTraits = JSON.parse(session.aiStudent.personalityTraits);
-    const knownConcepts = session.aiStudent.knowledge
+    const personalityTraits = JSON.parse(session.ailyInstance!.personalityTraits);
+    const knownConcepts = session.ailyInstance!.knowledge
       .filter((k) => k.understandingLevel > 0.7)
       .map((k) => k.concept);
-    const partialConcepts = session.aiStudent.knowledge
+    const partialConcepts = session.ailyInstance!.knowledge
       .filter((k) => k.understandingLevel > 0.3 && k.understandingLevel <= 0.7)
       .map((k) => k.concept);
 
     const context: AIStudentContext = {
-      aiStudentId: session.aiStudent.id,
-      name: session.aiStudent.name,
-      level: session.aiStudent.level,
+      aiStudentId: session.ailyInstance!.id,
+      name: session.ailyInstance!.name || 'Aily',
+      level: session.ailyInstance!.level,
       grade: 8,
       knownConcepts,
       partialConcepts,
@@ -132,7 +132,7 @@ router.post('/start', async (req, res, next) => {
 
     res.json({
       sessionId: session.id,
-      aiStudent: session.aiStudent,
+      aiStudent: session.ailyInstance!,
       initialMessage: aiGreeting.message,
       initialEmotion: aiGreeting.emotion,
       message: 'Session started',
@@ -174,11 +174,11 @@ router.post('/:id/message', async (req, res, next) => {
     }
 
     // Build AI context with knowledge decay applied
-    const personalityTraits = JSON.parse(session.aiStudent.personalityTraits);
+    const personalityTraits = JSON.parse(session.ailyInstance!.personalityTraits);
 
     // Apply decay to old knowledge and update in database
     const updatedKnowledge = await Promise.all(
-      session.aiStudent.knowledge.map(async (k) => {
+      session.ailyInstance!.knowledge.map(async (k) => {
         if (shouldApplyDecay(k.lastReviewed)) {
           const decayedLevel = calculateDecay(k.lastReviewed, k.understandingLevel);
 
@@ -203,9 +203,9 @@ router.post('/:id/message', async (req, res, next) => {
       .map((k) => k.concept);
 
     const context: AIStudentContext = {
-      aiStudentId: session.aiStudent.id,
-      name: session.aiStudent.name,
-      level: session.aiStudent.level,
+      aiStudentId: session.ailyInstance!.id,
+      name: session.ailyInstance!.name,
+      level: session.ailyInstance!.level,
       grade: 8, // Default
       knownConcepts,
       partialConcepts,
@@ -272,7 +272,7 @@ router.post('/:id/message', async (req, res, next) => {
       const currentKnowledge = await prisma.knowledge.findUnique({
         where: {
           aiStudentId_concept: {
-            aiStudentId: session.aiStudent.id,
+            aiStudentId: session.ailyInstance!.id,
             concept: session.topic,
           },
         },
@@ -284,7 +284,7 @@ router.post('/:id/message', async (req, res, next) => {
       await prisma.knowledge.upsert({
         where: {
           aiStudentId_concept: {
-            aiStudentId: session.aiStudent.id,
+            aiStudentId: session.ailyInstance!.id,
             concept: session.topic,
           },
         },
@@ -294,7 +294,7 @@ router.post('/:id/message', async (req, res, next) => {
           lastReviewed: new Date(),
         },
         create: {
-          aiStudentId: session.aiStudent.id,
+          aiStudentId: session.ailyInstance!.id,
           concept: session.topic,
           understandingLevel: Math.max(0, Math.min(1.0, aiResponse.understandingDelta)),
           examplesSeen: 1,
@@ -310,7 +310,7 @@ router.post('/:id/message', async (req, res, next) => {
     // Add XP to AI student (real-time)
     if (xpGained > 0) {
       await prisma.aIStudent.update({
-        where: { id: session.aiStudent.id },
+        where: { id: session.ailyInstance!.id },
         data: {
           totalXP: { increment: xpGained },
         },
@@ -362,7 +362,7 @@ router.post('/:id/end', async (req, res, next) => {
     // Add XP to AI student and check for level-up
     const XP_THRESHOLDS = [0, 100, 300, 600, 1000, 1500];
     const aiStudent = await prisma.aIStudent.findUnique({
-      where: { id: session.aiStudentId },
+      where: { id: session.ailyInstance!Id },
     });
 
     if (!aiStudent) {
@@ -383,7 +383,7 @@ router.post('/:id/end', async (req, res, next) => {
     }
 
     await prisma.aIStudent.update({
-      where: { id: session.aiStudentId },
+      where: { id: session.ailyInstance!Id },
       data: {
         totalXP: newTotalXP,
         level: newLevel,
