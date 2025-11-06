@@ -56,7 +56,7 @@ export function Navbar() {
                   onClick={handleLogout}
                   className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 font-medium transition"
                 >
-                  {t('auth.logout')}
+                  {t('common.logout')}
                 </button>
               </div>
             ) : (
