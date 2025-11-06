@@ -137,8 +137,13 @@ function Dashboard() {
   }, [topics]);
 
   const handleStartSession = async () => {
-    if (!selectedTopic || !ailyInstance || !user) {
-      alert(t('common.error'));
+    if (!selectedTopic) {
+      alert('Моля, избери тема първо.');
+      return;
+    }
+
+    if (!ailyInstance) {
+      alert('Зареждане на Aily... Моля, опитай отново след малко.');
       return;
     }
 
@@ -147,16 +152,12 @@ function Dashboard() {
       const session = await api.startSession(user.id, ailyInstance.id, selectedTopic.title);
       navigate(`/teach/${session.sessionId}`);
     } catch (error) {
-      console.error('Error:', error);
-      alert(error instanceof Error ? error.message : t('auth.errors.genericError'));
+      console.error('[ERR] Session start failed:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Възникна грешка. Моля, опитай отново.';
+      alert(errorMessage);
     } finally {
       setIsStarting(false);
     }
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
   };
 
   const topicsInSection = selectedSection ? topics.filter((t) => t.section === selectedSection) : [];
@@ -169,19 +170,11 @@ function Dashboard() {
     <div className={isDark ? 'min-h-screen bg-gray-900 text-gray-100' : 'min-h-screen bg-white text-gray-900'}>
       <div className="max-w-6xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-4xl font-bold">{t('dashboard.welcome', { name: user.name })}</h1>
-            <p className={`mt-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-              {t('dashboard.myProgress')}
-            </p>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition"
-          >
-            {t('common.logout')}
-          </button>
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold">{t('dashboard.welcome', { name: user.name })}</h1>
+          <p className={`mt-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+            {t('dashboard.myProgress')}
+          </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
