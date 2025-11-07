@@ -1,4 +1,6 @@
 import { useState, KeyboardEvent, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useTheme } from '../hooks/useTheme';
 
 interface MessageInputProps {
   onSend: (message: string) => void;
@@ -6,6 +8,8 @@ interface MessageInputProps {
 }
 
 function MessageInput({ onSend, disabled }: MessageInputProps) {
+  const { t } = useTranslation();
+  const { isDark } = useTheme();
   const [input, setInput] = useState('');
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
@@ -48,7 +52,7 @@ function MessageInput({ onSend, disabled }: MessageInputProps) {
 
   const handleVoiceInput = () => {
     if (!recognitionRef.current) {
-      alert('Браузърът не поддържа гласово подаване');
+      alert(t('session.voiceNotSupported'));
       return;
     }
 
@@ -74,16 +78,20 @@ function MessageInput({ onSend, disabled }: MessageInputProps) {
   };
 
   return (
-    <div className="bg-white border-t border-gray-200 px-4 py-4">
+    <div className={`border-t px-4 py-4 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
       <div className="max-w-4xl mx-auto flex items-end space-x-3">
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={handleKeyPress}
-          placeholder="Обясни концепцията на AI ученика..."
+          placeholder={t('session.inputPlaceholder')}
           disabled={disabled}
           rows={3}
-          className="flex-1 resize-none px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+          className={`flex-1 resize-none px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed ${
+            isDark
+              ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400 disabled:bg-gray-800 disabled:text-gray-500'
+              : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 disabled:bg-gray-100 disabled:text-gray-400'
+          }`}
         />
 
         <button
@@ -92,24 +100,26 @@ function MessageInput({ onSend, disabled }: MessageInputProps) {
           className={`px-4 py-3 rounded-xl transition duration-200 ${
             isListening
               ? 'bg-red-600 hover:bg-red-700 text-white'
+              : isDark
+              ? 'bg-gray-700 hover:bg-gray-600 text-gray-200'
               : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-          } disabled:bg-gray-100 disabled:cursor-not-allowed`}
-          title={isListening ? 'Слушам...' : 'Микрофон'}
+          } disabled:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50`}
+          title={isListening ? t('session.listening') : t('session.microphone')}
         >
-          {isListening ? 'Слушам...' : 'Микрофон'}
+          {isListening ? t('session.listening') : t('session.microphone')}
         </button>
 
         <button
           onClick={handleSend}
           disabled={disabled || !input.trim()}
-          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white font-medium rounded-xl transition duration-200"
+          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:opacity-50 text-white font-medium rounded-xl transition duration-200"
         >
-          Изпрати
+          {t('session.send')}
         </button>
       </div>
       <div className="max-w-4xl mx-auto mt-2">
-        <p className="text-xs text-gray-500 text-center">
-          Съвет: Обяснявай със примери и питай дали AI ученикът разбра
+        <p className={`text-xs text-center ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+          {t('session.tipText')}
         </p>
       </div>
     </div>
