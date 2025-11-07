@@ -82,7 +82,15 @@ router.get('/user/:userId/progress', authMiddleware, requireAuth, async (req, re
     });
 
     // Organize by section
-    const progressBySection: Record<string, any[]> = {};
+    interface TopicProgress {
+      topicId: string;
+      topicTitle: string;
+      understandingLevel: number;
+      sessionsCount: number;
+      lastStudied: Date | null;
+    }
+
+    const progressBySection: Record<string, TopicProgress[]> = {};
     Object.values(TOPICS_SECTIONS).forEach((section) => {
       progressBySection[section] = [];
     });
@@ -100,7 +108,15 @@ router.get('/user/:userId/progress', authMiddleware, requireAuth, async (req, re
     });
 
     // Calculate stats by section
-    const stats: Record<string, any> = {};
+    interface SectionStats {
+      totalTopics: number;
+      progressedTopics: number;
+      completedTopics: number;
+      averageUnderstanding: number;
+      topics: TopicProgress[];
+    }
+
+    const stats: Record<string, SectionStats> = {};
     Object.entries(progressBySection).forEach(([section, items]) => {
       const totalTopicsInSection = getTopicsBySection(section).length;
       const completedTopics = items.filter((item) => item.understandingLevel >= 0.7).length;

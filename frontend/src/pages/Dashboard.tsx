@@ -7,6 +7,7 @@ import { useTheme } from '../hooks/useTheme';
 import { SectionTabs } from '../components/SectionTabs';
 import { TopicCard } from '../components/TopicCard';
 import { api } from '../services/api';
+import { Knowledge } from '../types';
 
 interface AilyInstance {
   id: string;
@@ -58,8 +59,8 @@ function Dashboard() {
           try {
             // Reload Aily knowledge/progress
             const knowledge = await api.aiStudents.getAIStudentKnowledge(ailyInstance.id);
-            const progressMap: Record<string, any> = {};
-            knowledge.forEach((k: any) => {
+            const progressMap: Record<string, Knowledge> = {};
+            knowledge.forEach((k: Knowledge) => {
               progressMap[k.concept] = k;
             });
             setAilyProgress(progressMap);
@@ -92,8 +93,8 @@ function Dashboard() {
             // Load knowledge/progress for this Aily
             try {
               const knowledge = await api.aiStudents.getAIStudentKnowledge(aily.id);
-              const progressMap: Record<string, any> = {};
-              knowledge.forEach((k: any) => {
+              const progressMap: Record<string, Knowledge> = {};
+              knowledge.forEach((k: Knowledge) => {
                 progressMap[k.concept] = k;
               });
               setAilyProgress(progressMap);

@@ -63,13 +63,15 @@ export class EmailService {
     try {
       await sgMail.send(msg);
       console.log(`[OK] Verification email sent to ${toEmail}`);
-    } catch (error: any) {
-      console.error('[ERR] SendGrid Error:', {
-        status: error.code,
-        message: error.message,
-        errors: error.response?.body?.errors,
-        details: error.response?.body
-      });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error('[ERR] SendGrid Error:', {
+          message: error.message,
+          error
+        });
+      } else {
+        console.error('[ERR] SendGrid Error:', error);
+      }
       throw new Error('Failed to send verification email');
     }
   }

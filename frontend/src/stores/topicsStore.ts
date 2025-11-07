@@ -33,7 +33,7 @@ export const useTopicsStore = create<TopicsState>((set, get) => ({
       const response = await api.topics.getAllTopics();
       // Flatten all topics from sections
       const allTopics: Topic[] = [];
-      Object.values(response.sections).forEach((section: any) => {
+      Object.values(response.sections).forEach((section: { topics: Topic[] }) => {
         allTopics.push(...section.topics);
       });
       set({ topics: allTopics, isLoading: false });
@@ -57,7 +57,7 @@ export const useTopicsStore = create<TopicsState>((set, get) => ({
       const response = await api.topics.getUserProgress(userId);
       // Transform response into a flat map for easier access
       const progressMap: Record<string, TopicProgress> = {};
-      Object.values(response).forEach((section: any) => {
+      Object.values(response).forEach((section: { topics?: TopicProgress[] }) => {
         section.topics?.forEach((topic: TopicProgress) => {
           progressMap[topic.topicId] = topic;
         });

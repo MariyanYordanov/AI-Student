@@ -512,9 +512,9 @@ router.post('/resend-verification-email', async (req, res, next) => {
  * GET /api/auth/me
  * Get current user info with preferences
  */
-router.get('/me', authMiddleware, async (req, res, next) => {
+router.get('/me', authMiddleware, requireAuth, async (req, res, next) => {
   try {
-    const userId = (req as any).userId;
+    const userId = req.user!.id;
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -560,7 +560,7 @@ router.patch('/preferences', authMiddleware, requireAuth, async (req, res, next)
       return;
     }
 
-    const updateData: any = {};
+    const updateData: { preferredTheme?: string; preferredLanguage?: string } = {};
     if (preferredTheme) updateData.preferredTheme = preferredTheme;
     if (preferredLanguage) updateData.preferredLanguage = preferredLanguage;
 

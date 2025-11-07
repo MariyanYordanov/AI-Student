@@ -55,7 +55,7 @@ async function fetchWithTimeout(url: string, options: RequestInit = {}): Promise
 /**
  * Handle API response errors with user-friendly messages
  */
-async function handleResponse(response: Response): Promise<any> {
+async function handleResponse<T = unknown>(response: Response): Promise<T> {
   if (!response.ok) {
     // Unauthorized
     if (response.status === 401) {
@@ -116,7 +116,7 @@ export const api = {
     },
 
     async updatePreferences(preferredTheme?: string, preferredLanguage?: string) {
-      const body: any = {};
+      const body: { preferredTheme?: string; preferredLanguage?: string } = {};
       if (preferredTheme) body.preferredTheme = preferredTheme;
       if (preferredLanguage) body.preferredLanguage = preferredLanguage;
 

@@ -56,3 +56,14 @@ export interface Session {
   createdAt: string;
   endedAt?: string;
 }
+
+export interface Knowledge {
+  id: string;
+  ailyInstanceId: string;
+  concept: string;
+  understandingLevel: number;
+  examplesSeen: number;
+  lastReviewed: string;
+  createdAt: string;
+  updatedAt: string;
+}
