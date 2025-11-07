@@ -4,13 +4,13 @@ import { TOPICS } from '../src/data/topics';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Seeding database...');
+  console.log('Seeding database...');
 
   // Skip creating test user - users should register via the app
-  console.log('ℹ️  Skipping test user creation (users should register via app)');
+  console.log('Skipping test user creation (users should register via app)');
 
   // Seed all topics into database
-  console.log('\n📚 Seeding topics...');
+  console.log('\nSeeding topics...');
 
   for (const topic of TOPICS) {
     await prisma.topic.upsert({
@@ -27,7 +27,7 @@ async function main() {
     });
   }
 
-  console.log(`✅ Created ${TOPICS.length} topics in database`);
+  console.log(`Created ${TOPICS.length} topics in database`);
 
   // Count topics by section
   const sections = new Map<string, number>();
@@ -35,7 +35,7 @@ async function main() {
     sections.set(topic.section, (sections.get(topic.section) || 0) + 1);
   });
 
-  console.log('\n📖 Topics by section:');
+  console.log('\nTopics by section:');
   sections.forEach((count, section) => {
     console.log(`   ${section}: ${count} topics`);
   });
@@ -43,11 +43,11 @@ async function main() {
 
 main()
   .then(async () => {
-    console.log('\n✅ Seeding completed successfully');
+    console.log('\nSeeding completed successfully');
     await prisma.$disconnect();
   })
   .catch(async (e) => {
-    console.error('❌ Seed error:', e);
+    console.error('Seed error:', e);
     await prisma.$disconnect();
     // Exit with error code to indicate failure
     // @ts-ignore - process is available in Node.js runtime
