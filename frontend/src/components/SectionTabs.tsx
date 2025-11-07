@@ -1,3 +1,4 @@
+import { useTheme } from '../hooks/useTheme';
 import { TOPICS_SECTIONS } from '../data/topics';
 
 interface SectionTabsProps {
@@ -6,6 +7,7 @@ interface SectionTabsProps {
 }
 
 export function SectionTabs({ selectedSection, onSelectSection }: SectionTabsProps) {
+  const { isDark } = useTheme();
   const sections = Object.values(TOPICS_SECTIONS);
 
   return (
@@ -17,6 +19,8 @@ export function SectionTabs({ selectedSection, onSelectSection }: SectionTabsPro
           className={`px-4 py-2 rounded-lg font-medium transition-all ${
             selectedSection === section
               ? 'bg-blue-600 text-white shadow-lg'
+              : isDark
+              ? 'bg-gray-700 text-gray-200 hover:bg-gray-600'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
