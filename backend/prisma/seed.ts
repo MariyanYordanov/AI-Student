@@ -6,22 +6,8 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Seeding database...');
 
-  // Create a temporary test user
-  const user = await prisma.user.upsert({
-    where: { email: 'test@example.com' },
-    update: {},
-    create: {
-      id: 'temp-user-123',
-      email: 'test@example.com',
-      password: '', // Will be set on first login
-      name: 'Тестов Потребител',
-      role: 'STUDENT',
-    },
-  });
-
-  console.log('✅ Created user:', user.name);
-  console.log('📧 Email:', user.email);
-  console.log('🆔 ID:', user.id);
+  // Skip creating test user - users should register via the app
+  console.log('ℹ️  Skipping test user creation (users should register via app)');
 
   // Seed all topics into database
   console.log('\n📚 Seeding topics...');
