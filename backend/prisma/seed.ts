@@ -42,10 +42,17 @@ async function main() {
 }
 
 main()
-  .catch((e) => {
-    console.error('❌ Seed error:', e);
-    process.exit(1);
-  })
-  .finally(async () => {
+  .then(async () => {
+    console.log('\n✅ Seeding completed successfully');
     await prisma.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error('❌ Seed error:', e);
+    await prisma.$disconnect();
+    // Exit with error code to indicate failure
+    // @ts-ignore - process is available in Node.js runtime
+    if (typeof process !== 'undefined') {
+      // @ts-ignore
+      process.exit(1);
+    }
   });
