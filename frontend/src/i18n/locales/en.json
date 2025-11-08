@@ -124,7 +124,15 @@
     "difficulty": "Difficulty",
     "estimatedTime": "Estimated Time",
     "concepts": "concepts",
-    "noTopics": "No topics available"
+    "noTopics": "No topics available",
+    "sections": {
+      "basics": "Basics",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced",
+      "oop": "OOP",
+      "applications": "Applications",
+      "web": "Web"
+    }
   },
   "session": {
     "title": "Learning Session",

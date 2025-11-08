@@ -13,12 +13,12 @@ export interface Topic {
 }
 
 export const TOPICS_SECTIONS = {
-  BASICS: 'Основи',
-  INTERMEDIATE: 'Средни',
-  ADVANCED: 'Напреднал',
-  OOP: 'ООП',
-  APPLICATIONS: 'Практически',
-  WEB: 'Web',
+  BASICS: 'basics',
+  INTERMEDIATE: 'intermediate',
+  ADVANCED: 'advanced',
+  OOP: 'oop',
+  APPLICATIONS: 'applications',
+  WEB: 'web',
 } as const;
 
 export const TOPICS: Topic[] = [

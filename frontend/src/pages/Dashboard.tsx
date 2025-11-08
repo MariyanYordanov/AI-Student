@@ -186,7 +186,7 @@ function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Topics Section */}
           <div className={`lg:col-span-2 rounded-2xl shadow-xl p-8 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
-            <h2 className="text-2xl font-bold mb-6">{t('dashboard.topics')}</h2>
+            <h2 className={`text-2xl font-bold mb-6 ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>{t('dashboard.topics')}</h2>
 
             {topicsLoading ? (
               <div className="text-center py-12">
@@ -217,7 +217,7 @@ function Dashboard() {
           {/* Aily Info & Start Section */}
           <div className={`rounded-2xl shadow-xl p-8 h-fit ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
             <div className="mb-6">
-              <h3 className="text-2xl font-bold">{t('common.appName')}</h3>
+              <h3 className={`text-2xl font-bold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>{t('common.appName')}</h3>
               <p className={`text-sm mt-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                 {t('session.aiStudent')}
               </p>

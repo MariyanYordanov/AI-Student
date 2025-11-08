@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
 import { TOPICS_SECTIONS } from '../data/topics';
 
@@ -7,6 +8,7 @@ interface SectionTabsProps {
 }
 
 export function SectionTabs({ selectedSection, onSelectSection }: SectionTabsProps) {
+  const { t } = useTranslation();
   const { isDark } = useTheme();
   const sections = Object.values(TOPICS_SECTIONS);
 
@@ -24,7 +26,7 @@ export function SectionTabs({ selectedSection, onSelectSection }: SectionTabsPro
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
-          {section}
+          {t(`topics.sections.${section}`)}
         </button>
       ))}
     </div>
