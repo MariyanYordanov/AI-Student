@@ -42,18 +42,9 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       const response = await api.auth.login(email, password);
 
-      // Extract user data without token
-      const user = {
-        id: response.id,
-        email: response.email,
-        name: response.name,
-        role: response.role,
-        emailVerified: response.emailVerified
-      };
-
       localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify(user));
-      set({ user, token: response.token, isLoading: false });
+      localStorage.setItem('user', JSON.stringify(response.user));
+      set({ user: response.user, token: response.token, isLoading: false });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Грешка при логин';
       set({ error: message, isLoading: false });

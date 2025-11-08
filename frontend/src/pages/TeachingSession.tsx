@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../stores/authStore';
 import { useTheme } from '../hooks/useTheme';
 import { api } from '../services/api';
-import { SessionMessage, AIStudent } from '../types';
+import { SessionMessage, AilyInstance } from '../types';
 import ChatMessage from '../components/ChatMessage';
 import MessageInput from '../components/MessageInput';
 
@@ -17,7 +17,7 @@ function TeachingSession() {
 
   const [messages, setMessages] = useState<SessionMessage[]>([]);
   const [loading, setLoading] = useState(false);
-  const [aiStudent, setAIStudent] = useState<AIStudent | null>(null);
+  const [aiStudent, setAIStudent] = useState<AilyInstance | null>(null);
   const [topic, setTopic] = useState('');
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -51,7 +51,11 @@ function TeachingSession() {
     try {
       const session = await api.getSession(sessionId);
       setMessages(session.transcript);
-      setAIStudent(session.aiStudent);
+      // Load AI Student by ID
+      if (session.aiStudentId) {
+        const aiStudent = await api.getAIStudent(session.aiStudentId);
+        setAIStudent(aiStudent);
+      }
       setTopic(session.topic);
     } catch (error) {
       console.error('Error loading session:', error);
@@ -83,14 +87,11 @@ function TeachingSession() {
       const result = await api.endSession(sessionId);
 
       let message = `${t('session.sessionEnded')}!\n\n`;
-      message += `${t('session.timeSpent')}: ${result.durationMinutes} ${t('dashboard.minutes')}\n`;
-      message += `${t('dashboard.messages')}: ${result.messagesExchanged}\n`;
       message += `${t('session.xpEarned')}: +${result.xpEarned}\n`;
-      message += `${t('common.appName')} ${t('dashboard.xp')}: ${result.totalXP}`;
+      message += `${t('common.appName')} ${t('dashboard.level')} ${result.newLevel}`;
 
-      if (result.leveledUp) {
-        message += `\n\n${t('session.wellUnderstood')}!\n`;
-        message += `${t('common.appName')} ${t('dashboard.level')} ${result.newLevel}!`;
+      if (result.qualityScore) {
+        message += `\n${t('session.quality')}: ${Math.round(result.qualityScore * 100)}%`;
       }
 
       alert(message);

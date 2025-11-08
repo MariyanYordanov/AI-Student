@@ -67,3 +67,19 @@ export interface Knowledge {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface AilyInstance {
+  id: string;
+  userId: string;
+  currentCharacterId: string;
+  name?: string; // Optional for compatibility with AIStudent
+  level: number;
+  totalXP: number;
+  personalityTraits: {
+    curiosity: number;
+    confusionRate: number;
+    learningSpeed: number;
+  };
+  createdAt: string;
+  updatedAt: string;
+}

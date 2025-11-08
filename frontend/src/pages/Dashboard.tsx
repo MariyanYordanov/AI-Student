@@ -156,7 +156,7 @@ function Dashboard() {
     setIsStarting(true);
     try {
       const session = await api.startSession(user.id, ailyInstance.id, selectedTopic.title);
-      navigate(`/teach/${session.sessionId}`);
+      navigate(`/teach/${session.id}`);
     } catch (error) {
       console.error('[ERR] Session start failed:', error);
       const errorMessage = error instanceof Error ? error.message : 'Възникна грешка. Моля, опитай отново.';

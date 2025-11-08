@@ -1,4 +1,5 @@
 // API client for backend communication
+import { AilyInstance, Knowledge, User, Topic, Session } from '../types';
 
 const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:4000') + '/api';
 const REQUEST_TIMEOUT = 30000; // 30 seconds
@@ -91,7 +92,7 @@ export const api = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, name, password }),
       });
-      return handleResponse(response);
+      return handleResponse<{ token: string; user: User }>(response);
     },
 
     async login(email: string, password: string) {
@@ -100,19 +101,19 @@ export const api = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-      return handleResponse(response);
+      return handleResponse<{ token: string; user: User }>(response);
     },
 
     async getCurrentUser() {
       const response = await fetchWithTimeout(`${API_BASE}/auth/me`);
-      return handleResponse(response);
+      return handleResponse<User>(response);
     },
 
     async logout() {
       const response = await fetchWithTimeout(`${API_BASE}/auth/logout`, {
         method: 'POST',
       });
-      return handleResponse(response);
+      return handleResponse<{ message: string }>(response);
     },
 
     async updatePreferences(preferredTheme?: string, preferredLanguage?: string) {
@@ -125,7 +126,7 @@ export const api = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
-      return handleResponse(response);
+      return handleResponse<User>(response);
     },
   },
 
@@ -133,17 +134,17 @@ export const api = {
   topics: {
     async getAllTopics() {
       const response = await fetchWithTimeout(`${API_BASE}/topics`);
-      return handleResponse(response);
+      return handleResponse<Record<string, { topics: Topic[] }>>(response);
     },
 
     async getTopic(topicId: string) {
       const response = await fetchWithTimeout(`${API_BASE}/topics/${topicId}`);
-      return handleResponse(response);
+      return handleResponse<Topic>(response);
     },
 
     async getUserProgress(userId: string) {
       const response = await fetchWithTimeout(`${API_BASE}/topics/user/${userId}/progress`);
-      return handleResponse(response);
+      return handleResponse<Record<string, unknown>>(response);
     },
 
     async recordProgress(topicId: string, understandingLevel: number) {
@@ -152,12 +153,12 @@ export const api = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ understandingLevel }),
       });
-      return handleResponse(response);
+      return handleResponse<{ message: string }>(response);
     },
 
     async getTopicsBySection(sectionName: string) {
       const response = await fetchWithTimeout(`${API_BASE}/topics/section/${sectionName}`);
-      return handleResponse(response);
+      return handleResponse<{ topics: Topic[] }>(response);
     },
   },
 
@@ -165,7 +166,7 @@ export const api = {
   aiStudents: {
     async getCharacters() {
       const response = await fetchWithTimeout(`${API_BASE}/ai-students/characters`);
-      return handleResponse(response);
+      return handleResponse<AilyInstance[]>(response);
     },
 
     async selectCharacter(characterId: string) {
@@ -174,22 +175,22 @@ export const api = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ characterId }),
       });
-      return handleResponse(response);
+      return handleResponse<AilyInstance>(response);
     },
 
     async getUserStudents(userId: string) {
       const response = await fetchWithTimeout(`${API_BASE}/ai-students/user/${userId}`);
-      return handleResponse(response);
+      return handleResponse<AilyInstance[]>(response);
     },
 
     async getAIStudent(id: string) {
       const response = await fetchWithTimeout(`${API_BASE}/ai-students/${id}`);
-      return handleResponse(response);
+      return handleResponse<AilyInstance>(response);
     },
 
     async getAIStudentKnowledge(id: string) {
       const response = await fetchWithTimeout(`${API_BASE}/ai-students/${id}/knowledge`);
-      return handleResponse(response);
+      return handleResponse<Knowledge[]>(response);
     },
   },
 
@@ -200,17 +201,17 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ownerId, name }),
     });
-    return handleResponse(response);
+    return handleResponse<AilyInstance>(response);
   },
 
   async getAIStudent(id: string) {
     const response = await fetchWithTimeout(`${API_BASE}/ai-students/${id}`);
-    return handleResponse(response);
+    return handleResponse<AilyInstance>(response);
   },
 
   async getAIStudentKnowledge(id: string) {
     const response = await fetchWithTimeout(`${API_BASE}/ai-students/${id}/knowledge`);
-    return handleResponse(response);
+    return handleResponse<Knowledge[]>(response);
   },
 
   // Sessions
@@ -220,7 +221,7 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ studentId, aiStudentId, topic }),
     });
-    return handleResponse(response);
+    return handleResponse<Session>(response);
   },
 
   async sendMessage(sessionId: string, message: string) {
@@ -229,18 +230,18 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message }),
     });
-    return handleResponse(response);
+    return handleResponse<{ response: string; emotion: string; newLevel?: number }>(response);
   },
 
   async endSession(sessionId: string) {
     const response = await fetchWithTimeout(`${API_BASE}/sessions/${sessionId}/end`, {
       method: 'POST',
     });
-    return handleResponse(response);
+    return handleResponse<{ xpEarned: number; newLevel: number; qualityScore: number }>(response);
   },
 
   async getSession(sessionId: string) {
     const response = await fetchWithTimeout(`${API_BASE}/sessions/${sessionId}`);
-    return handleResponse(response);
+    return handleResponse<Session>(response);
   },
 };
