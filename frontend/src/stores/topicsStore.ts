@@ -33,7 +33,7 @@ export const useTopicsStore = create<TopicsState>((set, get) => ({
       const response = await api.topics.getAllTopics();
       // Flatten all topics from sections
       const allTopics: Topic[] = [];
-      Object.values(response).forEach((section: { topics: Topic[] }) => {
+      Object.values(response.sections).forEach((section: { topics: Topic[] }) => {
         allTopics.push(...section.topics);
       });
       set({ topics: allTopics, isLoading: false });

@@ -134,7 +134,7 @@ export const api = {
   topics: {
     async getAllTopics() {
       const response = await fetchWithTimeout(`${API_BASE}/topics`);
-      return handleResponse<Record<string, { topics: Topic[] }>>(response);
+      return handleResponse<{ totalTopics: number; sections: Record<string, { topics: Topic[] }> }>(response);
     },
 
     async getTopic(topicId: string) {
