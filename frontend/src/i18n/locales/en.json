@@ -154,6 +154,7 @@
     "wellUnderstood": "Well understood",
     "partiallyUnderstood": "Partially understood",
     "justStarted": "Just started",
+    "quality": "Quality",
     "emotion": {
       "confused": "Confused",
       "understanding": "Understanding",
