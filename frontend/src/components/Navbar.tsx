@@ -49,12 +49,12 @@ export function Navbar() {
 
             {user && user.emailVerified ? (
               <div className="flex items-center gap-4">
-                <span className="text-sm text-gray-700 dark:text-gray-300">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   {user.name}
                 </span>
                 <button
                   onClick={handleLogout}
-                  className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 font-medium transition"
+                  className="px-4 py-2 text-sm bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg font-medium transition border border-red-200 dark:border-red-800"
                 >
                   {t('common.logout')}
                 </button>

@@ -231,19 +231,13 @@ function Dashboard() {
               <>
                 <div className={`space-y-4 mb-6 p-4 rounded-lg ${isDark ? 'bg-gray-700' : 'bg-gray-50'}`}>
                   <div>
-                    <p className={`text-xs mb-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                      {t('dashboard.level')}
-                    </p>
-                    <p className="text-sm">
-                      <span className="font-semibold">{t('dashboard.level')}: {ailyInstance?.level || 0}</span>
+                    <p className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+                      {t('dashboard.level')}: {ailyInstance?.level || 0}
                     </p>
                   </div>
 
                   <div>
-                    <p className={`text-xs mb-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                      {t('dashboard.xp')}
-                    </p>
-                    <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                    <p className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
                       {t('dashboard.xp')}: {ailyInstance?.totalXP || 0}
                     </p>
                   </div>
@@ -265,8 +259,14 @@ function Dashboard() {
 
                 <button
                   onClick={handleStartSession}
-                  disabled={isStarting || !selectedTopic}
-                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center"
+                  disabled={isStarting || !selectedTopic || !ailyInstance}
+                  className={`w-full font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center ${
+                    isStarting || !selectedTopic || !ailyInstance
+                      ? isDark
+                        ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      : 'bg-blue-600 hover:bg-blue-700 text-white'
+                  }`}
                 >
                   {isStarting ? (
                     <>
@@ -274,7 +274,7 @@ function Dashboard() {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      {t('session.endingSession')}
+                      {t('common.loading')}
                     </>
                   ) : (
                     t('dashboard.startSession')
