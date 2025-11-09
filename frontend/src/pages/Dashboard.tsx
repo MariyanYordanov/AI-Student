@@ -173,7 +173,7 @@ function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <div className="max-w-6xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">

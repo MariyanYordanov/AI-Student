@@ -19,7 +19,9 @@ function getAuthToken(): string | null {
  */
 function getCurrentLanguage(): string {
   if (typeof window !== 'undefined') {
-    return localStorage.getItem('i18nextLng') || 'en';
+    const lng = localStorage.getItem('i18nextLng') || 'en';
+    // Extract just 'en' or 'bg' from 'en-US', 'bg-BG', etc.
+    return lng.toLowerCase().startsWith('bg') ? 'bg' : 'en';
   }
   return 'en';
 }
