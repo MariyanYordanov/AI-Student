@@ -16,6 +16,10 @@ router.post('/start', async (req, res, next) => {
   try {
     const { studentId, aiStudentId, topic } = req.body;
 
+    // Get language from Accept-Language header (defaults to 'bg')
+    const acceptLanguage = req.headers['accept-language'] || 'bg';
+    const language = acceptLanguage.toLowerCase().startsWith('en') ? 'en' : 'bg';
+
     if (!studentId || !aiStudentId || !topic) {
       res.status(400).json({ error: 'Missing required fields' });
       return;
@@ -78,13 +82,16 @@ router.post('/start', async (req, res, next) => {
       personalityTraits,
     };
 
-    // Generate greeting message with timeout handling
-    const greetingPrompt = `Здравей! Днес ще те науча за ${topic}. Готов ли си?`;
+    // Generate greeting message with timeout handling (language-aware)
+    const greetingPrompt = language === 'en'
+      ? `Hi! Today you'll teach me about ${topic}. Ready?`
+      : `Здравей! Днес ще те науча за ${topic}. Готов ли си?`;
+
     let aiGreeting;
     let geminiAvailable = true;
 
     try {
-      aiGreeting = await gemini.generateResponse(greetingPrompt, context, []);
+      aiGreeting = await gemini.generateResponse(greetingPrompt, context, [], language);
     } catch (aiError) {
       console.error('[ERR] Failed to generate AI greeting:', aiError);
       geminiAvailable = false;
@@ -94,12 +101,16 @@ router.post('/start', async (req, res, next) => {
       const isTimeout = errorMsg.includes('timeout');
       const isApiKey = errorMsg.includes('API_KEY') || errorMsg.includes('API error');
 
-      // Provide specific fallback message
-      let fallbackMessage = `Здравей! Днес ще те науча за ${topic}. Готов ли си?`;
+      // Provide specific fallback message (language-aware)
+      let fallbackMessage = greetingPrompt;
       if (isTimeout) {
-        fallbackMessage = `Здравей! (AI асистентът отговаря бавно, но можем да започнем). Днес ще те науча за ${topic}. Готов ли си?`;
+        fallbackMessage = language === 'en'
+          ? `Hi! (AI is responding slowly, but we can start). Today you'll teach me about ${topic}. Ready?`
+          : `Здравей! (AI асистентът отговаря бавно, но можем да започнем). Днес ще те науча за ${topic}. Готов ли си?`;
       } else if (isApiKey) {
-        fallbackMessage = `Здравей! (AI асистентът е недостъпен, но можем да започнем). Днес ще те науча за ${topic}. Готов ли си?`;
+        fallbackMessage = language === 'en'
+          ? `Hi! (AI is unavailable, but we can start). Today you'll teach me about ${topic}. Ready?`
+          : `Здравей! (AI асистентът е недостъпен, но можем да започнем). Днес ще те науча за ${topic}. Готов ли си?`;
       }
 
       aiGreeting = {
