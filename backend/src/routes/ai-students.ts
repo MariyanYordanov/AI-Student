@@ -19,72 +19,8 @@ router.get('/characters', async (_req, res, next) => {
 });
 
 /**
- * POST /api/ai-students/select-character
- * Select or create AI student with a character
- * Each user can have only ONE AI student per character
- */
-router.post('/select-character', authMiddleware, requireAuth, async (req, res, next) => {
-  try {
-    const { characterId } = req.body;
-    const userId = req.user!.id;
-
-    if (!characterId) {
-      res.status(400).json({ error: 'characterId is required' });
-      return;
-    }
-
-    // Verify character exists
-    const character = getCharacterById(characterId);
-    if (!character) {
-      res.status(404).json({ error: 'Character not found' });
-      return;
-    }
-
-    // Check if user already has this character
-    let aiStudent = await prisma.aIStudent.findUnique({
-      where: {
-        ownerId_characterId: {
-          ownerId: userId,
-          characterId,
-        },
-      },
-      include: {
-        knowledge: true,
-        sessions: {
-          orderBy: { createdAt: 'desc' },
-          take: 5,
-        },
-      },
-    });
-
-    // Create if doesn't exist
-    if (!aiStudent) {
-      aiStudent = await prisma.aIStudent.create({
-        data: {
-          ownerId: userId,
-          characterId,
-          name: character.name,
-          personalityTraits: JSON.stringify(character.personality),
-        },
-        include: {
-          knowledge: true,
-          sessions: true,
-        },
-      });
-    }
-
-    res.json({
-      ...aiStudent,
-      personalityTraits: JSON.parse(aiStudent.personalityTraits),
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-/**
  * GET /api/ai-students/user/:userId
- * Get AilyInstance for a user (returns as array for backwards compatibility)
+ * Get AilyInstance for a user
  */
 router.get('/user/:userId', authMiddleware, requireAuth, async (req, res, next) => {
   try {
@@ -123,47 +59,14 @@ router.get('/user/:userId', authMiddleware, requireAuth, async (req, res, next) 
 });
 
 /**
- * POST /api/ai-students/create
- * DEPRECATED - Use /select-character instead
- * Kept for backward compatibility
- */
-router.post('/create', async (req, res, next) => {
-  try {
-    const { ownerId, name } = req.body;
-
-    if (!ownerId || !name) {
-      res.status(400).json({ error: 'ownerId and name are required' });
-      return;
-    }
-
-    const aiStudent = await prisma.aIStudent.create({
-      data: {
-        ownerId,
-        characterId: 'jean', // Default to Jean
-        name,
-        personalityTraits: JSON.stringify({
-          curiosity: 0.5 + Math.random() * 0.3,
-          confusionRate: 0.4 + Math.random() * 0.3,
-          learningSpeed: 0.3 + Math.random() * 0.4,
-        }),
-      },
-    });
-
-    res.json(aiStudent);
-  } catch (error) {
-    next(error);
-  }
-});
-
-/**
  * GET /api/ai-students/:id
- * Get AI student details
+ * Get AilyInstance details by ID
  */
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', authMiddleware, requireAuth, async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const aiStudent = await prisma.aIStudent.findUnique({
+    const ailyInstance = await prisma.ailyInstance.findUnique({
       where: { id },
       include: {
         knowledge: true,
@@ -174,14 +77,20 @@ router.get('/:id', async (req, res, next) => {
       },
     });
 
-    if (!aiStudent) {
-      res.status(404).json({ error: 'AI student not found' });
+    if (!ailyInstance) {
+      res.status(404).json({ error: 'Aily instance not found' });
+      return;
+    }
+
+    // Verify user owns this Aily instance
+    if (req.user!.id !== ailyInstance.userId) {
+      res.status(403).json({ error: 'Not authorized' });
       return;
     }
 
     res.json({
-      ...aiStudent,
-      personalityTraits: JSON.parse(aiStudent.personalityTraits),
+      ...ailyInstance,
+      personalityTraits: JSON.parse(ailyInstance.personalityTraits),
     });
   } catch (error) {
     next(error);
@@ -190,18 +99,109 @@ router.get('/:id', async (req, res, next) => {
 
 /**
  * GET /api/ai-students/:id/knowledge
- * Get AI student's knowledge map
+ * Get Aily's knowledge map
  */
-router.get('/:id/knowledge', async (req, res, next) => {
+router.get('/:id/knowledge', authMiddleware, requireAuth, async (req, res, next) => {
   try {
     const { id } = req.params;
 
+    // Verify Aily instance exists and user owns it
+    const ailyInstance = await prisma.ailyInstance.findUnique({
+      where: { id },
+      select: { userId: true },
+    });
+
+    if (!ailyInstance) {
+      res.status(404).json({ error: 'Aily instance not found' });
+      return;
+    }
+
+    if (req.user!.id !== ailyInstance.userId) {
+      res.status(403).json({ error: 'Not authorized' });
+      return;
+    }
+
+    // Get knowledge for this Aily instance
     const knowledge = await prisma.knowledge.findMany({
-      where: { aiStudentId: id },
+      where: { ailyInstanceId: id },
       orderBy: { understandingLevel: 'desc' },
     });
 
     res.json(knowledge);
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * POST /api/ai-students/:id/change-mood
+ * Change Aily's current character mood for the next session
+ */
+router.post('/:id/change-mood', authMiddleware, requireAuth, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { characterId } = req.body;
+
+    if (!characterId) {
+      res.status(400).json({ error: 'characterId is required' });
+      return;
+    }
+
+    // Verify character exists
+    const character = getCharacterById(characterId);
+    if (!character) {
+      res.status(404).json({ error: 'Character not found' });
+      return;
+    }
+
+    // Verify Aily instance exists and user owns it
+    const ailyInstance = await prisma.ailyInstance.findUnique({
+      where: { id },
+      select: { userId: true },
+    });
+
+    if (!ailyInstance) {
+      res.status(404).json({ error: 'Aily instance not found' });
+      return;
+    }
+
+    if (req.user!.id !== ailyInstance.userId) {
+      res.status(403).json({ error: 'Not authorized' });
+      return;
+    }
+
+    // Update Aily's current character
+    const updatedAily = await prisma.ailyInstance.update({
+      where: { id },
+      data: {
+        currentCharacterId: characterId,
+      },
+      include: {
+        knowledge: true,
+        sessions: {
+          orderBy: { createdAt: 'desc' },
+          take: 3,
+        },
+      },
+    });
+
+    res.json({
+      ...updatedAily,
+      personalityTraits: JSON.parse(updatedAily.personalityTraits),
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * GET /api/ai-students/random-character
+ * Get a random character mood for starting a new session
+ */
+router.get('/random-character', async (_req, res, next) => {
+  try {
+    const randomCharacter = getRandomCharacter();
+    res.json(randomCharacter);
   } catch (error) {
     next(error);
   }
