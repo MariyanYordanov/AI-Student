@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { STUDENT_CHARACTERS, getCharacterById } from '../data/students';
+import { AILY_CHARACTERS, getCharacterById, getRandomCharacter } from '../data/characters';
 import { authMiddleware, requireAuth } from '../middleware/auth';
 
 const router = Router();
@@ -8,11 +8,11 @@ const prisma = new PrismaClient();
 
 /**
  * GET /api/ai-students/characters
- * Get all available student characters
+ * Get all available Aily character moods/personalities
  */
 router.get('/characters', async (_req, res, next) => {
   try {
-    res.json(STUDENT_CHARACTERS);
+    res.json(AILY_CHARACTERS);
   } catch (error) {
     next(error);
   }

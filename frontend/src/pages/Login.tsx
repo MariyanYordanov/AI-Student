@@ -25,7 +25,7 @@ function Login() {
 
     try {
       await login(email, password);
-      navigate('/');
+      navigate('/dashboard');
     } catch (err) {
       setLocalError(error || t('auth.errors.genericError'));
     }
