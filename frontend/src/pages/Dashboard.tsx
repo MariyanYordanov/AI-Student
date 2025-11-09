@@ -18,7 +18,7 @@ interface AilyInstance {
 }
 
 function Dashboard() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { isDark } = useTheme();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -119,13 +119,13 @@ function Dashboard() {
     loadAily();
   }, [user]);
 
-  // Load topics
+  // Load topics - reload when language changes
   useEffect(() => {
     fetchAllTopics();
     if (user) {
       fetchUserProgress(user.id);
     }
-  }, [user]);
+  }, [user, i18n.language]); // Add i18n.language as dependency
 
   // Auto-select first section
   useEffect(() => {
