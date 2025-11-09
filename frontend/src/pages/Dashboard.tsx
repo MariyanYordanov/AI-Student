@@ -156,6 +156,11 @@ function Dashboard() {
     setIsStarting(true);
     try {
       const session = await api.startSession(user.id, ailyInstance.id, selectedTopic.title);
+
+      if (!session || !session.id) {
+        throw new Error('Session was not created properly');
+      }
+
       navigate(`/teach/${session.id}`);
     } catch (error) {
       console.error('[ERR] Session start failed:', error);

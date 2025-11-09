@@ -32,10 +32,14 @@ function TeachingSession() {
   }, [user, navigate]);
 
   useEffect(() => {
-    if (sessionId) {
+    if (sessionId && sessionId !== 'undefined') {
       loadSession();
+    } else if (!sessionId || sessionId === 'undefined') {
+      // No valid sessionId - redirect to dashboard
+      console.error('No valid sessionId, redirecting to dashboard');
+      navigate('/');
     }
-  }, [sessionId]);
+  }, [sessionId, navigate]);
 
   useEffect(() => {
     scrollToBottom();
@@ -46,7 +50,11 @@ function TeachingSession() {
   };
 
   const loadSession = async () => {
-    if (!sessionId) return;
+    if (!sessionId || sessionId === 'undefined') {
+      console.error('Invalid sessionId in loadSession:', sessionId);
+      navigate('/');
+      return;
+    }
 
     try {
       const session = await api.getSession(sessionId);
@@ -59,6 +67,10 @@ function TeachingSession() {
       setTopic(session.topic);
     } catch (error) {
       console.error('Error loading session:', error);
+      // If session not found, redirect to dashboard
+      if (error instanceof Error && error.message.includes('не е намерен')) {
+        navigate('/');
+      }
     }
   };
 
