@@ -1,10 +1,19 @@
 import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { TOPICS_SECTIONS } from '../data/topics';
 import { authMiddleware, requireAuth } from '../middleware/auth';
 
 const router = Router();
 const prisma = new PrismaClient();
+
+// Topic sections constants
+const TOPICS_SECTIONS = {
+  BASICS: 'basics',
+  INTERMEDIATE: 'intermediate',
+  ADVANCED: 'advanced',
+  OOP: 'oop',
+  APPLICATIONS: 'applications',
+  WEB: 'web',
+} as const;
 
 // Helper function to get language from request
 function getLanguage(req: any): 'bg' | 'en' {
