@@ -127,7 +127,11 @@ router.post('/start', async (req, res, next) => {
     });
 
     res.json({
-      sessionId: session.id,
+      id: session.id,  // Frontend expects 'id', not 'sessionId'
+      sessionId: session.id,  // Keep for backwards compatibility
+      studentId: session.studentId,
+      aiStudentId: session.ailyInstanceId,
+      topic: session.topic,
       aiStudent: ailyInstance,
       initialMessage: aiGreeting.message,
       initialEmotion: aiGreeting.emotion,
