@@ -240,13 +240,9 @@ export const api = {
   },
 
   async sendMessage(sessionId: string, message: string) {
-    const language = getCurrentLanguage(); // Get current language
+    // Note: Accept-Language is automatically added by fetchWithTimeout
     const response = await fetchWithTimeout(`${API_BASE}/sessions/${sessionId}/message`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept-Language': language, // Send current language
-      },
       body: JSON.stringify({ message }),
     });
     return handleResponse<{ response: string; emotion: string; newLevel?: number }>(response);
