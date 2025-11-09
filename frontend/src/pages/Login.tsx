@@ -25,7 +25,7 @@ function Login() {
 
     try {
       await login(email, password);
-      navigate('/dashboard');
+      navigate('/'); // HomeRoute will show Dashboard for logged in users
     } catch (err) {
       setLocalError(error || t('auth.errors.genericError'));
     }

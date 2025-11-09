@@ -113,7 +113,8 @@ export const api = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-      return handleResponse<{ token: string; user: User }>(response);
+      // Backend returns flat object with all user fields + token
+      return handleResponse<User & { token: string }>(response);
     },
 
     async getCurrentUser() {
