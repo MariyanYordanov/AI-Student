@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../stores/authStore';
-import { useTheme } from '../hooks/useTheme';
 import { api } from '../services/api';
 import { SessionMessage, AilyInstance } from '../types';
 import ChatMessage from '../components/ChatMessage';
@@ -10,7 +9,6 @@ import MessageInput from '../components/MessageInput';
 
 function TeachingSession() {
   const { t } = useTranslation();
-  const { isDark } = useTheme();
   const { sessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
   const { user } = useAuthStore();
@@ -129,30 +127,30 @@ function TeachingSession() {
   const xpProgress = nextLevelXP > 0 ? Math.min((currentLevelXP / nextLevelXP) * 100, 100) : 0;
 
   return (
-    <div className={`flex flex-col h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
+    <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <div className={`px-6 py-4 shadow-sm ${isDark ? 'bg-gray-800 border-b border-gray-700' : 'bg-white border-b border-gray-200'}`}>
+      <div className="px-6 py-4 shadow-sm bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between max-w-4xl mx-auto">
           <div className="flex items-center space-x-4">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
               {t('common.appName').charAt(0)}
             </div>
             <div className="flex-1">
-              <h2 className={`text-xl font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                 {t('common.appName')}
               </h2>
-              <p className={`text-sm mb-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+              <p className="text-sm mb-1 text-gray-500 dark:text-gray-400">
                 {t('session.topic')}: {topic} • {t('dashboard.level')} {currentLevel}
               </p>
               {/* XP Progress Bar */}
               <div className="flex items-center space-x-2">
-                <div className={`flex-1 rounded-full h-2 max-w-xs ${isDark ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                <div className="flex-1 rounded-full h-2 max-w-xs bg-gray-200 dark:bg-gray-700">
                   <div
                     className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all duration-500"
                     style={{ width: `${xpProgress}%` }}
                   />
                 </div>
-                <span className={`text-xs font-medium whitespace-nowrap ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                <span className="text-xs font-medium whitespace-nowrap text-gray-600 dark:text-gray-400">
                   {totalXP} / {XP_THRESHOLDS[currentLevel + 1] || '∞'} XP
                 </span>
               </div>
@@ -160,7 +158,7 @@ function TeachingSession() {
           </div>
           <button
             onClick={handleEndSession}
-            className={`px-4 py-2 text-sm font-medium rounded-lg transition ${isDark ? 'text-red-400 hover:bg-red-900/20' : 'text-red-600 hover:bg-red-50'}`}
+            className="px-4 py-2 text-sm font-medium rounded-lg transition text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
           >
             {t('session.endSession')}
           </button>
@@ -171,7 +169,7 @@ function TeachingSession() {
       <div className="flex-1 overflow-y-auto px-4 py-6">
         <div className="max-w-4xl mx-auto space-y-4">
           {messages.length === 0 && !loading && (
-            <div className={`text-center py-12 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+            <div className="text-center py-12 text-gray-500 dark:text-gray-400">
               <p className="text-lg mb-2">{t('session.inputPlaceholder')}</p>
               <p className="text-sm">{t('session.tipText')}</p>
             </div>
@@ -182,11 +180,11 @@ function TeachingSession() {
           ))}
 
           {loading && (
-            <div className={`flex items-center space-x-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+            <div className="flex items-center space-x-2 text-gray-500 dark:text-gray-400">
               <div className="flex space-x-1">
-                <div className={`w-2 h-2 rounded-full animate-bounce ${isDark ? 'bg-gray-500' : 'bg-gray-400'}`} style={{ animationDelay: '0ms' }}></div>
-                <div className={`w-2 h-2 rounded-full animate-bounce ${isDark ? 'bg-gray-500' : 'bg-gray-400'}`} style={{ animationDelay: '150ms' }}></div>
-                <div className={`w-2 h-2 rounded-full animate-bounce ${isDark ? 'bg-gray-500' : 'bg-gray-400'}`} style={{ animationDelay: '300ms' }}></div>
+                <div className="w-2 h-2 rounded-full animate-bounce bg-gray-400 dark:bg-gray-500" style={{ animationDelay: '0ms' }}></div>
+                <div className="w-2 h-2 rounded-full animate-bounce bg-gray-400 dark:bg-gray-500" style={{ animationDelay: '150ms' }}></div>
+                <div className="w-2 h-2 rounded-full animate-bounce bg-gray-400 dark:bg-gray-500" style={{ animationDelay: '300ms' }}></div>
               </div>
               <span className="text-sm">{t('common.appName')} {t('session.inputPlaceholder')}</span>
             </div>

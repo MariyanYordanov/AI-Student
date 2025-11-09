@@ -1,6 +1,5 @@
 import { useState, KeyboardEvent, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../hooks/useTheme';
 
 interface MessageInputProps {
   onSend: (message: string) => void;
@@ -54,7 +53,6 @@ declare global {
 
 function MessageInput({ onSend, disabled }: MessageInputProps) {
   const { t } = useTranslation();
-  const { isDark } = useTheme();
   const [input, setInput] = useState('');
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<ISpeechRecognition | null>(null);
@@ -123,7 +121,7 @@ function MessageInput({ onSend, disabled }: MessageInputProps) {
   };
 
   return (
-    <div className={`border-t px-4 py-4 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+    <div className="border-t px-4 py-4 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
       <div className="max-w-4xl mx-auto flex items-end space-x-3">
         <textarea
           value={input}
@@ -132,23 +130,17 @@ function MessageInput({ onSend, disabled }: MessageInputProps) {
           placeholder={t('session.inputPlaceholder')}
           disabled={disabled}
           rows={3}
-          className={`flex-1 resize-none px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed ${
-            isDark
-              ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400 disabled:bg-gray-800 disabled:text-gray-500'
-              : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 disabled:bg-gray-100 disabled:text-gray-400'
-          }`}
+          className="flex-1 resize-none px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:text-gray-400 dark:disabled:text-gray-500"
         />
 
         <button
           onClick={handleVoiceInput}
           disabled={disabled}
-          className={`px-4 py-3 rounded-xl transition duration-200 ${
+          className={`px-4 py-3 rounded-xl transition duration-200 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 ${
             isListening
               ? 'bg-red-600 hover:bg-red-700 text-white'
-              : isDark
-              ? 'bg-gray-700 hover:bg-gray-600 text-gray-200'
-              : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-          } disabled:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50`}
+              : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200'
+          }`}
           title={isListening ? t('session.listening') : t('session.microphone')}
         >
           {isListening ? t('session.listening') : t('session.microphone')}
@@ -163,7 +155,7 @@ function MessageInput({ onSend, disabled }: MessageInputProps) {
         </button>
       </div>
       <div className="max-w-4xl mx-auto mt-2">
-        <p className={`text-xs text-center ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+        <p className="text-xs text-center text-gray-500 dark:text-gray-400">
           {t('session.tipText')}
         </p>
       </div>

@@ -1,12 +1,10 @@
 import { SessionMessage } from '../types';
-import { useTheme } from '../hooks/useTheme';
 
 interface ChatMessageProps {
   message: SessionMessage;
 }
 
 function ChatMessage({ message }: ChatMessageProps) {
-  const { isDark } = useTheme();
   const isStudent = message.role === 'student';
 
   const emotionEmojis = {
@@ -22,9 +20,7 @@ function ChatMessage({ message }: ChatMessageProps) {
         className={`max-w-[70%] rounded-2xl px-4 py-3 ${
           isStudent
             ? 'bg-blue-600 text-white'
-            : isDark
-            ? 'bg-gray-800 text-gray-100 border border-gray-700'
-            : 'bg-white text-gray-900 border border-gray-200'
+            : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700'
         }`}
       >
         <div className="flex items-start space-x-2">
@@ -35,11 +31,7 @@ function ChatMessage({ message }: ChatMessageProps) {
           )}
           <div className="flex-1">
             <p className="text-sm leading-relaxed">{message.message}</p>
-            <p
-              className={`text-xs mt-1 ${
-                isStudent ? 'text-blue-100' : isDark ? 'text-gray-500' : 'text-gray-400'
-              }`}
-            >
+            <p className={`text-xs mt-1 ${isStudent ? 'text-blue-100' : 'text-gray-400 dark:text-gray-500'}`}>
               {new Date(message.timestamp).toLocaleTimeString('bg-BG', {
                 hour: '2-digit',
                 minute: '2-digit',
