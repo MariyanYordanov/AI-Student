@@ -151,6 +151,10 @@ router.post('/:id/message', async (req, res, next) => {
     const { id: sessionId } = req.params;
     const { message: userMessage } = req.body;
 
+    // Get language from Accept-Language header (defaults to 'bg')
+    const acceptLanguage = req.headers['accept-language'] || 'bg';
+    const language = acceptLanguage.toLowerCase().startsWith('en') ? 'en' : 'bg';
+
     if (!userMessage) {
       res.status(400).json({ error: 'Message is required' });
       return;
@@ -223,16 +227,20 @@ router.post('/:id/message', async (req, res, next) => {
     // Get conversation history
     const transcript: SessionMessage[] = JSON.parse(session.transcript);
 
-    // Get AI response WITH conversation history and fallback handling
+    // Get AI response WITH conversation history, language, and fallback handling
     let aiResponse;
     try {
-      aiResponse = await gemini.generateResponse(userMessage, context, transcript);
+      aiResponse = await gemini.generateResponse(userMessage, context, transcript, language);
     } catch (aiError) {
       console.error('[ERR] Failed to generate AI response:', aiError);
 
-      // Fallback response when Gemini is unavailable
+      // Fallback response when Gemini is unavailable (language-aware)
+      const fallbackMessage = language === 'en'
+        ? 'Hmm... I need to think about that. Can you rephrase what you said?'
+        : 'Хм... малко се замислих. Можеш ли да преформулираш това, което каза?';
+
       aiResponse = {
-        message: 'Хм... малко се замислих. Можеш ли да преформулираш това, което каза?',
+        message: fallbackMessage,
         emotion: 'confused' as const,
         understandingDelta: 0,
         shouldAskQuestion: true,

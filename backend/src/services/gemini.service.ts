@@ -36,9 +36,10 @@ export class GeminiService {
   async generateResponse(
     userInput: string,
     context: AIStudentContext,
-    conversationHistory?: Array<{ role: 'student' | 'ai_student'; message: string }>
+    conversationHistory?: Array<{ role: 'student' | 'ai_student'; message: string }>,
+    language: string = 'bg' // Default to Bulgarian
   ): Promise<AIResponse> {
-    const systemPrompt = this.buildSystemPrompt(context);
+    const systemPrompt = this.buildSystemPrompt(context, language);
 
     try {
       // Using gemini-2.0-flash-exp - experimental but works
@@ -60,12 +61,16 @@ export class GeminiService {
         }
       }
 
-      // Add current user message
+      // Add current user message (language-aware)
+      const userPrompt = language === 'en'
+        ? `The teacher is explaining: "${userInput}"\n\nRespond as an AI student:`
+        : `Ученикът ти обяснява: "${userInput}"\n\nОтговори като AI-ученик:`;
+
       contents.push({
         role: 'user',
         parts: [
           {
-            text: `Ученикът ти обяснява: "${userInput}"\n\nОтговори като AI-ученик:`,
+            text: userPrompt,
           },
         ],
       });
@@ -193,10 +198,52 @@ export class GeminiService {
   /**
    * Build the system prompt that defines AI student personality
    */
-  private buildSystemPrompt(context: AIStudentContext): string {
+  private buildSystemPrompt(context: AIStudentContext, language: string = 'bg'): string {
     const { name, level, knownConcepts, partialConcepts, currentTopic, personalityTraits } =
       context;
 
+    if (language === 'en') {
+      // English system prompt
+      const levelDescriptions = [
+        'absolute beginner - you know almost nothing about programming',
+        'beginner - you know a few basics',
+        'advanced beginner - you understand basic concepts',
+        'intermediate - you can write simple code',
+        'advanced - you understand more complex concepts',
+      ];
+
+      return `You are a student named ${name} learning JavaScript.
+
+CURRENT LEVEL: ${level} - ${levelDescriptions[level] || levelDescriptions[0]}
+
+PERSONALITY:
+- Curiosity: ${personalityTraits.curiosity} (how often you ask questions)
+- Confusion rate: ${personalityTraits.confusionRate} (how easily you get confused)
+- Learning speed: ${personalityTraits.learningSpeed}
+
+ALREADY KNOW: ${knownConcepts.length > 0 ? knownConcepts.join(', ') : 'almost nothing yet'}
+PARTIALLY UNDERSTAND: ${partialConcepts.length > 0 ? partialConcepts.join(', ') : 'nothing yet'}
+
+CURRENT TOPIC: ${currentTopic}
+
+BEHAVIOR RULES (MANDATORY!):
+1. Answer BRIEFLY - maximum 1-2 sentences
+2. Speak casually in English, like a real student
+3. Make mistakes typical for level ${level}
+4. If you don't understand - ask clarifying questions ONLY about what the teacher is explaining NOW
+5. Show enthusiasm when you learn something: "Ohh!", "Cool!", "Got it!"
+6. Sometimes confuse similar things
+7. DON'T WRITE code in your answers - just talk about it
+8. DON'T use AI phrases like "Certainly", "Of course", "Let's"
+9. DON'T mention concepts the teacher HASN'T explained - don't invent topics yourself
+
+EXAMPLE RESPONSES FOR LEVEL ${level}:
+${this.getExampleResponsesForLevel(level, 'en')}
+
+Respond like a real student, NOT like an AI assistant!`;
+    }
+
+    // Bulgarian system prompt (default)
     const levelDescriptions = [
       'абсолютен начинаещ - не знаеш почти нищо за програмиране',
       'начинаещ - знаеш малко основи',
@@ -205,7 +252,7 @@ export class GeminiService {
       'напреднал - разбираш по-сложни концепции',
     ];
 
-    return `Ти си Bulgarian ученик на име ${name}, който се учи на JavaScript.
+    return `Ти си ученик на име ${name}, който се учи на JavaScript.
 
 ТЕКУЩО НИВО: ${level} - ${levelDescriptions[level] || levelDescriptions[0]}
 
@@ -231,7 +278,7 @@ export class GeminiService {
 9. НЕ споменавай концепции които ученикът НЕ е обяснил - не измисляй теми сам
 
 ПРИМЕРНИ ОТГОВОРИ ЗА НИВО ${level}:
-${this.getExampleResponsesForLevel(level)}
+${this.getExampleResponsesForLevel(level, 'bg')}
 
 Отговаряй като истински ученик, НЕ като AI асистент!`;
   }
@@ -239,7 +286,30 @@ ${this.getExampleResponsesForLevel(level)}
   /**
    * Get example responses based on student level
    */
-  private getExampleResponsesForLevel(level: number): string {
+  private getExampleResponsesForLevel(level: number, language: string = 'bg'): string {
+    if (language === 'en') {
+      const examples = [
+        // Level 0
+        `- "Uhh... I didn't get that, can you explain again?"
+- "Wait, this is really confusing... can I get an example?"
+- "I don't know what that means."`,
+        // Level 1
+        `- "Ohh! I think I got the idea!"
+- "Okay, so this works like this, right?"
+- "Are there other ways to do it?"`,
+        // Level 2
+        `- "Cool! I understand how it works!"
+- "Can it be used differently?"
+- "Got it, I see the connection now!"`,
+        // Level 3+
+        `- "Interesting! How does this connect to other things I know?"
+- "There was a case where... how should I use it there?"
+- "This reminds me of something... the difference is that...?"`,
+      ];
+      return examples[Math.min(level, examples.length - 1)];
+    }
+
+    // Bulgarian examples (default)
     const examples = [
       // Level 0
       `- "Ъъъ... не разбрах, може ли да обясниш още веднъж?"
