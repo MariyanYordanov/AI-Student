@@ -15,6 +15,16 @@ function getAuthToken(): string | null {
 }
 
 /**
+ * Get current language for API requests
+ */
+function getCurrentLanguage(): string {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('i18nextLng') || 'en';
+  }
+  return 'en';
+}
+
+/**
  * Enhanced fetch with timeout and better error handling
  */
 async function fetchWithTimeout(url: string, options: RequestInit = {}): Promise<Response> {
@@ -23,8 +33,10 @@ async function fetchWithTimeout(url: string, options: RequestInit = {}): Promise
 
   try {
     const token = getAuthToken();
+    const language = getCurrentLanguage();
     const headers = {
       'Content-Type': 'application/json',
+      'Accept-Language': language,
       ...(token && { Authorization: `Bearer ${token}` }),
       ...options.headers,
     };

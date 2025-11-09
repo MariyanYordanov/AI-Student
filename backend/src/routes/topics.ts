@@ -1,31 +1,57 @@
 import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { TOPICS, TOPICS_SECTIONS, getTopicsBySection } from '../data/topics';
+import { TOPICS_SECTIONS } from '../data/topics';
 import { authMiddleware, requireAuth } from '../middleware/auth';
 
 const router = Router();
 const prisma = new PrismaClient();
 
+// Helper function to get language from request
+function getLanguage(req: any): 'bg' | 'en' {
+  const acceptLanguage = req.headers['accept-language'] || '';
+  return acceptLanguage.toLowerCase().includes('bg') ? 'bg' : 'en';
+}
+
+// Helper function to format topic with correct language
+function formatTopic(topic: any, language: 'bg' | 'en') {
+  return {
+    id: topic.id,
+    section: topic.section,
+    title: language === 'bg' ? topic.titleBg : topic.titleEn,
+    description: language === 'bg' ? topic.descriptionBg : topic.descriptionEn,
+    difficulty: topic.difficulty,
+    estimatedMinutes: topic.estimatedMinutes,
+    createdAt: topic.createdAt,
+  };
+}
+
 /**
  * GET /api/topics
  * Get all topics organized by sections
  */
-router.get('/', async (_req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
+    const language = getLanguage(req);
+
+    // Get all topics from database
+    const allTopics = await prisma.topic.findMany({
+      orderBy: [{ section: 'asc' }, { id: 'asc' }],
+    });
+
     // Organize topics by section
     const sections: Record<string, any> = {};
 
     Object.values(TOPICS_SECTIONS).forEach((section) => {
-      const topicsInSection = getTopicsBySection(section);
+      const topicsInSection = allTopics.filter((t) => t.section === section);
       sections[section] = {
         name: section,
         topicCount: topicsInSection.length,
-        topics: topicsInSection,
+        topics: topicsInSection.map((t) => formatTopic(t, language)),
       };
     });
 
     res.json({
-      totalTopics: TOPICS.length,
+      totalTopics: allTopics.length,
       sections,
     });
   } catch (error) {
@@ -40,6 +66,7 @@ router.get('/', async (_req, res, next) => {
 router.get('/:topicId', async (req, res, next) => {
   try {
     const { topicId } = req.params;
+    const language = getLanguage(req);
 
     const topic = await prisma.topic.findUnique({
       where: { id: topicId },
@@ -50,7 +77,7 @@ router.get('/:topicId', async (req, res, next) => {
       return;
     }
 
-    res.json(topic);
+    res.json(formatTopic(topic, language));
   } catch (error) {
     next(error);
   }
@@ -95,11 +122,13 @@ router.get('/user/:userId/progress', authMiddleware, requireAuth, async (req, re
       progressBySection[section] = [];
     });
 
+    const language = getLanguage(req);
+
     progress.forEach((p) => {
       if (p.topic.section in progressBySection) {
         progressBySection[p.topic.section].push({
           topicId: p.topic.id,
-          topicTitle: p.topic.title,
+          topicTitle: language === 'bg' ? p.topic.titleBg : p.topic.titleEn,
           understandingLevel: p.understandingLevel,
           sessionsCount: p.sessionsCount,
           lastStudied: p.lastStudied,
@@ -116,9 +145,18 @@ router.get('/user/:userId/progress', authMiddleware, requireAuth, async (req, re
       topics: TopicProgress[];
     }
 
+    // Get total topics count for each section from database
+    const allTopics = await prisma.topic.findMany({
+      select: { section: true },
+    });
+    const topicsCountBySection: Record<string, number> = {};
+    Object.values(TOPICS_SECTIONS).forEach((section) => {
+      topicsCountBySection[section] = allTopics.filter((t) => t.section === section).length;
+    });
+
     const stats: Record<string, SectionStats> = {};
     Object.entries(progressBySection).forEach(([section, items]) => {
-      const totalTopicsInSection = getTopicsBySection(section).length;
+      const totalTopicsInSection = topicsCountBySection[section] || 0;
       const completedTopics = items.filter((item) => item.understandingLevel >= 0.7).length;
       const averageUnderstanding =
         items.length > 0
@@ -213,6 +251,7 @@ router.post(
 router.get('/section/:sectionName', async (req, res, next) => {
   try {
     const { sectionName } = req.params;
+    const language = getLanguage(req);
 
     // Find the section (case-insensitive)
     const section = Object.values(TOPICS_SECTIONS).find(
@@ -224,11 +263,15 @@ router.get('/section/:sectionName', async (req, res, next) => {
       return;
     }
 
-    const topics = getTopicsBySection(section);
+    const topics = await prisma.topic.findMany({
+      where: { section },
+      orderBy: { id: 'asc' },
+    });
+
     res.json({
       section,
       topicCount: topics.length,
-      topics,
+      topics: topics.map((t) => formatTopic(t, language)),
     });
   } catch (error) {
     next(error);

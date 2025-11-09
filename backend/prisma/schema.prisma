@@ -151,9 +151,11 @@ model Achievement {
 // Topic - Static list of all JavaScript topics
 model Topic {
   id                  String   @id
-  section             String   // "Основи", "Средни", "Напреднал", "ООП", "Практически", "Web"
-  title               String   // Topic title in Bulgarian
-  description         String   // Topic description
+  section             String   // "basics", "intermediate", "advanced", "oop", "applications", "web"
+  titleEn             String   // Topic title in English
+  titleBg             String   // Topic title in Bulgarian
+  descriptionEn       String   // Topic description in English
+  descriptionBg       String   // Topic description in Bulgarian
   difficulty          String   @default("beginner") // beginner, intermediate, advanced
   estimatedMinutes    Int      @default(20)
   createdAt           DateTime @default(now())
@@ -161,7 +163,7 @@ model Topic {
   // Relations
   userProgress        TopicProgress[]
 
-  @@unique([section, title])
+  @@unique([section, titleEn])
 }
 
 // TopicProgress - Tracks user progress on each topic
