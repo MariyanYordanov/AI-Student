@@ -3,7 +3,6 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../stores/authStore';
 import { useTopicsStore } from '../stores/topicsStore';
-import { useTheme } from '../hooks/useTheme';
 import { SectionTabs } from '../components/SectionTabs';
 import { TopicCard } from '../components/TopicCard';
 import { api } from '../services/api';
@@ -19,7 +18,6 @@ interface AilyInstance {
 
 function Dashboard() {
   const { t, i18n } = useTranslation();
-  const { isDark } = useTheme();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuthStore();
@@ -178,24 +176,24 @@ function Dashboard() {
   }
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-6xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold">{t('dashboard.welcome', { name: user.name })}</h1>
-          <p className={`mt-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">
             {t('dashboard.myProgress')}
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Topics Section */}
-          <div className={`lg:col-span-2 rounded-2xl shadow-xl p-8 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
-            <h2 className={`text-2xl font-bold mb-6 ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>{t('dashboard.topics')}</h2>
+          <div className="lg:col-span-2 rounded-2xl shadow-xl p-8 bg-white dark:bg-gray-800">
+            <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">{t('dashboard.topics')}</h2>
 
             {topicsLoading ? (
               <div className="text-center py-12">
-                <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>{t('common.loading')}</p>
+                <p className="text-gray-600 dark:text-gray-400">{t('common.loading')}</p>
               </div>
             ) : (
               <>
@@ -220,43 +218,43 @@ function Dashboard() {
           </div>
 
           {/* Aily Info & Start Section */}
-          <div className={`rounded-2xl shadow-xl p-8 h-fit ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
+          <div className="rounded-2xl shadow-xl p-8 h-fit bg-white dark:bg-gray-800">
             <div className="mb-6">
-              <h3 className={`text-2xl font-bold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>{t('common.appName')}</h3>
-              <p className={`text-sm mt-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t('common.appName')}</h3>
+              <p className="text-sm mt-2 text-gray-600 dark:text-gray-400">
                 {t('session.aiStudent')}
               </p>
             </div>
 
             {isLoadingAily ? (
               <div className="text-center py-6">
-                <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>{t('common.loading')}</p>
+                <p className="text-gray-600 dark:text-gray-400">{t('common.loading')}</p>
               </div>
             ) : (
               <>
-                <div className={`space-y-4 mb-6 p-4 rounded-lg ${isDark ? 'bg-gray-700' : 'bg-gray-50'}`}>
+                <div className="space-y-4 mb-6 p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
                   <div>
-                    <p className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
                       {t('dashboard.level')}: {ailyInstance?.level || 0}
                     </p>
                   </div>
 
                   <div>
-                    <p className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
                       {t('dashboard.xp')}: {ailyInstance?.totalXP || 0}
                     </p>
                   </div>
                 </div>
 
                 {selectedTopic && (
-                  <div className={`p-3 rounded-lg mb-6 ${isDark ? 'bg-gray-700 border border-gray-600' : 'bg-blue-50 border border-blue-200'}`}>
-                    <p className={`text-sm font-medium mb-1 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <div className="p-3 rounded-lg mb-6 bg-blue-50 dark:bg-gray-700 border border-blue-200 dark:border-gray-600">
+                    <p className="text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                       {t('session.topic')}:
                     </p>
-                    <p className={`text-sm font-semibold ${isDark ? 'text-blue-400' : 'text-blue-700'}`}>
+                    <p className="text-sm font-semibold text-blue-700 dark:text-blue-400">
                       {selectedTopic.title}
                     </p>
-                    <p className={`text-xs mt-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                    <p className="text-xs mt-1 text-gray-600 dark:text-gray-400">
                       {selectedTopic.description}
                     </p>
                   </div>
@@ -267,9 +265,7 @@ function Dashboard() {
                   disabled={isStarting || !selectedTopic || !ailyInstance}
                   className={`w-full font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center ${
                     isStarting || !selectedTopic || !ailyInstance
-                      ? isDark
-                        ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                       : 'bg-blue-600 hover:bg-blue-700 text-white'
                   }`}
                 >
