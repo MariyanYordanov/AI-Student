@@ -91,10 +91,12 @@ function Dashboard() {
             // Load knowledge/progress for this Aily
             try {
               const knowledge = await api.aiStudents.getAIStudentKnowledge(aily.id);
+              console.log('[DEBUG] Loaded knowledge:', knowledge);
               const progressMap: Record<string, Knowledge> = {};
               knowledge.forEach((k: Knowledge) => {
                 progressMap[k.concept] = k;
               });
+              console.log('[DEBUG] Progress map:', progressMap);
               setAilyProgress(progressMap);
             } catch (error) {
               console.error('Error loading Aily knowledge:', error);
