@@ -180,14 +180,6 @@ function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-6xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold">{t('dashboard.welcome', { name: user.name })}</h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">
-            {t('dashboard.myProgress')}
-          </p>
-        </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Topics Section */}
           <div className="lg:col-span-2 rounded-2xl shadow-xl p-8 bg-white dark:bg-gray-800">
@@ -205,15 +197,19 @@ function Dashboard() {
                 />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {topicsInSection.map((topic) => (
-                    <TopicCard
-                      key={topic.id}
-                      topic={topic}
-                      isSelected={selectedTopic?.id === topic.id}
-                      progress={ailyProgress?.[topic.title]?.understandingLevel || 0}
-                      onClick={() => selectTopic(topic)}
-                    />
-                  ))}
+                  {topicsInSection.map((topic) => {
+                    const progress = ailyProgress?.[topic.title]?.understandingLevel || 0;
+                    console.log(`[DEBUG] Topic "${topic.title}" progress:`, progress, 'from', ailyProgress?.[topic.title]);
+                    return (
+                      <TopicCard
+                        key={topic.id}
+                        topic={topic}
+                        isSelected={selectedTopic?.id === topic.id}
+                        progress={progress}
+                        onClick={() => selectTopic(topic)}
+                      />
+                    );
+                  })}
                 </div>
               </>
             )}
