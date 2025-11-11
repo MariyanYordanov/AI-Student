@@ -141,13 +141,22 @@ export class GeminiService {
 
           const data = await response.json() as GeminiResponse;
 
+          console.log('[DEBUG] Gemini response:', JSON.stringify(data).substring(0, 500));
+
           // Check if we got a valid response
           if (!data.candidates || data.candidates.length === 0) {
             console.error('[ERR] No candidates in Gemini response:', JSON.stringify(data));
             throw new Error('No response from Gemini API');
           }
 
-          let aiMessage = data.candidates[0]?.content?.parts[0]?.text || 'Хм... не разбрах.';
+          // Safely extract message with multiple fallbacks
+          const candidate = data.candidates[0];
+          if (!candidate || !candidate.content || !candidate.content.parts || candidate.content.parts.length === 0) {
+            console.error('[ERR] Invalid candidate structure:', JSON.stringify(candidate));
+            throw new Error('Invalid response structure from Gemini API');
+          }
+
+          let aiMessage = candidate.content.parts[0].text || 'Хм... не разбрах.';
 
           // Validate response: not too long (max 300 chars)
           if (aiMessage.length > 300) {
