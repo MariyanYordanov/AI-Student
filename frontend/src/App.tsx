@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAuthStore } from './stores/authStore';
 import { useTheme } from './hooks/useTheme';
+import { wakeUpBackend } from './services/api';
 import LandingPage from './pages/LandingPage';
 // Version: 1.0.0 - Ensure VerifyEmail route is available
 import TeachingSession from './pages/TeachingSession';
@@ -41,8 +42,11 @@ function App() {
   const [isInitialized, setIsInitialized] = useState(false);
   useTheme(); // Initialize theme from localStorage
 
-  // Restore session on mount
+  // Restore session and wake up backend on mount
   useEffect(() => {
+    // Wake up backend early (don't await - let it run in background)
+    wakeUpBackend();
+
     restoreSession();
     // Mark as initialized immediately (restoreSession is synchronous)
     setIsInitialized(true);

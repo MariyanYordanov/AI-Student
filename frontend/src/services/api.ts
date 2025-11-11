@@ -27,6 +27,26 @@ function getCurrentLanguage(): string {
 }
 
 /**
+ * Wake up the backend server (Render free tier sleeps after inactivity)
+ */
+export async function wakeUpBackend(): Promise<void> {
+  try {
+    console.log('[API] Waking up backend...');
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+    await fetch(`${API_BASE.replace('/api', '')}/health`, {
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+    console.log('[API] Backend is awake!');
+  } catch (error) {
+    console.log('[API] Backend ping failed (will retry on actual requests)');
+  }
+}
+
+/**
  * Enhanced fetch with timeout and better error handling
  */
 async function fetchWithTimeout(url: string, options: RequestInit = {}): Promise<Response> {
