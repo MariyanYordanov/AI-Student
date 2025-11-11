@@ -280,19 +280,23 @@ router.post('/:id/message', async (req, res, next) => {
       },
     });
 
-    // Calculate XP earned during this interaction
+    // Calculate XP earned based on actual learning (understandingDelta)
     let xpGained = 0;
-    if (aiResponse.emotion === 'excited') {
-      xpGained = 10; // Big "Aha!" moment
-    } else if (aiResponse.emotion === 'understanding') {
-      xpGained = 5; // Regular understanding
-    } else if (aiResponse.emotion === 'neutral') {
-      xpGained = 2; // Participated in conversation
-    }
-    // confused gives 0 XP
 
     // Update knowledge if understanding changed (can be positive or negative)
     if (aiResponse.understandingDelta && aiResponse.understandingDelta !== 0) {
+      // Give XP only when student actually learns (positive delta)
+      if (aiResponse.understandingDelta > 0) {
+        // Scale XP based on how much was learned
+        if (aiResponse.understandingDelta >= 0.15) {
+          xpGained = 10; // Big learning jump (15%+)
+        } else if (aiResponse.understandingDelta >= 0.08) {
+          xpGained = 5; // Good progress (8-15%)
+        } else if (aiResponse.understandingDelta > 0) {
+          xpGained = 2; // Small progress (1-7%)
+        }
+      }
+      // No XP for negative delta (forgetting)
       // Get current knowledge to calculate new level with cap
       const currentKnowledge = await prisma.knowledge.findUnique({
         where: {
