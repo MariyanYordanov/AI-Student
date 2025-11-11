@@ -163,8 +163,8 @@ function TeachingSession() {
 
   return (
     <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header - Fixed (doesn't scroll) */}
-      <div className="flex-shrink-0 px-6 py-4 shadow-sm bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      {/* Header - Fixed at top */}
+      <div className="flex-shrink-0 sticky top-0 z-50 px-6 py-4 shadow-sm bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between max-w-4xl mx-auto">
           <div className="flex items-center space-x-4">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
