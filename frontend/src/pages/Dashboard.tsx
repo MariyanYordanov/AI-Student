@@ -155,7 +155,8 @@ function Dashboard() {
 
     setIsStarting(true);
     try {
-      const session = await api.startSession(user.id, ailyInstance.id, selectedTopic.title);
+      // Use English title for session topic (saved as Knowledge.concept)
+      const session = await api.startSession(user.id, ailyInstance.id, selectedTopic.titleEn);
 
       if (!session || !session.id) {
         throw new Error('Session was not created properly');
@@ -198,8 +199,9 @@ function Dashboard() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {topicsInSection.map((topic) => {
-                    const progress = ailyProgress?.[topic.title]?.understandingLevel || 0;
-                    console.log(`[DEBUG] Topic "${topic.title}" progress:`, progress, 'from', ailyProgress?.[topic.title]);
+                    // Use English title (titleEn) for matching with Knowledge.concept
+                    const progress = ailyProgress?.[topic.titleEn]?.understandingLevel || 0;
+                    console.log(`[DEBUG] Topic "${topic.title}" (${topic.titleEn}) progress:`, progress);
                     return (
                       <TopicCard
                         key={topic.id}

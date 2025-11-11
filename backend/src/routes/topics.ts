@@ -27,6 +27,7 @@ function formatTopic(topic: any, language: 'bg' | 'en') {
     id: topic.id,
     section: topic.section,
     title: language === 'bg' ? topic.titleBg : topic.titleEn,
+    titleEn: topic.titleEn, // Always include English title for matching with Knowledge.concept
     description: language === 'bg' ? topic.descriptionBg : topic.descriptionEn,
     difficulty: topic.difficulty,
     estimatedMinutes: topic.estimatedMinutes,

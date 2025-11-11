@@ -12,7 +12,8 @@ export interface User {
 export interface Topic {
   id: string;
   section: string;
-  title: string;
+  title: string; // Localized title
+  titleEn: string; // English title for matching with Knowledge.concept
   description: string;
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   estimatedMinutes: number;
