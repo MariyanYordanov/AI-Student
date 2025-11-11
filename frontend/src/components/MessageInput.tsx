@@ -63,7 +63,7 @@ function MessageInput({ onSend, disabled }: MessageInputProps) {
     if (SpeechRecognition) {
       recognitionRef.current = new SpeechRecognition();
       recognitionRef.current.lang = 'bg-BG'; // Bulgarian language
-      recognitionRef.current.continuous = false;
+      recognitionRef.current.continuous = true; // Keep listening even after pauses
       recognitionRef.current.interimResults = true;
 
       recognitionRef.current.onstart = () => {

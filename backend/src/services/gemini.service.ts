@@ -87,7 +87,7 @@ export class GeminiService {
         contents,
         generationConfig: {
           temperature: 0.8,
-          maxOutputTokens: 500, // Increased from 200 to allow for reasoning + response
+          maxOutputTokens: 1000, // Increased to 1000 to handle reasoning + actual response
           topP: 0.9,
           topK: 40,
         },
