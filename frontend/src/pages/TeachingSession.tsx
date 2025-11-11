@@ -186,7 +186,7 @@ function TeachingSession() {
                 <div className="w-2 h-2 rounded-full animate-bounce bg-gray-400 dark:bg-gray-500" style={{ animationDelay: '150ms' }}></div>
                 <div className="w-2 h-2 rounded-full animate-bounce bg-gray-400 dark:bg-gray-500" style={{ animationDelay: '300ms' }}></div>
               </div>
-              <span className="text-sm">{t('common.appName')} {t('session.inputPlaceholder')}</span>
+              <span className="text-sm">{t('common.appName')}</span>
             </div>
           )}
 
