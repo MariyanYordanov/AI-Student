@@ -2,7 +2,7 @@
 import { AilyInstance, Knowledge, User, Topic, Session } from '../types';
 
 const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:4000') + '/api';
-const REQUEST_TIMEOUT = 30000; // 30 seconds
+const REQUEST_TIMEOUT = 60000; // 60 seconds (longer for cold starts)
 
 /**
  * Get auth token from localStorage
