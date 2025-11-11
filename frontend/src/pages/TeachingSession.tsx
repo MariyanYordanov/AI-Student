@@ -49,23 +49,26 @@ function TeachingSession() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const loadSession = async () => {
+  const loadSession = async (showLoader = true) => {
     if (!sessionId || sessionId === 'undefined') {
       console.error('Invalid sessionId in loadSession:', sessionId);
       navigate('/');
       return;
     }
 
-    setIsLoadingSession(true);
+    if (showLoader) {
+      setIsLoadingSession(true);
+    }
     setLoadError(null);
 
     try {
       const session = await api.getSession(sessionId);
       setMessages(session.transcript);
-      // Load AI Student by ID
+      // Load AI Student by ID to get updated XP
       if (session.aiStudentId) {
         const aiStudent = await api.getAIStudent(session.aiStudentId);
         setAIStudent(aiStudent);
+        console.log('[DEBUG] Updated AI Student XP:', aiStudent.totalXP);
       }
       setTopic(session.topic);
       setLoadError(null);
@@ -83,7 +86,9 @@ function TeachingSession() {
         setLoadError(`Грешка при зареждане: ${errorMessage}`);
       }
     } finally {
-      setIsLoadingSession(false);
+      if (showLoader) {
+        setIsLoadingSession(false);
+      }
     }
   };
 
@@ -93,7 +98,8 @@ function TeachingSession() {
     setLoading(true);
     try {
       await api.sendMessage(sessionId, message);
-      await loadSession();
+      // Reload session without showing loader (just update XP silently)
+      await loadSession(false);
     } catch (error) {
       console.error('Error sending message:', error);
       const errorMessage = error instanceof Error ? error.message : 'Възникна грешка';
@@ -157,8 +163,8 @@ function TeachingSession() {
 
   return (
     <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header - Sticky */}
-      <div className="sticky top-0 z-10 px-6 py-4 shadow-sm bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      {/* Header - Fixed (doesn't scroll) */}
+      <div className="flex-shrink-0 px-6 py-4 shadow-sm bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between max-w-4xl mx-auto">
           <div className="flex items-center space-x-4">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
