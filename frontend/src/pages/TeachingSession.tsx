@@ -17,6 +17,8 @@ function TeachingSession() {
   const [loading, setLoading] = useState(false);
   const [aiStudent, setAIStudent] = useState<AilyInstance | null>(null);
   const [topic, setTopic] = useState('');
+  const [isLoadingSession, setIsLoadingSession] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -54,6 +56,9 @@ function TeachingSession() {
       return;
     }
 
+    setIsLoadingSession(true);
+    setLoadError(null);
+
     try {
       const session = await api.getSession(sessionId);
       setMessages(session.transcript);
@@ -63,12 +68,22 @@ function TeachingSession() {
         setAIStudent(aiStudent);
       }
       setTopic(session.topic);
+      setLoadError(null);
     } catch (error) {
       console.error('Error loading session:', error);
-      // If session not found, redirect to dashboard
-      if (error instanceof Error && error.message.includes('не е намерен')) {
-        navigate('/');
+      const errorMessage = error instanceof Error ? error.message : 'Възникна грешка';
+
+      // Check if it's a timeout error
+      if (errorMessage.includes('твърде дълго време') || errorMessage.includes('timeout')) {
+        setLoadError('Backend-ът се събужда (Render free tier). Моля, изчакай 30-60 секунди и refresh-ни страницата.');
+      } else if (errorMessage.includes('не е намерен')) {
+        setLoadError('Сесията не е намерена. Пренасочване към Dashboard...');
+        setTimeout(() => navigate('/'), 2000);
+      } else {
+        setLoadError(`Грешка при зареждане: ${errorMessage}`);
       }
+    } finally {
+      setIsLoadingSession(false);
     }
   };
 
@@ -81,7 +96,13 @@ function TeachingSession() {
       await loadSession();
     } catch (error) {
       console.error('Error sending message:', error);
-      alert(t('auth.errors.genericError'));
+      const errorMessage = error instanceof Error ? error.message : 'Възникна грешка';
+
+      if (errorMessage.includes('твърде дълго време') || errorMessage.includes('timeout')) {
+        alert('Backend-ът се събужда. Изчакай 10-20 секунди и опитай отново.');
+      } else {
+        alert(`Грешка: ${errorMessage}`);
+      }
     } finally {
       setLoading(false);
     }
@@ -115,6 +136,14 @@ function TeachingSession() {
       navigate('/?viewTopics=true');
     } catch (error) {
       console.error('Error ending session:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Възникна грешка';
+
+      if (errorMessage.includes('твърде дълго време') || errorMessage.includes('timeout')) {
+        alert('Backend-ът не отговаря. Сесията може вече да е приключила. Връщане към Dashboard...');
+        navigate('/');
+      } else {
+        alert(`Грешка при приключване на сесията: ${errorMessage}`);
+      }
     }
   };
 
@@ -168,7 +197,33 @@ function TeachingSession() {
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-6">
         <div className="max-w-4xl mx-auto space-y-4">
-          {messages.length === 0 && !loading && (
+          {/* Loading Session */}
+          {isLoadingSession && (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+              <p className="text-lg text-gray-600 dark:text-gray-400">Зареждане на сесията...</p>
+              <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">Ако Backend-ът спи, това може да отнеме до 60 секунди</p>
+            </div>
+          )}
+
+          {/* Load Error */}
+          {loadError && (
+            <div className="text-center py-12">
+              <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-6 max-w-lg mx-auto">
+                <p className="text-yellow-800 dark:text-yellow-200 font-medium mb-2">⚠️ Проблем при зареждане</p>
+                <p className="text-yellow-700 dark:text-yellow-300 text-sm">{loadError}</p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="mt-4 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg text-sm"
+                >
+                  Refresh
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Messages */}
+          {!isLoadingSession && !loadError && messages.length === 0 && !loading && (
             <div className="text-center py-12 text-gray-500 dark:text-gray-400">
               <p className="text-lg mb-2">{t('session.inputPlaceholder')}</p>
               <p className="text-sm">{t('session.tipText')}</p>
