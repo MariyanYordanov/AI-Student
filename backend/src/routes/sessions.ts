@@ -376,7 +376,10 @@ router.post('/:id/end', async (req, res, next) => {
 
     const transcript: SessionMessage[] = JSON.parse(session.transcript);
     const durationMinutes = Math.max(1, Math.floor(transcript.length / 4)); // Rough estimate
-    const xpEarned = durationMinutes * 10;
+
+    // XP is now earned in real-time during conversation (based on understandingDelta)
+    // No additional XP awarded at session end to avoid double-counting
+    const xpEarned = 0;
 
     // Update session
     await prisma.session.update({
@@ -384,11 +387,11 @@ router.post('/:id/end', async (req, res, next) => {
       data: {
         endedAt: new Date(),
         durationMinutes,
-        xpEarned,
+        xpEarned, // Always 0 since XP is earned in real-time
       },
     });
 
-    // Add XP to Aily and check for level-up
+    // Check for level-up based on current XP (earned during conversation)
     const XP_THRESHOLDS = [0, 100, 300, 600, 1000, 1500];
     const ailyInstance = await prisma.ailyInstance.findUnique({
       where: { id: session.ailyInstanceId! },
@@ -399,34 +402,36 @@ router.post('/:id/end', async (req, res, next) => {
       return;
     }
 
-    const newTotalXP = ailyInstance.totalXP + xpEarned;
+    const currentTotalXP = ailyInstance.totalXP;
     let newLevel = ailyInstance.level;
     let leveledUp = false;
 
     // Check if reached next level threshold
     if (ailyInstance.level < XP_THRESHOLDS.length - 1) {
-      if (newTotalXP >= XP_THRESHOLDS[ailyInstance.level + 1]) {
+      if (currentTotalXP >= XP_THRESHOLDS[ailyInstance.level + 1]) {
         newLevel = ailyInstance.level + 1;
         leveledUp = true;
       }
     }
 
-    await prisma.ailyInstance.update({
-      where: { id: session.ailyInstanceId! },
-      data: {
-        totalXP: newTotalXP,
-        level: newLevel,
-      },
-    });
+    // Only update level if changed (XP already updated in real-time)
+    if (leveledUp) {
+      await prisma.ailyInstance.update({
+        where: { id: session.ailyInstanceId! },
+        data: {
+          level: newLevel,
+        },
+      });
+    }
 
     res.json({
       message: 'Session ended',
       durationMinutes,
-      xpEarned,
+      xpEarned, // Always 0 (XP earned in real-time)
       messagesExchanged: transcript.length,
       leveledUp,
       newLevel,
-      totalXP: newTotalXP,
+      totalXP: currentTotalXP, // Current total from real-time earnings
     });
   } catch (error) {
     next(error);
