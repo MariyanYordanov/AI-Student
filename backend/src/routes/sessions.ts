@@ -85,7 +85,7 @@ router.post('/start', async (req, res, next) => {
     // Generate greeting message with timeout handling (language-aware)
     const greetingPrompt = language === 'en'
       ? `Hi! Today you'll teach me about ${topic}. Ready?`
-      : `Здравей! Днес ще те науча за ${topic}. Готов ли си?`;
+      : `Здравей! Днес ти ще ме научиш на ${topic}. Готов ли си?`;
 
     let aiGreeting;
     let geminiAvailable = true;
@@ -106,11 +106,11 @@ router.post('/start', async (req, res, next) => {
       if (isTimeout) {
         fallbackMessage = language === 'en'
           ? `Hi! (AI is responding slowly, but we can start). Today you'll teach me about ${topic}. Ready?`
-          : `Здравей! (AI асистентът отговаря бавно, но можем да започнем). Днес ще те науча за ${topic}. Готов ли си?`;
+          : `Здравей! (AI асистентът отговаря бавно, но можем да започнем). Днес ти ще ме научиш на ${topic}. Готов ли си?`;
       } else if (isApiKey) {
         fallbackMessage = language === 'en'
           ? `Hi! (AI is unavailable, but we can start). Today you'll teach me about ${topic}. Ready?`
-          : `Здравей! (AI асистентът е недостъпен, но можем да започнем). Днес ще те науча за ${topic}. Готов ли си?`;
+          : `Здравей! (AI асистентът е недостъпен, но можем да започнем). Днес ти ще ме научиш на ${topic}. Готов ли си?`;
       }
 
       aiGreeting = {
