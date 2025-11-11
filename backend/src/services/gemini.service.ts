@@ -3,10 +3,13 @@ import { AIStudentContext, AIResponse } from '../types';
 interface GeminiResponse {
   candidates: Array<{
     content: {
-      parts: Array<{
+      parts?: Array<{
         text: string;
       }>;
+      role?: string;
     };
+    finishReason?: string;
+    index?: number;
   }>;
 }
 
@@ -84,7 +87,7 @@ export class GeminiService {
         contents,
         generationConfig: {
           temperature: 0.8,
-          maxOutputTokens: 200,
+          maxOutputTokens: 500, // Increased from 200 to allow for reasoning + response
           topP: 0.9,
           topK: 40,
         },
@@ -151,6 +154,13 @@ export class GeminiService {
 
           // Safely extract message with multiple fallbacks
           const candidate = data.candidates[0];
+
+          // Check for MAX_TOKENS finish reason (no parts generated)
+          if (candidate.finishReason === 'MAX_TOKENS' && (!candidate.content.parts || candidate.content.parts.length === 0)) {
+            console.error('[ERR] Response stopped due to MAX_TOKENS, no content generated');
+            throw new Error('Gemini response truncated due to token limit');
+          }
+
           if (!candidate || !candidate.content || !candidate.content.parts || candidate.content.parts.length === 0) {
             console.error('[ERR] Invalid candidate structure:', JSON.stringify(candidate));
             throw new Error('Invalid response structure from Gemini API');
