@@ -371,19 +371,19 @@ ${this.getExampleResponsesForLevel(level, 'bg')}
     ) {
       emotion = 'excited';
     }
-    // Understanding patterns
+    // Understanding patterns (expanded to catch more cases)
     else if (
-      /ааа[,\s]|разбрах[,\.\s]|ясно|окей|добре|схванах|сетих се|aha|got it/.test(lowerMsg)
+      /ааа[,\s]|разбрах[,\.\s]|ясно|окей|добре|схванах|сетих се|aha|got it|може|значи|това е|основно|замяст|return/.test(lowerMsg)
     ) {
       emotion = 'understanding';
     }
 
     // Dynamic understanding delta based on emotion
     const understandingDelta = {
-      'excited': 0.15,      // Big "Aha!" moment
-      'understanding': 0.1,  // Regular understanding
-      'neutral': 0.03,       // Just listening/processing
-      'confused': -0.05      // Confusion decreases understanding
+      'excited': 0.15,      // Big "Aha!" moment (15% - gives 10 XP)
+      'understanding': 0.10, // Regular understanding (10% - gives 5 XP)
+      'neutral': 0.05,       // Just listening/processing (5% - gives 2 XP)
+      'confused': -0.05      // Confusion decreases understanding (no XP)
     }[emotion] || 0;
 
     // Should ask question if confused or curious
