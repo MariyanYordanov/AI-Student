@@ -42,8 +42,8 @@ export class GeminiService {
     const systemPrompt = this.buildSystemPrompt(context, language);
 
     try {
-      // Using gemini-2.0-flash-exp - experimental but works
-      const modelName = 'gemini-2.0-flash-exp';
+      // Using gemini-2.5-flash - stable and fast model
+      const modelName = 'gemini-2.5-flash';
       console.log(`[AI] Calling Gemini API: ${this.baseURL}/models/${modelName}:generateContent`);
 
       // Build conversation history for context
