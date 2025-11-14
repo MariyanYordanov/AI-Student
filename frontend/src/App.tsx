@@ -4,7 +4,6 @@ import { useAuthStore } from './stores/authStore';
 import { useTheme } from './hooks/useTheme';
 import { wakeUpBackend } from './services/api';
 import LandingPage from './pages/LandingPage';
-// Version: 1.0.0 - Ensure VerifyEmail route is available
 import TeachingSession from './pages/TeachingSession';
 import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
@@ -20,20 +19,14 @@ import { AdminRoute } from './components/AdminRoute';
 function HomeRoute() {
   const { user } = useAuthStore();
 
-  console.log('[DEBUG] HomeRoute: user =', user);
-  console.log('[DEBUG] HomeRoute: user?.emailVerified =', user?.emailVerified);
-
   if (!user) {
-    console.log('[DEBUG] HomeRoute: No user, showing LandingPage');
     return <LandingPage />;
   }
 
   if (!user.emailVerified) {
-    console.log('[DEBUG] HomeRoute: emailVerified is false, redirecting to /login');
     return <Navigate to="/login" replace />;
   }
 
-  console.log('[DEBUG] HomeRoute: User verified, showing Dashboard');
   return <Dashboard />;
 }
 

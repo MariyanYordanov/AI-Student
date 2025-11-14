@@ -6,4 +6,4 @@ services:
     startCommand: npm start
     envVars:
       - key: VITE_API_URL
-        value: https://ai-student-r9ay.onrender.com
+        value: https://ai-student-28c8.onrender.com
