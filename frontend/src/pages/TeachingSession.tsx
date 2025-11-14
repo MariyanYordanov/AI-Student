@@ -19,7 +19,6 @@ function TeachingSession() {
   const [topic, setTopic] = useState('');
   const [isLoadingSession, setIsLoadingSession] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [xpNotification, setXpNotification] = useState<{amount: number; show: boolean}>({amount: 0, show: false});
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const previousXP = useRef<number>(0);
@@ -70,12 +69,10 @@ function TeachingSession() {
       if (session.aiStudentId) {
         const aiStudent = await api.getAIStudent(session.aiStudentId);
 
-        // Check if XP changed and show notification
+        // Track XP changes for logging purposes
         if (previousXP.current > 0 && aiStudent.totalXP > previousXP.current) {
           const xpGained = aiStudent.totalXP - previousXP.current;
           console.log('[XP] Gained:', xpGained, 'XP! Total:', aiStudent.totalXP);
-          setXpNotification({amount: xpGained, show: true});
-          setTimeout(() => setXpNotification({amount: 0, show: false}), 3000);
         }
 
         previousXP.current = aiStudent.totalXP;
@@ -165,13 +162,8 @@ function TeachingSession() {
     }
   };
 
-  // XP system constants
-  const XP_THRESHOLDS = [0, 100, 300, 600, 1000, 1500];
+  // Level display
   const currentLevel = aiStudent?.level || 0;
-  const totalXP = aiStudent?.totalXP || 0;
-  const currentLevelXP = totalXP - XP_THRESHOLDS[currentLevel];
-  const nextLevelXP = XP_THRESHOLDS[currentLevel + 1] - XP_THRESHOLDS[currentLevel];
-  const xpProgress = nextLevelXP > 0 ? Math.min((currentLevelXP / nextLevelXP) * 100, 100) : 0;
 
   return (
     <div className="relative h-screen bg-gray-50 dark:bg-gray-900">
@@ -186,27 +178,9 @@ function TeachingSession() {
               <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                 {t('common.appName')}
               </h2>
-              <p className="text-sm mb-1 text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 {t('session.topic')}: {topic} • {t('dashboard.level')} {currentLevel}
               </p>
-              {/* XP Progress Bar */}
-              <div className="flex items-center space-x-2 relative">
-                <div className="flex-1 rounded-full h-2 max-w-xs bg-gray-200 dark:bg-gray-700">
-                  <div
-                    className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${xpProgress}%` }}
-                  />
-                </div>
-                <span className="text-xs font-medium whitespace-nowrap text-gray-600 dark:text-gray-400">
-                  {totalXP} / {XP_THRESHOLDS[currentLevel + 1] || '∞'} XP
-                </span>
-                {/* XP Notification */}
-                {xpNotification.show && (
-                  <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold animate-bounce">
-                    +{xpNotification.amount} XP!
-                  </div>
-                )}
-              </div>
             </div>
           </div>
           <button

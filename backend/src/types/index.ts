@@ -9,6 +9,7 @@ export interface AIStudentContext {
   partialConcepts: string[];
   commonMistakes: string[];
   currentTopic: string;
+  currentTopicUnderstanding?: number; // 0-1, understanding level for current topic
   personalityTraits: PersonalityTraits;
 }
 

@@ -218,7 +218,7 @@ export class GeminiService {
    * Build the system prompt that defines AI student personality
    */
   private buildSystemPrompt(context: AIStudentContext, language: string = 'bg'): string {
-    const { name, level, knownConcepts, partialConcepts, currentTopic, personalityTraits } =
+    const { name, level, knownConcepts, partialConcepts, currentTopic, currentTopicUnderstanding, personalityTraits } =
       context;
 
     if (language === 'en') {
@@ -244,6 +244,7 @@ ALREADY KNOW: ${knownConcepts.length > 0 ? knownConcepts.join(', ') : 'almost no
 PARTIALLY UNDERSTAND: ${partialConcepts.length > 0 ? partialConcepts.join(', ') : 'nothing yet'}
 
 CURRENT TOPIC: ${currentTopic}
+YOUR UNDERSTANDING OF THE TOPIC: ${Math.round((currentTopicUnderstanding || 0) * 100)}%
 
 BEHAVIOR RULES (MANDATORY!):
 1. Answer BRIEFLY - maximum 1-2 sentences
@@ -255,6 +256,7 @@ BEHAVIOR RULES (MANDATORY!):
 7. DON'T WRITE code in your answers - just talk about it
 8. DON'T use AI phrases like "Certainly", "Of course", "Let's"
 9. DON'T mention concepts the teacher HASN'T explained - don't invent topics yourself
+10. IMPORTANT: If your understanding reaches 95% or more, tell the teacher that you've understood everything about the topic and suggest ending the session! For example: "Awesome! I think I understand everything about ${currentTopic} now! Should we end the session?"
 
 EXAMPLE RESPONSES FOR LEVEL ${level}:
 ${this.getExampleResponsesForLevel(level, 'en')}
@@ -284,6 +286,7 @@ Respond like a real student, NOT like an AI assistant!`;
 ЧАСТИЧНО РАЗБИРАШ: ${partialConcepts.length > 0 ? partialConcepts.join(', ') : 'нищо засега'}
 
 ТЕКУЩА ТЕМА: ${currentTopic}
+ТВОЕТО РАЗБИРАНЕ НА ТЕМАТА: ${Math.round((currentTopicUnderstanding || 0) * 100)}%
 
 ПРАВИЛА КАК ДА СЕ ДЪРЖИШ (ЗАДЪЛЖИТЕЛНО!):
 1. Отговаряй КРАТКО - максимум 1-2 изречения
@@ -295,6 +298,7 @@ Respond like a real student, NOT like an AI assistant!`;
 7. НЕ ПИШИ код в отговорите си - само говори за него
 8. НЕ използвай AI фрази като "Разбира се", "Със сигурност", "Нека"
 9. НЕ споменавай концепции които ученикът НЕ е обяснил - не измисляй теми сам
+10. ВАЖНО: Ако твоето разбиране достигне 95% или повече, кажи на ученика че вече си разбрал/а всичко за темата и предложи да приключите сесията! Например: "Супер! Мисля че вече разбирам всичко за ${currentTopic}! Да приключим ли сесията?"
 
 ПРИМЕРНИ ОТГОВОРИ ЗА НИВО ${level}:
 ${this.getExampleResponsesForLevel(level, 'bg')}

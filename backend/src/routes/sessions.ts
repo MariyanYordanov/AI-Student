@@ -223,6 +223,10 @@ router.post('/:id/message', async (req, res, next) => {
       .filter((k) => k.understandingLevel > 0.3 && k.understandingLevel <= 0.7)
       .map((k) => k.concept);
 
+    // Get current understanding level for the current topic
+    const currentTopicKnowledge = updatedKnowledge.find((k) => k.concept === session.topic);
+    const currentTopicUnderstanding = currentTopicKnowledge?.understandingLevel || 0;
+
     const context: AIStudentContext = {
       aiStudentId: ailyInstance.id,
       name: 'Aily',
@@ -232,6 +236,7 @@ router.post('/:id/message', async (req, res, next) => {
       partialConcepts,
       commonMistakes: ['забравяне на ;', 'бъркане на = с ==', 'главни букви в keywords'],
       currentTopic: session.topic,
+      currentTopicUnderstanding,
       personalityTraits,
     };
 
