@@ -8,17 +8,17 @@ This document describes the complete technical flow of how the system works from
 
 ## PHASE 1: REGISTRATION
 
-**When user clicks "🚀 Регистрирай се":**
+**When user clicks "Register":**
 
 ```
-Browser (Frontend) → https://studaint.onrender.com
+Browser (Frontend) → https://ai-student-28c8.onrender.com
     ↓
 Frontend Files:
   - Register.tsx (registration form page)
   - authStore.ts (manages registration logic)
   - api.ts (sends HTTP request to backend)
     ↓
-POST request: https://ai-student-r9ay.onrender.com/api/auth/register
+POST request: https://ai-student-28c8.onrender.com/api/auth/register
 {
   "email": "marsrewq@gmail.com",
   "name": "test",
@@ -118,7 +118,7 @@ Receives email with:
 **When user clicks verification link:**
 
 ```
-Browser: https://studaint.onrender.com/verify-email?token=1c647efcc...
+Browser: https://ai-student-28c8.onrender.com/verify-email?token=1c647efcc...
     ↓
 React Router (frontend/src/App.tsx line 28):
   Recognizes /verify-email route
@@ -133,7 +133,7 @@ VerifyEmail.tsx (frontend/src/pages/VerifyEmail.tsx):
 **On Backend:**
 
 ```
-GET https://ai-student-r9ay.onrender.com/api/auth/verify-email/1c647efcc...
+GET https://ai-student-28c8.onrender.com/api/auth/verify-email/1c647efcc...
     ↓
 backend/src/routes/auth.ts (lines 197-247):
   1. Reads token from URL parameter
@@ -171,10 +171,10 @@ User table:
 
 ## PHASE 4: LOGIN
 
-**When user clicks [Към логин] or goes to /login:**
+**When user clicks Login or goes to /login:**
 
 ```
-Browser: https://studaint.onrender.com/login
+Browser: https://ai-student-28c8.onrender.com/login
     ↓
 Login.tsx component:
   Shows form with Email and Password
@@ -183,7 +183,7 @@ Login.tsx component:
 **When user fills and clicks "Влез":**
 
 ```
-POST https://ai-student-r9ay.onrender.com/api/auth/login
+POST https://ai-student-28c8.onrender.com/api/auth/login
 {
   "email": "marsrewq@gmail.com",
   "password": "password123"
@@ -224,7 +224,7 @@ authStore.ts (lines 39-51):
 **When user goes to /dashboard:**
 
 ```
-Browser: https://studaint.onrender.com/dashboard
+Browser: https://ai-student-28c8.onrender.com/dashboard
     ↓
 Dashboard.tsx component (frontend/src/pages/Dashboard.tsx):
   useEffect hook:
@@ -239,7 +239,7 @@ Dashboard.tsx component (frontend/src/pages/Dashboard.tsx):
 **On Backend:**
 
 ```
-GET https://ai-student-r9ay.onrender.com/api/ai-students/characters
+GET https://ai-student-28c8.onrender.com/api/ai-students/characters
     ↓
 backend/src/routes/ai-students.ts (lines 13-19):
   1. Reads STUDENT_CHARACTERS from backend/src/data/students.ts
@@ -270,24 +270,24 @@ Dashboard.tsx receives characters:
 ## SYSTEM ARCHITECTURE
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    BROWSER (Frontend)                       │
-│  https://studaint.onrender.com                              │
-│  ├─ React Components (Register, Login, Dashboard)           │
-│  ├─ Zustand Store (authStore)                               │
-│  ├─ API Service (api.ts) - HTTP client                      │
-│  └─ LocalStorage (token, user data)                         │
-└─────────────────────────────────────────────────────────────┘
-                              ↕ HTTPS
-┌─────────────────────────────────────────────────────────────┐
-│              RENDER.COM BACKEND (Node.js)                   │
-│  https://ai-student-r9ay.onrender.com                       │
-│  ├─ Express Server (port 4000)                              │
-│  ├─ Routes (auth, ai-students, topics, sessions)            │
-│  ├─ Middleware (JWT auth, CORS)                             │
-│  ├─ Services (EmailService, GeminiService)                  │
-│  └─ Database Connection (Prisma ORM)                        │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                  RENDER.COM UNIFIED SERVICE                         │
+│         https://ai-student-28c8.onrender.com                        │
+│                                                                     │
+│  Frontend (React) served via server.js                             │
+│  ├─ React Components (Register, Login, Dashboard, TeachingSession)│
+│  ├─ Zustand Store (authStore, topicsStore)                        │
+│  ├─ API Service (api.ts) - HTTP client                            │
+│  ├─ LocalStorage (token, user data, preferences)                  │
+│  └─ i18n (Bulgarian and English translations)                     │
+│                                                                     │
+│  Backend (Express) on same service                                │
+│  ├─ API Routes (/api/auth, /api/sessions, /api/ai-students)      │
+│  ├─ Middleware (JWT auth, CORS, rate limiting, error handling)    │
+│  ├─ Services (EmailService via SendGrid, GeminiService)           │
+│  ├─ Database ORM (Prisma with PostgreSQL connection)              │
+│  └─ Static file serving (SPA routing for /api/* passthrough)      │
+└─────────────────────────────────────────────────────────────────────┘
                               ↕
 ┌─────────────────────────────────────────────────────────────┐
 │           RENDER.COM PostgreSQL (Database)                  │
@@ -361,10 +361,11 @@ Dashboard.tsx receives characters:
 - Only after verification can user login
 
 ### CORS (Cross-Origin Resource Sharing)
-- Frontend on `https://studaint.onrender.com`
-- Backend on `https://ai-student-r9ay.onrender.com`
-- Different domains require CORS headers
-- Backend configured to allow requests from frontend origin
+- Both frontend and backend served from `https://ai-student-28c8.onrender.com`
+- Same origin, so no CORS headers needed for internal API calls
+- CORS still configured in backend for local development:
+  - http://localhost:5173 (Vite frontend)
+  - http://localhost:4000 (Express backend)
 
 ### Environment Variables (.env)
 - `PORT`: Backend port (4000 on Render)

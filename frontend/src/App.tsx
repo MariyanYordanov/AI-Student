@@ -15,6 +15,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { Navbar } from './components/Navbar';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AdminRoute } from './components/AdminRoute';
+import { GuestRoute } from './components/GuestRoute';
 
 function HomeRoute() {
   const { user } = useAuthStore();
@@ -55,10 +56,31 @@ function App() {
       <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors">
         <Navbar />
         <Routes>
-          {/* Auth Routes - Public */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/verify-email" element={<VerifyEmail />} />
+          {/* Auth Routes - Guest Only (unauthenticated users) */}
+          <Route
+            path="/login"
+            element={
+              <GuestRoute>
+                <Login />
+              </GuestRoute>
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <GuestRoute>
+                <Register />
+              </GuestRoute>
+            }
+          />
+          <Route
+            path="/verify-email"
+            element={
+              <GuestRoute>
+                <VerifyEmail />
+              </GuestRoute>
+            }
+          />
 
           {/* Home - Landing or Dashboard based on auth */}
           <Route path="/" element={<HomeRoute />} />

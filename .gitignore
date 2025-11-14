@@ -41,3 +41,4 @@ prisma/dev.db-journal
 .env.backup
 temp/
 tmp/
+docs/ARCHITECTURE.md
