@@ -13,9 +13,11 @@ import Register from './pages/Register';
 import VerifyEmail from './pages/VerifyEmail';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { Navbar } from './components/Navbar';
+import { Sidebar } from './components/Sidebar';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AdminRoute } from './components/AdminRoute';
 import { GuestRoute } from './components/GuestRoute';
+import { LayoutProvider } from './contexts/LayoutContext';
 
 function HomeRoute() {
   const { user } = useAuthStore();
@@ -53,70 +55,77 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors">
-        <Navbar />
-        <Routes>
-          {/* Auth Routes - Guest Only (unauthenticated users) */}
-          <Route
-            path="/login"
-            element={
-              <GuestRoute>
-                <Login />
-              </GuestRoute>
-            }
-          />
-          <Route
-            path="/register"
-            element={
-              <GuestRoute>
-                <Register />
-              </GuestRoute>
-            }
-          />
-          <Route
-            path="/verify-email"
-            element={
-              <GuestRoute>
-                <VerifyEmail />
-              </GuestRoute>
-            }
-          />
+      <LayoutProvider>
+        <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors">
+          <Navbar />
+          <div className="flex">
+            <Sidebar />
+            <main className="flex-1 w-full md:ml-0">
+              <Routes>
+                {/* Auth Routes - Guest Only (unauthenticated users) */}
+                <Route
+                  path="/login"
+                  element={
+                    <GuestRoute>
+                      <Login />
+                    </GuestRoute>
+                  }
+                />
+                <Route
+                  path="/register"
+                  element={
+                    <GuestRoute>
+                      <Register />
+                    </GuestRoute>
+                  }
+                />
+                <Route
+                  path="/verify-email"
+                  element={
+                    <GuestRoute>
+                      <VerifyEmail />
+                    </GuestRoute>
+                  }
+                />
 
-          {/* Home - Landing or Dashboard based on auth */}
-          <Route path="/" element={<HomeRoute />} />
+                {/* Home - Landing or Dashboard based on auth */}
+                <Route path="/" element={<HomeRoute />} />
 
-          {/* Admin Routes - Requires admin role */}
-          <Route
-            path="/admin"
-            element={
-              <AdminRoute>
-                <AdminDashboard />
-              </AdminRoute>
-            }
-          />
+                {/* Admin Routes - Requires admin role */}
+                <Route
+                  path="/admin"
+                  element={
+                    <AdminRoute>
+                      <AdminDashboard />
+                    </AdminRoute>
+                  }
+                />
 
-          {/* Protected Routes - Requires authentication and email verification */}
-          <Route
-            path="/teach/:sessionId"
-            element={
-              <ProtectedRoute requireEmailVerified>
-                <TeachingSession />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/history/:aiStudentId"
-            element={
-              <ProtectedRoute requireEmailVerified>
-                <SessionHistory />
-              </ProtectedRoute>
-            }
-          />
+                {/* Protected Routes - Requires authentication and email verification */}
+                <Route
+                  path="/teach/:sessionId"
+                  element={
+                    <ProtectedRoute requireEmailVerified>
+                      <TeachingSession />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/history/:aiStudentId"
+                  element={
+                    <ProtectedRoute requireEmailVerified>
+                      <SessionHistory />
+                    </ProtectedRoute>
+                  }
+                />
 
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </div>
+                {/* Fallback */}
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </main>
+          </div>
+        </div>
+      </LayoutProvider>
     </ErrorBoundary>
   );
 }

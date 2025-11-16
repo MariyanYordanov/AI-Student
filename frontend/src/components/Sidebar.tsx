@@ -1,0 +1,110 @@
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { useAuthStore } from '../stores/authStore';
+import { useLayout } from '../contexts/LayoutContext';
+import { LanguageThemeSwitcher } from './LanguageThemeSwitcher';
+
+export function Sidebar() {
+  const { t } = useTranslation();
+  const { user, logout } = useAuthStore();
+  const { sidebarOpen, closeSidebar } = useLayout();
+
+  const handleLogout = () => {
+    logout();
+    closeSidebar();
+  };
+
+  const handleNavClick = () => {
+    closeSidebar();
+  };
+
+  return (
+    <>
+      {/* Mobile Overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+          onClick={closeSidebar}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div
+        className={`fixed left-0 top-16 h-screen w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transform transition-transform duration-300 z-30 md:static md:translate-x-0 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        <div className="flex flex-col h-full p-6 space-y-6">
+          {/* Navigation */}
+          {user && user.emailVerified && (
+            <nav className="space-y-3">
+              <Link
+                to="/"
+                onClick={handleNavClick}
+                className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg transition font-medium"
+              >
+                {t('navigation.dashboard')}
+              </Link>
+              {user.role === 'SUPERADMIN' && (
+                <Link
+                  to="/admin"
+                  onClick={handleNavClick}
+                  className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg transition font-medium"
+                >
+                  {t('navigation.admin')}
+                </Link>
+              )}
+            </nav>
+          )}
+
+          {/* Divider */}
+          {user && user.emailVerified && <div className="border-t border-gray-200 dark:border-gray-700" />}
+
+          {/* Language/Theme Switcher */}
+          <div className="py-2">
+            <LanguageThemeSwitcher />
+          </div>
+
+          {/* Divider */}
+          <div className="border-t border-gray-200 dark:border-gray-700" />
+
+          {/* Auth Section */}
+          <div className="flex-1 flex flex-col justify-end space-y-3">
+            {user && user.emailVerified ? (
+              <>
+                <div className="px-4 py-2">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {user.name}
+                  </p>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="w-full px-4 py-2 text-sm bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg font-medium transition border border-red-200 dark:border-red-800"
+                >
+                  {t('common.logout')}
+                </button>
+              </>
+            ) : (
+              <div className="space-y-2">
+                <Link
+                  to="/login"
+                  onClick={handleNavClick}
+                  className="block px-4 py-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg font-medium text-sm text-center transition"
+                >
+                  {t('auth.login')}
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={handleNavClick}
+                  className="block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition font-medium text-sm text-center"
+                >
+                  {t('auth.register')}
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}

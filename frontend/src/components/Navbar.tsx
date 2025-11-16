@@ -1,81 +1,47 @@
-import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { useAuthStore } from '../stores/authStore';
-import { LanguageThemeSwitcher } from './LanguageThemeSwitcher';
+import { useLayout } from '../contexts/LayoutContext';
 
 export function Navbar() {
-  const { t } = useTranslation();
-  const { user, logout } = useAuthStore();
-
-  const handleLogout = () => {
-    logout();
-  };
+  const { toggleSidebar } = useLayout();
 
   return (
     <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link
-            to="/"
-            className="text-2xl font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition"
-          >
-            Aily
-          </Link>
-
-          {/* Center Navigation */}
-          {user && user.emailVerified && (
-            <div className="hidden md:flex gap-8">
-              <Link
-                to="/"
-                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition font-medium"
-              >
-                {t('navigation.dashboard')}
-              </Link>
-              {user.role === 'SUPERADMIN' && (
-                <Link
-                  to="/admin"
-                  className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition font-medium"
-                >
-                  {t('navigation.admin')}
-                </Link>
-              )}
-            </div>
-          )}
-
-          {/* Right side - Language/Theme/Auth */}
+          {/* Logo and Menu Toggle */}
           <div className="flex items-center gap-4">
-            <LanguageThemeSwitcher />
+            {/* Menu Toggle Button (Mobile) */}
+            <button
+              onClick={toggleSidebar}
+              className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+              aria-label="Toggle menu"
+            >
+              <svg
+                className="w-6 h-6 text-gray-700 dark:text-gray-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </button>
 
-            {user && user.emailVerified ? (
-              <div className="flex items-center gap-4">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {user.name}
-                </span>
-                <button
-                  onClick={handleLogout}
-                  className="px-4 py-2 text-sm bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg font-medium transition border border-red-200 dark:border-red-800"
-                >
-                  {t('common.logout')}
-                </button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <Link
-                  to="/login"
-                  className="px-4 py-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium text-sm"
-                >
-                  {t('auth.login')}
-                </Link>
-                <Link
-                  to="/register"
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition font-medium text-sm"
-                >
-                  {t('auth.register')}
-                </Link>
-              </div>
-            )}
+            {/* Logo */}
+            <Link
+              to="/"
+              className="text-2xl font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition"
+            >
+              Aily
+            </Link>
           </div>
+
+          {/* Spacer */}
+          <div className="flex-1" />
         </div>
       </div>
     </nav>
