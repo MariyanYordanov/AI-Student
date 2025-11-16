@@ -179,9 +179,9 @@ function Dashboard() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Fixed Aily Card at Top */}
-      <div className="w-full bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+      <div className="fixed top-16 left-0 right-0 z-40 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-6xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
           <div className="rounded-2xl shadow-xl p-4 sm:p-6 bg-white dark:bg-gray-800 max-w-full">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -239,8 +239,8 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1">
+      {/* Main Content - Offset for fixed Aily card */}
+      <div className="pt-40 sm:pt-48">
         <div className="max-w-6xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
           {/* Topics Section */}
           <div className="rounded-2xl shadow-xl p-6 sm:p-8 bg-white dark:bg-gray-800">
