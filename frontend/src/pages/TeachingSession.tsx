@@ -166,9 +166,9 @@ function TeachingSession() {
   const currentLevel = aiStudent?.level || 0;
 
   return (
-    <div className="relative h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header - Absolutely positioned at top */}
-      <div className="absolute top-0 left-0 right-0 z-50 px-6 py-4 shadow-sm bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+    <div className="flex flex-col min-h-screen pt-16 bg-gray-50 dark:bg-gray-900">
+      {/* Header - Sticky below Navbar */}
+      <div className="sticky top-16 left-0 right-0 z-40 px-6 py-4 shadow-sm bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between max-w-4xl mx-auto">
           <div className="flex items-center space-x-4">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
@@ -192,8 +192,8 @@ function TeachingSession() {
         </div>
       </div>
 
-      {/* Messages - scrollable area between fixed header and input */}
-      <div className="absolute top-28 bottom-40 left-0 right-0 overflow-y-auto px-4 py-6">
+      {/* Messages - scrollable area */}
+      <div className="flex-1 overflow-y-auto px-4 py-6 pb-40">
         <div className="max-w-4xl mx-auto space-y-4">
           {/* Loading Session */}
           {isLoadingSession && (
@@ -248,7 +248,7 @@ function TeachingSession() {
       </div>
 
       {/* Input - Fixed at bottom */}
-      <div className="absolute bottom-0 left-0 right-0">
+      <div className="fixed bottom-0 left-0 right-0 z-40">
         <MessageInput onSend={handleSendMessage} disabled={loading} />
       </div>
     </div>
