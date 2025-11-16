@@ -242,7 +242,7 @@ function Dashboard() {
       </div>
 
       {/* Main Content - Offset for Fixed Card */}
-      <div className="pt-24 sm:pt-28 min-h-screen">
+      <div className="pt-36 sm:pt-44 min-h-screen">
         <div className="max-w-6xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
           {/* Topics Section */}
           <div className="rounded-2xl shadow-xl p-6 sm:p-8 bg-white dark:bg-gray-800">
