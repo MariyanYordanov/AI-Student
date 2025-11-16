@@ -71,10 +71,13 @@ export function Sidebar() {
           <div className="border-t border-gray-200 dark:border-gray-700" />
 
           {/* Auth Section */}
-          <div className="flex-1 flex flex-col justify-end space-y-2 md:space-y-2">
+          <div className="space-y-2">
             {user && user.emailVerified ? (
               <>
-                <div className="px-3 py-2">
+                <div className="px-3 py-1">
+                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-widest">
+                    {t('common.appName')}
+                  </p>
                   <p className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate">
                     {user.name}
                   </p>

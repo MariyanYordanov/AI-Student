@@ -27,7 +27,7 @@ function HomeRoute() {
   }
 
   if (!user.emailVerified) {
-    return <Navigate to="/login" replace />;
+    return <LandingPage />;
   }
 
   return <Dashboard />;
