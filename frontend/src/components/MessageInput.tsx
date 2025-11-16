@@ -55,7 +55,19 @@ function MessageInput({ onSend, disabled }: MessageInputProps) {
   const { t } = useTranslation();
   const [input, setInput] = useState('');
   const [isListening, setIsListening] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const recognitionRef = useRef<ISpeechRecognition | null>(null);
+
+  // Auto-resize textarea
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      // Reset to min height to get proper scrollHeight
+      textarea.style.height = 'auto';
+      // Set to scrollHeight to expand
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  }, [input]);
 
   useEffect(() => {
     // Initialize Web Speech API
@@ -110,6 +122,10 @@ function MessageInput({ onSend, disabled }: MessageInputProps) {
     if (input.trim() && !disabled) {
       onSend(input);
       setInput('');
+      // Reset textarea height after sending
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
+      }
     }
   };
 
@@ -124,13 +140,14 @@ function MessageInput({ onSend, disabled }: MessageInputProps) {
     <div className="border-t px-4 py-4 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
       <div className="max-w-4xl mx-auto flex items-end space-x-3">
         <textarea
+          ref={textareaRef}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={handleKeyPress}
           placeholder={t('session.inputPlaceholder')}
           disabled={disabled}
-          rows={3}
-          className="flex-1 resize-none px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:text-gray-400 dark:disabled:text-gray-500"
+          rows={1}
+          className="flex-1 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:text-gray-400 dark:disabled:text-gray-500 overflow-hidden"
         />
 
         <button
