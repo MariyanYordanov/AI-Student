@@ -34,7 +34,7 @@ function HomeRoute() {
 }
 
 function App() {
-  const { restoreSession } = useAuthStore();
+  const { restoreSession, user } = useAuthStore();
   const [isInitialized, setIsInitialized] = useState(false);
   useTheme(); // Initialize theme from localStorage
 
@@ -53,13 +53,17 @@ function App() {
     return <div />;
   }
 
+  // Check if user is logged in and verified
+  const isAuthenticatedAndVerified = user && user.emailVerified;
+
   return (
     <ErrorBoundary>
       <LayoutProvider>
         <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors">
           <Navbar />
           <div className="flex">
-            <Sidebar />
+            {/* Show sidebar only for authenticated and verified users */}
+            {isAuthenticatedAndVerified && <Sidebar />}
             <main className="flex-1 w-full">
               <Routes>
                 {/* Auth Routes - Guest Only (unauthenticated users) */}
