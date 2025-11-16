@@ -183,8 +183,8 @@ function Dashboard() {
       <div className="max-w-6xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Topics Section */}
-          <div className="lg:col-span-2 rounded-2xl shadow-xl p-8 bg-white dark:bg-gray-800">
-            <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">{t('dashboard.topics')}</h2>
+          <div className="lg:col-span-2 rounded-2xl shadow-xl p-6 sm:p-8 bg-white dark:bg-gray-800">
+            <h2 className="text-xl sm:text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">{t('dashboard.topics')}</h2>
 
             {topicsLoading ? (
               <div className="text-center py-12">
@@ -218,9 +218,9 @@ function Dashboard() {
           </div>
 
           {/* Aily Info & Start Section */}
-          <div className="rounded-2xl shadow-xl p-8 h-fit bg-white dark:bg-gray-800">
+          <div className="lg:sticky lg:top-6 rounded-2xl shadow-xl p-6 sm:p-8 bg-white dark:bg-gray-800 h-fit">
             <div className="mb-6">
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t('common.appName')}</h3>
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">{t('common.appName')}</h3>
               <p className="text-sm mt-2 text-gray-600 dark:text-gray-400">
                 {t('session.aiStudent')}
               </p>
