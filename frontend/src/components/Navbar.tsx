@@ -1,16 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useLayout } from '../contexts/LayoutContext';
-import { useAuthStore } from '../stores/authStore';
-import { useTranslation } from 'react-i18next';
 
 export function Navbar() {
   const { toggleSidebar } = useLayout();
-  const { user, logout } = useAuthStore();
-  const { t } = useTranslation();
-
-  const handleLogout = () => {
-    logout();
-  };
 
   return (
     <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
@@ -47,16 +39,6 @@ export function Navbar() {
               Aily
             </Link>
           </div>
-
-          {/* Right side - Mobile Logout Button */}
-          {user && user.emailVerified && (
-            <button
-              onClick={handleLogout}
-              className="md:hidden px-3 py-1 text-sm bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg font-medium transition border border-red-200 dark:border-red-800"
-            >
-              {t('common.logout')}
-            </button>
-          )}
         </div>
       </div>
     </nav>
