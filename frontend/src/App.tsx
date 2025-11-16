@@ -60,7 +60,7 @@ function App() {
           <Navbar />
           <div className="flex">
             <Sidebar />
-            <main className="flex-1 w-full md:ml-0">
+            <main className="flex-1 w-full">
               <Routes>
                 {/* Auth Routes - Guest Only (unauthenticated users) */}
                 <Route

@@ -30,38 +30,40 @@ export function Sidebar() {
 
       {/* Sidebar */}
       <div
-        className={`fixed left-0 top-16 h-screen w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transform transition-transform duration-300 z-30 md:static md:translate-x-0 ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`fixed left-0 top-16 h-[calc(100vh-64px)] w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transform transition-transform duration-300 z-30 md:static md:top-auto md:h-auto md:relative ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
-        <div className="flex flex-col h-full p-6 space-y-6">
-          {/* Navigation */}
+        <div className="flex flex-col h-full md:h-auto p-4 md:p-4 space-y-4">
+          {/* Navigation - Always visible for logged in users */}
           {user && user.emailVerified && (
-            <nav className="space-y-3">
-              <Link
-                to="/"
-                onClick={handleNavClick}
-                className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg transition font-medium"
-              >
-                {t('navigation.dashboard')}
-              </Link>
-              {user.role === 'SUPERADMIN' && (
+            <>
+              <nav className="space-y-2">
                 <Link
-                  to="/admin"
+                  to="/"
                   onClick={handleNavClick}
-                  className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg transition font-medium"
+                  className="block px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg transition font-medium"
                 >
-                  {t('navigation.admin')}
+                  {t('navigation.dashboard')}
                 </Link>
-              )}
-            </nav>
+                {user.role === 'SUPERADMIN' && (
+                  <Link
+                    to="/admin"
+                    onClick={handleNavClick}
+                    className="block px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg transition font-medium"
+                  >
+                    {t('navigation.admin')}
+                  </Link>
+                )}
+              </nav>
+
+              {/* Divider */}
+              <div className="border-t border-gray-200 dark:border-gray-700" />
+            </>
           )}
 
-          {/* Divider */}
-          {user && user.emailVerified && <div className="border-t border-gray-200 dark:border-gray-700" />}
-
           {/* Language/Theme Switcher */}
-          <div className="py-2">
+          <div>
             <LanguageThemeSwitcher />
           </div>
 
@@ -69,17 +71,17 @@ export function Sidebar() {
           <div className="border-t border-gray-200 dark:border-gray-700" />
 
           {/* Auth Section */}
-          <div className="flex-1 flex flex-col justify-end space-y-3">
+          <div className="flex-1 flex flex-col justify-end space-y-2 md:space-y-2">
             {user && user.emailVerified ? (
               <>
-                <div className="px-4 py-2">
-                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <div className="px-3 py-2">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate">
                     {user.name}
                   </p>
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="w-full px-4 py-2 text-sm bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg font-medium transition border border-red-200 dark:border-red-800"
+                  className="w-full px-3 py-2 text-xs md:text-sm bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg font-medium transition border border-red-200 dark:border-red-800"
                 >
                   {t('common.logout')}
                 </button>
@@ -89,14 +91,14 @@ export function Sidebar() {
                 <Link
                   to="/login"
                   onClick={handleNavClick}
-                  className="block px-4 py-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg font-medium text-sm text-center transition"
+                  className="block px-3 py-2 text-xs md:text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg font-medium text-center transition"
                 >
                   {t('auth.login')}
                 </Link>
                 <Link
                   to="/register"
                   onClick={handleNavClick}
-                  className="block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition font-medium text-sm text-center"
+                  className="block px-3 py-2 text-xs md:text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition font-medium text-center"
                 >
                   {t('auth.register')}
                 </Link>
