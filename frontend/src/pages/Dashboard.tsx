@@ -180,10 +180,72 @@ function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-6xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Fixed Aily Card at Top */}
+      <div className="fixed left-0 right-0 top-16 z-40 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+        <div className="max-w-6xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+          <div className="rounded-2xl shadow-xl p-4 sm:p-6 bg-white dark:bg-gray-800 max-w-full">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              {/* Aily Info */}
+              <div className="flex-1">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">{t('common.appName')}</h3>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                  {t('session.aiStudent')}
+                </p>
+              </div>
+
+              {/* Stats and Topic */}
+              {!isLoadingAily && (
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                  {/* Level & XP */}
+                  <div className="flex gap-4 text-sm">
+                    <div>
+                      <p className="font-medium text-gray-700 dark:text-gray-200">
+                        {t('dashboard.level')}: <span className="text-blue-600 dark:text-blue-400">{ailyInstance?.level || 0}</span>
+                      </p>
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-700 dark:text-gray-200">
+                        {t('dashboard.xp')}: <span className="text-blue-600 dark:text-blue-400">{ailyInstance?.totalXP || 0}</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Topic and Button */}
+                  {selectedTopic && (
+                    <button
+                      onClick={handleStartSession}
+                      disabled={isStarting || !selectedTopic || !ailyInstance}
+                      className={`px-4 py-2 font-semibold rounded-lg transition text-sm flex items-center justify-center whitespace-nowrap ${
+                        isStarting || !selectedTopic || !ailyInstance
+                          ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                          : 'bg-blue-600 hover:bg-blue-700 text-white'
+                      }`}
+                    >
+                      {isStarting ? (
+                        <>
+                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          {t('common.loading')}
+                        </>
+                      ) : (
+                        t('dashboard.startSession')
+                      )}
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content - Offset for Fixed Card */}
+      <div className="pt-24 sm:pt-28 min-h-screen">
+        <div className="max-w-6xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
           {/* Topics Section */}
-          <div className="lg:col-span-2 rounded-2xl shadow-xl p-6 sm:p-8 bg-white dark:bg-gray-800">
+          <div className="rounded-2xl shadow-xl p-6 sm:p-8 bg-white dark:bg-gray-800">
             <h2 className="text-xl sm:text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">{t('dashboard.topics')}</h2>
 
             {topicsLoading ? (
@@ -213,74 +275,6 @@ function Dashboard() {
                     );
                   })}
                 </div>
-              </>
-            )}
-          </div>
-
-          {/* Aily Info & Start Section */}
-          <div className="lg:sticky lg:top-6 rounded-2xl shadow-xl p-6 sm:p-8 bg-white dark:bg-gray-800 h-fit">
-            <div className="mb-6">
-              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">{t('common.appName')}</h3>
-              <p className="text-sm mt-2 text-gray-600 dark:text-gray-400">
-                {t('session.aiStudent')}
-              </p>
-            </div>
-
-            {isLoadingAily ? (
-              <div className="text-center py-6">
-                <p className="text-gray-600 dark:text-gray-400">{t('common.loading')}</p>
-              </div>
-            ) : (
-              <>
-                <div className="space-y-4 mb-6 p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
-                  <div>
-                    <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                      {t('dashboard.level')}: {ailyInstance?.level || 0}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                      {t('dashboard.xp')}: {ailyInstance?.totalXP || 0}
-                    </p>
-                  </div>
-                </div>
-
-                {selectedTopic && (
-                  <div className="p-3 rounded-lg mb-6 bg-blue-50 dark:bg-gray-700 border border-blue-200 dark:border-gray-600">
-                    <p className="text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      {t('session.topic')}:
-                    </p>
-                    <p className="text-sm font-semibold text-blue-700 dark:text-blue-400">
-                      {selectedTopic.title}
-                    </p>
-                    <p className="text-xs mt-1 text-gray-600 dark:text-gray-400">
-                      {selectedTopic.description}
-                    </p>
-                  </div>
-                )}
-
-                <button
-                  onClick={handleStartSession}
-                  disabled={isStarting || !selectedTopic || !ailyInstance}
-                  className={`w-full font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center ${
-                    isStarting || !selectedTopic || !ailyInstance
-                      ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-                      : 'bg-blue-600 hover:bg-blue-700 text-white'
-                  }`}
-                >
-                  {isStarting ? (
-                    <>
-                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      {t('common.loading')}
-                    </>
-                  ) : (
-                    t('dashboard.startSession')
-                  )}
-                </button>
               </>
             )}
           </div>
