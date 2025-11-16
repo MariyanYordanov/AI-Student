@@ -138,7 +138,7 @@ function MessageInput({ onSend, disabled }: MessageInputProps) {
 
   return (
     <div className="border-t px-4 py-4 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-      <div className="max-w-4xl mx-auto flex items-end space-x-3">
+      <div className="max-w-4xl mx-auto flex flex-col md:flex-row md:items-end gap-3">
         <textarea
           ref={textareaRef}
           value={input}
@@ -153,7 +153,7 @@ function MessageInput({ onSend, disabled }: MessageInputProps) {
         <button
           onClick={handleVoiceInput}
           disabled={disabled}
-          className={`px-4 py-3 rounded-xl transition duration-200 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 ${
+          className={`flex-1 md:flex-none px-4 py-3 rounded-xl transition duration-200 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 ${
             isListening
               ? 'bg-red-600 hover:bg-red-700 text-white'
               : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200'
@@ -166,7 +166,7 @@ function MessageInput({ onSend, disabled }: MessageInputProps) {
         <button
           onClick={handleSend}
           disabled={disabled || !input.trim()}
-          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:opacity-50 text-white font-medium rounded-xl transition duration-200"
+          className="flex-1 md:flex-none px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:opacity-50 text-white font-medium rounded-xl transition duration-200"
         >
           {t('session.send')}
         </button>
