@@ -59,17 +59,17 @@ function App() {
   return (
     <ErrorBoundary>
       <LayoutProvider>
-        <div className="h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors flex flex-col">
+        <div className="md:h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors flex flex-col">
           {/* Fixed Navbar at top */}
           <Navbar />
 
           {/* Main layout container: Sidebar (fixed on desktop) + Main content */}
-          <div className="flex flex-1 overflow-hidden">
+          <div className="flex flex-1 md:overflow-hidden">
             {/* Show sidebar only for authenticated and verified users */}
             {isAuthenticatedAndVerified && <Sidebar />}
 
-            {/* Main content area - scrollable */}
-            <main className="flex-1 overflow-y-auto w-full">
+            {/* Main content area - scrollable on desktop, natural flow on mobile */}
+            <main className="flex-1 w-full md:overflow-y-auto">
               <Routes>
                 {/* Auth Routes - Guest Only (unauthenticated users) */}
                 <Route
