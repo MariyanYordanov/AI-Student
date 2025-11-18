@@ -167,8 +167,8 @@ function TeachingSession() {
 
   return (
     <div className="flex flex-col min-h-screen pt-16 bg-gray-50 dark:bg-gray-900">
-      {/* Header - Sticky below Navbar */}
-      <div className="sticky top-16 left-0 right-0 z-40 px-6 py-4 shadow-sm bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      {/* Header - Sticky below Navbar - hidden on mobile */}
+      <div className="hidden sm:block sticky top-16 left-0 right-0 z-40 px-6 py-4 shadow-sm bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between max-w-4xl mx-auto">
           <div className="flex items-center space-x-4">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
@@ -193,7 +193,7 @@ function TeachingSession() {
       </div>
 
       {/* Messages - scrollable area */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 pb-40">
+      <div className="flex-1 overflow-y-auto px-4 py-6 pb-20 sm:pb-40">
         <div className="max-w-4xl mx-auto space-y-4">
           {/* Loading Session */}
           {isLoadingSession && (
@@ -246,6 +246,15 @@ function TeachingSession() {
           <div ref={messagesEndRef} />
         </div>
       </div>
+
+      {/* End Session Button - Fixed at bottom left on mobile only */}
+      <button
+        onClick={handleEndSession}
+        className="sm:hidden fixed bottom-6 left-6 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold text-sm flex items-center gap-2 shadow-lg z-40 transition"
+      >
+        <span>⏹</span>
+        {t('session.endSession')}
+      </button>
 
       {/* Input - Fixed at bottom */}
       <div className="fixed bottom-0 left-0 right-0 z-40">
