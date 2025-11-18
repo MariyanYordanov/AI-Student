@@ -179,65 +179,22 @@ function Dashboard() {
   }
 
   return (
-    <div className="w-full bg-gray-50 dark:bg-gray-900">
-      {/* Aily Card at Top (not fixed anymore, part of normal flow) */}
-      <div className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-4 py-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="rounded-2xl shadow-xl p-4 sm:p-6 bg-white dark:bg-gray-800 max-w-full">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              {/* Aily Info */}
-              <div className="flex-1">
-                <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">{t('common.appName')}</h3>
-                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                  {t('session.aiStudent')}
-                </p>
-              </div>
-
-              {/* Stats and Topic */}
-              {!isLoadingAily && (
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-                  {/* Level & XP */}
-                  <div className="flex gap-4 text-sm">
-                    <div>
-                      <p className="font-medium text-gray-700 dark:text-gray-200">
-                        {t('dashboard.level')}: <span className="text-blue-600 dark:text-blue-400">{ailyInstance?.level || 0}</span>
-                      </p>
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-700 dark:text-gray-200">
-                        {t('dashboard.xp')}: <span className="text-blue-600 dark:text-blue-400">{ailyInstance?.totalXP || 0}</span>
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Start Session Button */}
-                  <button
-                    onClick={handleStartSession}
-                    disabled={isStarting || !selectedTopic || !ailyInstance}
-                    className={`px-4 py-2 font-semibold rounded-lg transition text-sm flex items-center justify-center whitespace-nowrap ${
-                      isStarting || !selectedTopic || !ailyInstance
-                        ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-                        : 'bg-blue-600 hover:bg-blue-700 text-white'
-                    }`}
-                  >
-                    {isStarting ? (
-                      <>
-                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        {t('common.loading')}
-                      </>
-                    ) : (
-                      t('dashboard.startSession')
-                    )}
-                  </button>
-                </div>
-              )}
+    <div className="w-full bg-gray-50 dark:bg-gray-900 pb-20">
+      {/* Компактна информационна лента със Level и XP */}
+      {!isLoadingAily && (
+        <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto flex items-center justify-start gap-6">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-gray-600 dark:text-gray-400">{t('dashboard.level')}:</span>
+              <span className="text-lg font-bold text-blue-600 dark:text-blue-400">{ailyInstance?.level || 0}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-gray-600 dark:text-gray-400">{t('dashboard.xp')}:</span>
+              <span className="text-lg font-bold text-blue-600 dark:text-blue-400">{ailyInstance?.totalXP || 0}</span>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Main Content */}
       <div className="px-4 py-6 sm:px-6 lg:px-8">
@@ -278,6 +235,34 @@ function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* Fixed Start Session Button at Bottom Right */}
+      {!isLoadingAily && (
+        <button
+          onClick={handleStartSession}
+          disabled={isStarting || !selectedTopic || !ailyInstance}
+          className={`fixed bottom-6 right-6 px-6 py-3 font-semibold rounded-lg transition text-sm flex items-center justify-center gap-2 shadow-lg z-40 ${
+            isStarting || !selectedTopic || !ailyInstance
+              ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+              : 'bg-blue-600 hover:bg-blue-700 text-white'
+          }`}
+        >
+          {isStarting ? (
+            <>
+              <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              {t('common.loading')}
+            </>
+          ) : (
+            <>
+              <span>▶</span>
+              {t('dashboard.startSession')}
+            </>
+          )}
+        </button>
+      )}
     </div>
   );
 }
