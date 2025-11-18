@@ -180,17 +180,17 @@ function Dashboard() {
 
   return (
     <div className="w-full bg-gray-50 dark:bg-gray-900 pb-20">
-      {/* Компактна информационна лента със Level и XP */}
+      {/* Компактна информационна лента със Level и XP - видима само на десктоп */}
       {!isLoadingAily && (
-        <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 sm:px-6 lg:px-8">
+        <div className="hidden sm:block bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-2 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto flex items-center justify-start gap-6">
             <div className="flex items-center gap-2">
               <span className="text-xs font-semibold text-gray-600 dark:text-gray-400">{t('dashboard.level')}:</span>
-              <span className="text-lg font-bold text-blue-600 dark:text-blue-400">{ailyInstance?.level || 0}</span>
+              <span className="text-sm font-bold text-blue-600 dark:text-blue-400">{ailyInstance?.level || 0}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-xs font-semibold text-gray-600 dark:text-gray-400">{t('dashboard.xp')}:</span>
-              <span className="text-lg font-bold text-blue-600 dark:text-blue-400">{ailyInstance?.totalXP || 0}</span>
+              <span className="text-sm font-bold text-blue-600 dark:text-blue-400">{ailyInstance?.totalXP || 0}</span>
             </div>
           </div>
         </div>
