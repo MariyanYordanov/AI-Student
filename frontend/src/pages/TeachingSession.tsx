@@ -192,34 +192,37 @@ function TeachingSession() {
         </div>
       </div>
 
+      {/* Loading and Error states - centered in viewport */}
+      {isLoadingSession && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-50 dark:bg-gray-900/95 z-30">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+            <p className="text-lg text-gray-600 dark:text-gray-400">Зареждане на сесията...</p>
+            <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">Ако Backend-ът спи, това може да отнеме до 60 секунди</p>
+          </div>
+        </div>
+      )}
+
+      {loadError && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-50 dark:bg-gray-900/95 z-30">
+          <div className="text-center">
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-6 max-w-lg">
+              <p className="text-yellow-800 dark:text-yellow-200 font-medium mb-2">⚠️ Проблем при зареждане</p>
+              <p className="text-yellow-700 dark:text-yellow-300 text-sm">{loadError}</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="mt-4 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg text-sm"
+              >
+                Refresh
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Messages - scrollable area */}
       <div className="flex-1 overflow-y-auto px-4 py-6 pb-20 sm:pb-40">
         <div className="max-w-4xl mx-auto space-y-4">
-          {/* Loading Session */}
-          {isLoadingSession && (
-            <div className="text-center py-12">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-              <p className="text-lg text-gray-600 dark:text-gray-400">Зареждане на сесията...</p>
-              <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">Ако Backend-ът спи, това може да отнеме до 60 секунди</p>
-            </div>
-          )}
-
-          {/* Load Error */}
-          {loadError && (
-            <div className="text-center py-12">
-              <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-6 max-w-lg mx-auto">
-                <p className="text-yellow-800 dark:text-yellow-200 font-medium mb-2">⚠️ Проблем при зареждане</p>
-                <p className="text-yellow-700 dark:text-yellow-300 text-sm">{loadError}</p>
-                <button
-                  onClick={() => window.location.reload()}
-                  className="mt-4 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg text-sm"
-                >
-                  Refresh
-                </button>
-              </div>
-            </div>
-          )}
-
           {/* Messages */}
           {!isLoadingSession && !loadError && messages.length === 0 && !loading && (
             <div className="text-center py-12 text-gray-500 dark:text-gray-400">
