@@ -252,10 +252,10 @@ function TeachingSession() {
         <MessageInput onSend={handleSendMessage} disabled={loading} />
       </div>
 
-      {/* End Session Button - Fixed above input on mobile only */}
+      {/* End Session Button - Fixed at top right on mobile only */}
       <button
         onClick={handleEndSession}
-        className="sm:hidden fixed bottom-24 left-6 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold text-sm flex items-center gap-2 shadow-lg z-50 transition"
+        className="sm:hidden fixed top-20 right-6 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold text-sm flex items-center gap-2 shadow-lg z-50 transition"
       >
         <span>⏹</span>
         {t('session.endSession')}
